@@ -22,7 +22,7 @@ export default function Splash() {
       } else {
         ref.current?.setPage(initialPage + 1);
       }
-    }, 2000);
+    }, 5000);
 
     return () => clearInterval(intervalID);
   }, [initialPage, ref]);

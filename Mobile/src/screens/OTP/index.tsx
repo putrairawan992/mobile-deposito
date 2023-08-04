@@ -13,8 +13,12 @@ import Gap from '../../components/Gap';
 import Button from '../../components/Button';
 import {navigationRef} from '../../navigations/RootNavigation';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import {RootStackScreenProps} from '../../navigations/interface';
+import {showToast} from '../../utils/toast';
 
-export default function OTP() {
+export default function OTP({route}: RootStackScreenProps<'OTP'>) {
+  const phone = route.params.phone;
+
   const [otp, setOtp] = useState<string>('');
   const [timer, setTimer] = useState<number>(60);
 
@@ -32,9 +36,16 @@ export default function OTP() {
     return () => clearInterval(intervalID);
   }, [timer]);
 
+  const onLanjut = () => {
+    if (otp.trim().length < 6) {
+      return showToast('Masukkan OTP');
+    }
+    navigationRef.navigate('SplashLogin');
+  };
+
   return (
     <DefaultView>
-      <ScrollView>
+      <ScrollView showsVerticalScrollIndicator={false}>
         <View className="px-5 py-3">
           <Image
             className="w-[200] h-[100] self-center"
@@ -47,7 +58,9 @@ export default function OTP() {
             titleClassName="font-inter-bold text-lg"
           />
           <Gap height={10} />
-          <DefaultText title="Kami sudah mengirim kode OTP ke nomor HP kamu yang terdaftar: ********7654" />
+          <DefaultText
+            title={`Kami sudah mengirim kode OTP ke nomor HP kamu yang terdaftar: ${phone}`}
+          />
           <Gap height={10} />
           <DefaultText title="OTP" titleClassName="font-inter-semibold" />
           <Gap height={5} />
@@ -216,7 +229,7 @@ export default function OTP() {
         title="LANJUT"
         className="bg-primary mx-3 mb-7 self-center"
         titleClassName="text-white"
-        onPress={() => navigationRef.navigate('OTP')}
+        onPress={onLanjut}
       />
     </DefaultView>
   );

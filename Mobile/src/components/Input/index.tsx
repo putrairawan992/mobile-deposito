@@ -1,12 +1,15 @@
-import {TextInput, TextInputProps, View} from 'react-native';
-import React from 'react';
+import {Pressable, TextInput, TextInputProps} from 'react-native';
+import React, {ReactNode} from 'react';
 import DefaultText from '../DefaultText';
 
 interface InputProps {
   title?: string;
+  titleClassName?: string;
   value?: string;
   onChangeText?: (value: string) => void;
   textInputProps?: TextInputProps;
+  ComponentRight?: ReactNode;
+  onPress?: () => void;
 }
 
 export default function Input({
@@ -14,18 +17,32 @@ export default function Input({
   value,
   onChangeText,
   textInputProps,
+  titleClassName,
+  ComponentRight,
+  onPress,
 }: InputProps) {
   return (
-    <View className="border-b-[1px] border-b-black py-2">
+    <Pressable
+      disabled={!onPress}
+      className="border-b-[1px] border-b-black py-2"
+      onPress={onPress}>
       {title && (
-        <DefaultText title="Nomor HP" titleClassName="mb-1 font-inter-medium" />
+        <DefaultText
+          title={title}
+          titleClassName={`mb-1 font-inter-medium ${titleClassName ?? ''}`}
+        />
       )}
-      <TextInput
-        className="font-inter m-0 p-0"
-        value={value}
-        onChangeText={onChangeText}
-        {...textInputProps}
-      />
-    </View>
+      <Pressable disabled={!onPress} className="flex-row" onPress={onPress}>
+        <TextInput
+          className="font-inter m-0 p-0 flex-1 text-black"
+          value={value}
+          onChangeText={onChangeText}
+          editable={!onPress}
+          onPressIn={onPress}
+          {...textInputProps}
+        />
+        {ComponentRight && ComponentRight}
+      </Pressable>
+    </Pressable>
   );
 }

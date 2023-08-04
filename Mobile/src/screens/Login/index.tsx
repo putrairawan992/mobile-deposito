@@ -7,9 +7,19 @@ import Gap from '../../components/Gap';
 import Input from '../../components/Input';
 import Button from '../../components/Button';
 import {navigationRef} from '../../navigations/RootNavigation';
+import {showToast} from '../../utils/toast';
 
 export default function Login() {
   const [phone, setPhone] = useState<string>('');
+
+  const onLogin = () => {
+    if (phone.trim().length === 0) {
+      return showToast('Masukkan Nomor HP');
+    }
+    navigationRef.navigate('OTP', {
+      phone,
+    });
+  };
 
   return (
     <DefaultView>
@@ -43,7 +53,7 @@ export default function Login() {
           title="LANJUT"
           className="bg-primary"
           titleClassName="text-white"
-          onPress={() => navigationRef.navigate('OTP')}
+          onPress={onLogin}
         />
       </View>
     </DefaultView>
