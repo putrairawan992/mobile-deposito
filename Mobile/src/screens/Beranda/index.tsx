@@ -16,7 +16,7 @@ import Gap from '../../components/Gap';
 import LinearGradient from 'react-native-linear-gradient';
 import Carousel from 'react-native-reanimated-carousel';
 import Button from '../../components/Button';
-import {navigationRef} from '../../navigations/RootNavigation';
+import {navigationRef} from '../../navigation/RootNavigation';
 
 export default function Beranda() {
   const {width} = useWindowDimensions();
@@ -258,6 +258,7 @@ export default function Beranda() {
           <Gap height={20} />
           <Button
             title="Yuk Deposito Sekarang"
+            onPress={() => navigationRef.navigate('AjukanDeposito')}
             className="bg-primary rounded-xl self-center px-6"
             titleClassName="text-white"
           />

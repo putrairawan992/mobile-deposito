@@ -8,7 +8,7 @@ import Gap from '../../components/Gap';
 import DefaultText from '../../components/DefaultText';
 import Button from '../../components/Button';
 import PagerView from 'react-native-pager-view';
-import {navigationRef} from '../../navigations/RootNavigation';
+import {navigationRef} from '../../navigation/RootNavigation';
 
 export default function Splash() {
   const [initialPage, setInitialPage] = useState<number>(0);

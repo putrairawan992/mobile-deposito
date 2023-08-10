@@ -3,7 +3,7 @@ import React from 'react';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import DefaultText from '../DefaultText';
 import {colors} from '../../utils/colors';
-import {navigationRef} from '../../navigations/RootNavigation';
+import {navigationRef} from '../../navigation/RootNavigation';
 
 interface DefaultHeaderProps {
   title?: string;

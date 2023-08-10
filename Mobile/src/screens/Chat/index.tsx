@@ -6,7 +6,7 @@ import DefaultHeader from '../../components/DefaultHeader';
 import {colors} from '../../utils/colors';
 import Button from '../../components/Button';
 import Gap from '../../components/Gap';
-import {navigationRef} from '../../navigations/RootNavigation';
+import {navigationRef} from '../../navigation/RootNavigation';
 
 export default function Chat() {
   return (

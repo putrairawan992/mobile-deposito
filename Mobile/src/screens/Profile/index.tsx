@@ -7,7 +7,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import {colors} from '../../utils/colors';
 import Gap from '../../components/Gap';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import {navigationRef, replace} from '../../navigations/RootNavigation';
+import {navigationRef, replace} from '../../navigation/RootNavigation';
 
 export default function Profile() {
   return (

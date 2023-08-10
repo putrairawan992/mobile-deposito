@@ -5,7 +5,7 @@ import DefaultText from '../../components/DefaultText';
 import Gap from '../../components/Gap';
 import Input from '../../components/Input';
 import Button from '../../components/Button';
-import {navigationRef} from '../../navigations/RootNavigation';
+import {navigationRef} from '../../navigation/RootNavigation';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {showToast} from '../../utils/toast';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';

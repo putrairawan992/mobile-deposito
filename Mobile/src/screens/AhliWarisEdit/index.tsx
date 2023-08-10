@@ -4,7 +4,7 @@ import DefaultView from '../../components/DefaultView';
 import DefaultText from '../../components/DefaultText';
 import DefaultHeader from '../../components/DefaultHeader';
 import Gap from '../../components/Gap';
-import {navigationRef} from '../../navigations/RootNavigation';
+import {navigationRef} from '../../navigation/RootNavigation';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import ModalAlert from '../../components/ModalAlert';
 import {showToast} from '../../utils/toast';

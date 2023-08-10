@@ -39,7 +39,7 @@ export default function ModalAlert({
           onPress={onConfirm}
           activeOpacity={0.7}
           className="self-center bg-primary px-5 py-2 rounded-md">
-          <DefaultText title="OKE" titleClassName="text-white" />
+          <DefaultText title="OK" titleClassName="text-white" />
         </TouchableOpacity>
       </View>
     </Modal>

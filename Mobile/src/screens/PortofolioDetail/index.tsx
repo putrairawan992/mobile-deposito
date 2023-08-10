@@ -7,7 +7,7 @@ import Gap from '../../components/Gap';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {colors} from '../../utils/colors';
 import ModalAlert from '../../components/ModalAlert';
-import {navigationRef} from '../../navigations/RootNavigation';
+import {navigationRef} from '../../navigation/RootNavigation';
 
 export default function PortofolioDetail() {
   const [perpanjang, setPerpanjang] = useState<boolean>(true);

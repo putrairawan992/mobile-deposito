@@ -6,19 +6,21 @@ import DefaultText from '../../components/DefaultText';
 import Gap from '../../components/Gap';
 import Input from '../../components/Input';
 import Button from '../../components/Button';
-import {navigationRef} from '../../navigations/RootNavigation';
+import {navigationRef} from '../../navigation/RootNavigation';
 import {showToast} from '../../utils/toast';
+import { useDispatch } from 'react-redux';
+import { RootDispatch } from '../../store';
+import { checkLogin } from '../../services/user';
 
 export default function Login() {
   const [phone, setPhone] = useState<string>('');
+  const dispatch = useDispatch<RootDispatch>();
 
   const onLogin = () => {
     if (phone.trim().length === 0) {
       return showToast('Masukkan Nomor HP');
     }
-    navigationRef.navigate('OTP', {
-      phone,
-    });
+    dispatch(checkLogin(phone));
   };
 
   return (

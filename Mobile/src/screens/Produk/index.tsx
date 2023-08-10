@@ -7,7 +7,7 @@ import Gap from '../../components/Gap';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {colors} from '../../utils/colors';
 import LinearGradient from 'react-native-linear-gradient';
-import {navigationRef} from '../../navigations/RootNavigation';
+import {navigationRef} from '../../navigation/RootNavigation';
 
 const Item = () => {
   return (
@@ -71,13 +71,13 @@ const Item = () => {
           </View>
         </View>
         <Gap height={10} />
-        <View className="h-[20] w-full border-[1px] border-primary">
-          <View className="h-[16] bg-white" style={{width: '30%'}} />
+        <View className="w-full bg-gray-200 rounded-full dark:bg-gray-700">
+          <View
+            className="bg-green-600 text-xs font-medium text-blue-100 text-center p-0.5 leading-none rounded-full"
+            style={{width: '30%'}}>
+            <DefaultText title="45%"  titleClassName='text-center text-white'/>
+          </View>
         </View>
-        <DefaultText
-          title="Progress 30%"
-          titleClassName="text-white font-inter"
-        />
       </LinearGradient>
     </TouchableOpacity>
   );
@@ -204,7 +204,6 @@ export default function Produk() {
           )}
         </View>
       </View>
-      <Item />
       <FlatList
         data={[1, 2, 3, 4]}
         keyExtractor={(_, key) => key.toString()}

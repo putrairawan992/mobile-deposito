@@ -7,7 +7,7 @@ import Gap from '../../components/Gap';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {colors} from '../../utils/colors';
 import Button from '../../components/Button';
-import {navigationRef} from '../../navigations/RootNavigation';
+import {navigationRef} from '../../navigation/RootNavigation';
 
 export default function ProdukDetail() {
   const [activeNumber, setActiveNumber] = useState<number>(0);

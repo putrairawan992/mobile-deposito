@@ -9,7 +9,7 @@ import DefaultView from '../../components/DefaultView';
 import DefaultText from '../../components/DefaultText';
 import Gap from '../../components/Gap';
 import Button from '../../components/Button';
-import {navigationRef} from '../../navigations/RootNavigation';
+import {navigationRef} from '../../navigation/RootNavigation';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {showToast} from '../../utils/toast';
 

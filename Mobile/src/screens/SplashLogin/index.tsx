@@ -7,7 +7,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import Gap from '../../components/Gap';
 import DefaultText from '../../components/DefaultText';
 import Button from '../../components/Button';
-import {navigationRef} from '../../navigations/RootNavigation';
+import {navigationRef} from '../../navigation/RootNavigation';
 
 export default function SplashLogin() {
   return (

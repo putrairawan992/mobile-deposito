@@ -10,7 +10,7 @@ import DefaultView from '../../components/DefaultView';
 import DefaultText from '../../components/DefaultText';
 import DefaultHeader from '../../components/DefaultHeader';
 import LinearGradient from 'react-native-linear-gradient';
-import {navigationRef} from '../../navigations/RootNavigation';
+import {navigationRef} from '../../navigation/RootNavigation';
 import {colors} from '../../utils/colors';
 import Gap from '../../components/Gap';
 

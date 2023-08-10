@@ -6,7 +6,7 @@ import Button from '../../components/Button';
 import Gap from '../../components/Gap';
 import Input from '../../components/Input';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import {navigationRef} from '../../navigations/RootNavigation';
+import {navigationRef} from '../../navigation/RootNavigation';
 import {showToast} from '../../utils/toast';
 
 export default function BuatPassword() {

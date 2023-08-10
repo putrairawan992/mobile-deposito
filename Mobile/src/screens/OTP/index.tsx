@@ -11,18 +11,23 @@ import {images} from '../../utils/images';
 import DefaultText from '../../components/DefaultText';
 import Gap from '../../components/Gap';
 import Button from '../../components/Button';
-import {navigationRef} from '../../navigations/RootNavigation';
+import {navigationRef} from '../../navigation/RootNavigation';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import {RootStackScreenProps} from '../../navigations/interface';
+import {RootStackScreenProps} from '../../navigation/interface';
 import {showToast} from '../../utils/toast';
+import { RootDispatch } from '../../store';
+import { useDispatch } from 'react-redux';
+import { login } from '../../services/user';
 
 export default function OTP({route}: RootStackScreenProps<'OTP'>) {
-  const phone = route.params.phone;
+  const emailOrPhone = route.params.emailOrPhone;
 
   const [otp, setOtp] = useState<string>('');
   const [timer, setTimer] = useState<number>(60);
 
   const {width} = useWindowDimensions();
+
+  const dispatch = useDispatch<RootDispatch>();
 
   useEffect(() => {
     const intervalID = setInterval(() => {
@@ -40,7 +45,7 @@ export default function OTP({route}: RootStackScreenProps<'OTP'>) {
     if (otp.trim().length < 6) {
       return showToast('Masukkan OTP');
     }
-    navigationRef.navigate('SplashLogin');
+    dispatch(login(emailOrPhone,otp));
   };
 
   return (
@@ -59,7 +64,7 @@ export default function OTP({route}: RootStackScreenProps<'OTP'>) {
           />
           <Gap height={10} />
           <DefaultText
-            title={`Kami sudah mengirim kode OTP ke nomor HP kamu yang terdaftar: ${phone}`}
+            title={`Kami sudah mengirim kode OTP ke nomor HP kamu yang terdaftar: ${emailOrPhone}`}
           />
           <Gap height={10} />
           <DefaultText title="OTP" titleClassName="font-inter-semibold" />
