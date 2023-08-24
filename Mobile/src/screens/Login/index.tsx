@@ -1,4 +1,4 @@
-import {Image, ScrollView, View} from 'react-native';
+import {Image, ScrollView, View, ActivityIndicator} from 'react-native';
 import React, {useState} from 'react';
 import DefaultView from '../../components/DefaultView';
 import {images} from '../../utils/images';
@@ -8,14 +8,16 @@ import Input from '../../components/Input';
 import Button from '../../components/Button';
 import {navigationRef} from '../../navigation/RootNavigation';
 import {showToast} from '../../utils/toast';
-import { useDispatch } from 'react-redux';
-import { RootDispatch } from '../../store';
-import { checkLogin } from '../../services/user';
+import {useDispatch, useSelector} from 'react-redux';
+import {RootDispatch, RootState} from '../../store';
+import {checkLogin} from '../../services/user';
 
 export default function Login() {
   const [phone, setPhone] = useState<string>('');
   const dispatch = useDispatch<RootDispatch>();
-
+  const {checkLoginLoading} = useSelector(
+    (state: RootState) => state.userReducer,
+  );
   const onLogin = () => {
     if (phone.trim().length === 0) {
       return showToast('Masukkan Nomor HP');
@@ -51,12 +53,16 @@ export default function Login() {
         </View>
       </ScrollView>
       <View className="px-10 py-5">
-        <Button
-          title="LANJUT"
-          className="bg-primary"
-          titleClassName="text-white"
-          onPress={onLogin}
-        />
+        {checkLoginLoading ? (
+          <ActivityIndicator />
+        ) : (
+          <Button
+            title="LANJUT"
+            className="bg-primary"
+            titleClassName="text-white"
+            onPress={onLogin}
+          />
+        )}
       </View>
     </DefaultView>
   );

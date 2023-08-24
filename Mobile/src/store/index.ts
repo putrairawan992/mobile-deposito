@@ -1,10 +1,12 @@
 import {configureStore} from '@reduxjs/toolkit';
 
 import userReducer from './user';
+import productReducer from './product';
 
 const store = configureStore({
   reducer: {
-    userReducer
+    userReducer,
+    productReducer
   },
   middleware: getDefaultMiddleware =>
     getDefaultMiddleware({

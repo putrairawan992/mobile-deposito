@@ -1,5 +1,5 @@
 import {ScrollView, TouchableOpacity, View} from 'react-native';
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import DefaultView from '../../components/DefaultView';
 import DefaultText from '../../components/DefaultText';
 import DefaultHeader from '../../components/DefaultHeader';
@@ -8,10 +8,26 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {colors} from '../../utils/colors';
 import Button from '../../components/Button';
 import {navigationRef} from '../../navigation/RootNavigation';
+import {RootStackScreenProps} from '../../navigation/interface';
+import {useDispatch, useSelector} from 'react-redux';
+import {RootDispatch, RootState} from '../../store';
+import {getShowProductNasabahDetail} from '../../services/product';
 
-export default function ProdukDetail() {
+export default function ProdukDetail({
+  route,
+}: RootStackScreenProps<'ProdukDetail'>) {
   const [activeNumber, setActiveNumber] = useState<number>(0);
+  const noProduct = route?.params?.noProduct;
+  const {showProductDetail} = useSelector(
+    (state: RootState) => state.productReducer,
+  );
+  const dispatch = useDispatch<RootDispatch>();
 
+  console.log('ProdukDetail===>', showProductDetail);
+
+  useEffect(() => {
+    dispatch(getShowProductNasabahDetail(noProduct));
+  }, [dispatch]);
   return (
     <DefaultView>
       <DefaultHeader title="Detail Deposito" />

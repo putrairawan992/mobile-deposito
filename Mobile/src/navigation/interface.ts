@@ -1,10 +1,13 @@
-import {NativeStackScreenProps} from '@react-navigation/native-stack';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 export type RootStackParamList = {
   Splash: undefined;
   Login: undefined;
   OTP: {
-    phone: string;
+    emailOrPhone: string;
+  };
+  Password: {
+    emailOrPhone: string;
   };
   AhliWaris: undefined;
   AhliWarisEdit: undefined;
@@ -25,7 +28,9 @@ export type RootStackParamList = {
   Portofolio: undefined;
   PortofolioDetail: undefined;
   Produk: undefined;
-  ProdukDetail: undefined;
+  ProdukDetail?: { 
+    noProduct?: undefined 
+  };
   Profile: undefined;
   Register: undefined;
   RekeningSaya: undefined;
@@ -37,7 +42,7 @@ export type RootStackParamList = {
   SyaratKetentuan: undefined;
   FAQ: undefined;
   MyTabs: undefined;
-  BuatPassword: undefined;
+  BuatPassword?: undefined;
 };
 
 export type RootStackScreenProps<T extends keyof RootStackParamList> =
@@ -45,6 +50,6 @@ export type RootStackScreenProps<T extends keyof RootStackParamList> =
 
 declare global {
   namespace ReactNavigation {
-    interface RootParamList extends RootStackParamList {}
+    interface RootParamList extends RootStackParamList { }
   }
 }

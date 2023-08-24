@@ -1,3 +1,15 @@
 {
-    "java.compile.nullAnalysis.mode": "automatic"
+    "java.compile.nullAnalysis.mode": "automatic",
+    "cSpell.words": [
+        "akun",
+        "Buat",
+        "ceklogin",
+        "coba",
+        "formdata",
+        "lagi",
+        "mendaftarkan",
+        "nanti",
+        "Nasabah",
+        "Terjadi"
+    ]
 }

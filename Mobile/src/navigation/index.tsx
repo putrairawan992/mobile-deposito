@@ -38,6 +38,7 @@ import SyaratKetentuan from '../screens/SyaratKetentuan';
 import SemuaPromo from '../screens/SemuaPromo';
 import BottomNavigator from '../components/BottomNavigator';
 import BuatPassword from '../screens/BuatPassword';
+import Password from '../screens/Password';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 const Tab = createBottomTabNavigator();
@@ -91,6 +92,7 @@ function StackNavigator() {
       <Stack.Screen component={SplashLogin} name="SplashLogin" />
       <Stack.Screen component={SyaratKetentuan} name="SyaratKetentuan" />
       <Stack.Screen component={BuatPassword} name="BuatPassword" />
+      <Stack.Screen component={Password} name="Password" />
     </Stack.Navigator>
   );
 }

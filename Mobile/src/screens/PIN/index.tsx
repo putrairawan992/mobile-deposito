@@ -12,13 +12,17 @@ import Button from '../../components/Button';
 import {navigationRef} from '../../navigation/RootNavigation';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {showToast} from '../../utils/toast';
+import {registerPasswordPin} from '../../services/user';
+import { useDispatch } from 'react-redux';
+import { RootDispatch } from '../../store';
 
 export default function PIN() {
   const [otp, setOtp] = useState<string>('');
   const [timer, setTimer] = useState<number>(60);
 
   const {width} = useWindowDimensions();
-
+  const dispatch = useDispatch<RootDispatch>();
+  
   useEffect(() => {
     const intervalID = setInterval(() => {
       if (timer === 0) {
@@ -35,7 +39,8 @@ export default function PIN() {
     if (otp.length < 6) {
       return showToast('Masukkan PIN');
     }
-    navigationRef.navigate('MyTabs');
+
+    dispatch(registerPasswordPin({pin: otp}, 'MyTabs'));
   };
 
   return (

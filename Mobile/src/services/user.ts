@@ -2,23 +2,30 @@ import axios from 'axios';
 import store, { RootDispatch } from '../store';
 import { API, defaultHeaderAxios } from '../utils/constant';
 import {
+  setCheckLogin,
+  setCheckLoginLoading,
+  setDetailNasabah,
+  setForgotLoading,
   setLoginLoading,
   setRegisterLoading,
   setToken,
   setUser,
+  setUserProfile,
 } from '../store/user';
 import Toast from 'react-native-toast-message';
 import { addStorage, removeStorage } from '../utils/storage';
-import { navigationRef, replace } from '../navigation/RootNavigation';
+import { navigationRef } from '../navigation/RootNavigation';
 
 export const checkLogin =
   (emailOrPhone: string) =>
     async (dispatch: RootDispatch) => {
-      dispatch(setLoginLoading(true));
+      dispatch(setCheckLoginLoading(true));
       axios
         .post(`${API}/ceklogin`, { username: emailOrPhone }, defaultHeaderAxios)
-        .then(res => {
-          navigationRef.navigate('OTP', {
+        .then((res) => {
+          dispatch(setCheckLogin(res?.data));
+          dispatch(setCheckLoginLoading(false))
+          navigationRef.navigate(res?.data === 'password' ? 'Password' : 'OTP', {
             emailOrPhone,
           });
         })
@@ -27,10 +34,10 @@ export const checkLogin =
             type: 'error',
             text1: 'Error',
             text2:
-              err.response?.data?.message ?? 'Terjadi error, coba lagi nanti.',
+            err.response?.data ?? 'Terjadi error, coba lagi nanti.',
           });
         })
-        .finally(() => dispatch(setLoginLoading(false)));
+        .finally(() => dispatch(setCheckLoginLoading(false)));
     };
 
 export const login =
@@ -40,64 +47,135 @@ export const login =
       axios
         .post(`${API}/login`, { username: emailOrPhone, password: password }, defaultHeaderAxios)
         .then(res => {
-          setUser(res?.data)
+          dispatch(setUser(res?.data));
           addStorage('token', res.data.token);
+          dispatch(setToken(res.data.token));
           navigationRef.navigate('SplashLogin');
+        })
+        .catch(err => {
+          console.log(err.response?.data);
+          
+          Toast.show({
+            type: 'error',
+            text1: 'Error',
+            text2:
+            err.response?.data ?? 'Terjadi error, coba lagi nanti.',
+          });
+        })
+        .finally(() => dispatch(setLoginLoading(false)));
+    };
+
+export const getDetailNasabah = () => async (dispatch: RootDispatch) => {
+  axios
+    .get(`${API}/nasabah`, {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${store.getState().userReducer.token}`,
+      },
+    })
+    .then(res => {
+      dispatch(setDetailNasabah(res.data))
+    })
+    .catch(err => Toast.show({
+      type: 'error',
+      text1: 'Error',
+      text2:
+      err.response?.data ?? 'Terjadi error, coba lagi nanti.',
+    }));
+};
+
+export const getUserProfile = () => async (dispatch: RootDispatch) => {
+  axios
+    .get(`${API}/userprofile`, {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${store.getState().userReducer.token}`,
+      },
+    })
+    .then(res => {
+      dispatch(setUserProfile(res.data))
+    })
+    .catch(err => Toast.show({
+      type: 'error',
+      text1: 'Error',
+      text2:
+      err.response?.data ?? 'Terjadi error, coba lagi nanti.',
+    }));
+};
+
+export const logout = () => async (dispatch: RootDispatch) => {
+  axios
+    .get(`${API}/logout`, {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${store.getState().userReducer.token}`,
+      },
+    })
+    .then(() => {
+      Toast.show({
+        type: 'success',
+        text1: 'Success',
+        text2: 'Logout',
+      });
+      dispatch(setToken(null));
+      dispatch(setUser(null));
+      removeStorage('token');
+      navigationRef.reset({ index: 0, routes: [{ name: 'Login' }] });
+    })
+    .catch(err => Toast.show({
+      type: 'error',
+      text1: 'Error',
+      text2:
+      err.response?.data ?? 'Terjadi error, coba lagi nanti.',
+    }));
+};
+
+export const registerNasabah =
+  (payload: any) =>
+    async (dispatch: RootDispatch) => {
+      dispatch(setRegisterLoading(true));
+      axios
+        .post(
+          `${API}/regnasabah`,
+          payload,
+          defaultHeaderAxios,
+        )
+        .then(() => {
+          Toast.show({
+            type: 'success',
+            text1: 'Success',
+            text2: 'mendaftarkan akun.',
+          });
+          navigationRef.navigate(
+            store.getState().userReducer.checkLogin === 'password' ? 'MyTabs' : 'BuatPassword'
+          );
         })
         .catch(err => {
           Toast.show({
             type: 'error',
             text1: 'Error',
             text2:
-              err.response?.data?.message ?? 'Terjadi error, coba lagi nanti.',
+            err.response?.data ?? 'Terjadi error, coba lagi nanti.',
           });
-        })
-        .finally(() => dispatch(setLoginLoading(false)));
+        }).finally(() => dispatch(setRegisterLoading(false)));
     };
 
-export const getCurrentUser = () => async (dispatch: RootDispatch) => {
-  const token = store.getState().userReducer.token;
-
-  axios
-    .get(`${API}/account/profile`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    })
-    .then(res => dispatch(setUser(res.data.data)))
-    .catch(err => console.log('err get current user: ', err.response));
-};
-
-export const logout = () => async (dispatch: RootDispatch) => {
-  dispatch(setToken(null));
-  dispatch(setUser(null));
-  removeStorage('token');
-  navigationRef.reset({ index: 0, routes: [{ name: 'Login' }] });
-};
-
-export const register =
-  (
-    fullname: string,
-    phone: string,
-    password: string,
-    password_confirm: string,
-  ) =>
+export const registerPasswordPin =
+  (payload: any, route = 'PIN') =>
     async (dispatch: RootDispatch) => {
-      dispatch(setRegisterLoading(true));
-
       axios
-        .post(
-          `${API}/register`,
-          { fullname, phone, password, password_confirm },
+        .put(
+          `${API}/upuser`,
+          payload,
           defaultHeaderAxios,
         )
         .then(() => {
           Toast.show({
             type: 'success',
             text1: 'Sukses',
-            text2: 'Berhasil mendaftarkan akun.',
+            text2: 'Berhasil Membuat Password/Pin',
           });
-          replace('Login' as never);
+          navigationRef.navigate(route as any);
         })
         .catch(err => {
           console.log('err register: ', err.response);
@@ -107,6 +185,34 @@ export const register =
             text2:
               err.response?.data?.message ?? 'Terjadi error, coba lagi nanti.',
           });
-        })
-        .finally(() => dispatch(setRegisterLoading(false)));
+        });
     };
+
+export const forgotPasswordPin =
+  (payload: any,emailOrPhone:any) =>
+    async (dispatch: RootDispatch) => {
+      dispatch(setForgotLoading(true));
+      axios
+        .post(
+          `${API}/forgotpassmobile`,
+          payload,
+          defaultHeaderAxios,
+        )
+        .then(() => {
+          Toast.show({
+            type: 'success',
+            text1: 'Success',
+            text2: 'Reset Password/Pin',
+          });
+          dispatch(setForgotLoading(false));
+          navigationRef.navigate('OTP',{emailOrPhone});
+        })
+        .catch(err => {
+          Toast.show({
+            type: 'error',
+            text1: 'Error',
+            text2:
+            err.response?.data ?? 'Terjadi error, coba lagi nanti.',
+          });
+        }).finally(() => dispatch(setForgotLoading(false)));
+    };     

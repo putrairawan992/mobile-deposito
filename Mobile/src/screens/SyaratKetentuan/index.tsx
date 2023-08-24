@@ -1,5 +1,5 @@
 import {ScrollView, Text, TouchableOpacity, View} from 'react-native';
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import DefaultView from '../../components/DefaultView';
 import DefaultText from '../../components/DefaultText';
 import {colors} from '../../utils/colors';
@@ -8,15 +8,25 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import Button from '../../components/Button';
 import {navigationRef} from '../../navigation/RootNavigation';
 import {showToast} from '../../utils/toast';
+import { RootDispatch, RootState } from '../../store';
+import { useDispatch, useSelector } from 'react-redux';
+import { getDetailNasabah } from '../../services/user';
 
 export default function SyaratKetentuan() {
   const [agree, setAgree] = useState<boolean>(false);
+  const dispatch = useDispatch<RootDispatch>();
+  const { detailNasabah } = useSelector((state: RootState) => state.userReducer);
+console.log(detailNasabah);
+
+  useEffect(()=>{
+    dispatch(getDetailNasabah())
+  },[dispatch])
 
   const onLanjut = () => {
     if (!agree) {
       return showToast('Centang syarat dan ketentuan.');
     }
-    navigationRef.navigate('MyTabs');
+    navigationRef.navigate(detailNasabah?.validasi == "0" ?  'Register' : 'MyTabs');
   };
 
   return (

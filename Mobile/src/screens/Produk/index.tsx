@@ -1,6 +1,7 @@
 import {FlatList, StyleSheet, TouchableOpacity, View} from 'react-native';
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import DefaultView from '../../components/DefaultView';
+
 import DefaultText from '../../components/DefaultText';
 import DefaultHeader from '../../components/DefaultHeader';
 import Gap from '../../components/Gap';
@@ -8,19 +9,24 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {colors} from '../../utils/colors';
 import LinearGradient from 'react-native-linear-gradient';
 import {navigationRef} from '../../navigation/RootNavigation';
+import {useDispatch, useSelector} from 'react-redux';
+import {RootDispatch, RootState} from '../../store';
+import {getShowProductNasabah} from '../../services/product';
+import {formatRupiah} from '../../utils/currency';
 
-const Item = () => {
+const Item = (data: any) => {
+  let noProduct = data?.data?.item?.no_produk;
   return (
     <TouchableOpacity
       activeOpacity={0.7}
-      onPress={() => navigationRef.navigate('ProdukDetail')}>
+      onPress={() => navigationRef.navigate('ProdukDetail', {noProduct})}>
       <LinearGradient
         className="mx-3 p-2 rounded-xl mb-3"
         colors={[colors.primary, '#0F3746']}
         start={{x: 0, y: 0}}
         end={{x: 1, y: 0}}>
         <DefaultText
-          title="BPR Kencana Abadi"
+          title={data?.data?.item?.id_mitra}
           titleClassName="text-white font-inter-semibold"
         />
         <Gap height={10} />
@@ -28,12 +34,15 @@ const Item = () => {
           <View className="flex-1">
             <DefaultText title="Target" titleClassName="text-xs text-white" />
             <DefaultText
-              title="Rp 1.000.000.000"
+              title={data?.data?.item?.target}
               titleClassName="text-xs text-white"
             />
             <Gap height={5} />
             <DefaultText title="Tenor" titleClassName="text-xs text-white" />
-            <DefaultText title="3 Bulan" titleClassName="text-xs text-white" />
+            <DefaultText
+              title={data?.data?.item?.tenor}
+              titleClassName="text-xs text-white"
+            />
           </View>
           <Gap width={5} />
           <View className="flex-1">
@@ -42,7 +51,7 @@ const Item = () => {
               titleClassName="text-xs text-white"
             />
             <DefaultText
-              title="Rp 1.000.000"
+              title={formatRupiah(data?.data?.item?.minimal, 'Rp ')}
               titleClassName="text-xs text-white"
             />
             <Gap height={5} />
@@ -51,7 +60,7 @@ const Item = () => {
               titleClassName="text-xs text-white"
             />
             <DefaultText
-              title="5% / Tahun"
+              title={`${data?.data?.item?.bagi_hasil}% / Tahun`}
               titleClassName="text-xs text-white"
             />
           </View>
@@ -62,12 +71,15 @@ const Item = () => {
               titleClassName="text-xs text-white"
             />
             <DefaultText
-              title="18 Juli 2023"
+              title={`${data?.data?.item?.end_date}`}
               titleClassName="text-xs text-white"
             />
             <Gap height={5} />
             <DefaultText title="Nisbah" titleClassName="text-xs text-white" />
-            <DefaultText title="40:60" titleClassName="text-xs text-white" />
+            <DefaultText
+              title={`${data?.data?.item?.nisbah}`}
+              titleClassName="text-xs text-white"
+            />
           </View>
         </View>
         <Gap height={10} />
@@ -75,7 +87,7 @@ const Item = () => {
           <View
             className="bg-green-600 text-xs font-medium text-blue-100 text-center p-0.5 leading-none rounded-full"
             style={{width: '30%'}}>
-            <DefaultText title="45%"  titleClassName='text-center text-white'/>
+            <DefaultText title="45%" titleClassName="text-center text-white" />
           </View>
         </View>
       </LinearGradient>
@@ -88,6 +100,14 @@ export default function Produk() {
   const [showToner, setShowTenor] = useState<boolean>(false);
   const [hasilSetara, setHasilSetara] = useState<string>('5');
   const [tenor, setTenor] = useState<string>('6');
+  const {showProduct} = useSelector((state: RootState) => state.productReducer);
+  const dispatch = useDispatch<RootDispatch>();
+
+  console.log('showProduct===>', showProduct);
+
+  useEffect(() => {
+    dispatch(getShowProductNasabah());
+  }, [dispatch]);
 
   return (
     <DefaultView>
@@ -205,10 +225,10 @@ export default function Produk() {
         </View>
       </View>
       <FlatList
-        data={[1, 2, 3, 4]}
+        data={showProduct}
         keyExtractor={(_, key) => key.toString()}
         showsVerticalScrollIndicator={false}
-        renderItem={() => <Item />}
+        renderItem={e => <Item data={e} />}
         contentContainerStyle={styles.container}
       />
     </DefaultView>

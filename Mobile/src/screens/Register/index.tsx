@@ -1,5 +1,10 @@
-import {ScrollView, TouchableOpacity, View} from 'react-native';
-import React, {useState} from 'react';
+import {
+  ScrollView,
+  TouchableOpacity,
+  View,
+  ActivityIndicator,
+} from 'react-native';
+import React, {useEffect, useState} from 'react';
 import DefaultView from '../../components/DefaultView';
 import DefaultText from '../../components/DefaultText';
 import Gap from '../../components/Gap';
@@ -13,39 +18,82 @@ import moment from 'moment';
 import {formatRupiah, isEmail} from '../../utils/function';
 import ModalBank from '../../components/ModalBank';
 import {launchImageLibrary, Asset} from 'react-native-image-picker';
+import {useDispatch, useSelector} from 'react-redux';
+import {RootDispatch, RootState} from '../../store';
+import {getDetailNasabah, registerNasabah} from '../../services/user';
+import ModalPenghasilan from '../../components/ModalPenghasilan';
+import ModalStatusPernikahan from '../../components/ModalStatusPernikahan';
 
 export default function Register() {
+  const {registerLoading, detailNasabah,token} = useSelector(
+    (state: RootState) => state.userReducer,
+  );
   const [page, setPage] = useState<number>(0);
-
-  const [nama, setNama] = useState<string>('');
-  const [email, setEmail] = useState<string>('');
-  const [phone, setPhone] = useState<string>('');
-  const [alamat, setAlamat] = useState<string>('');
-  const [ktp, setKtp] = useState<string>('');
-  const [tempatLahir, setTempatLahir] = useState<string>('');
-  const [tanggalLahir, setTanggalLahir] = useState<Date>();
-  const [ibu, setIbu] = useState<string>('');
-  const [statusNikah, setStatusNikah] = useState<string>('');
-  const [perusahaan, setPerusahaan] = useState<string>('');
-  const [profesi, setProfesi] = useState<string>('');
-  const [alamatPerusahaan, setAlamatPerusahaan] = useState<string>('');
-  const [penghasilan, setPenghasilan] = useState<string>('');
-  const [ahliWaris, setAhliWaris] = useState<string>('');
-  const [ahliWarisKtp, setAhliWarisKtp] = useState<string>('');
-  const [ahliWarisPhone, setAhliWarisPhone] = useState<string>('');
+  const [nama, setNama] = useState<string>(detailNasabah?.nama); //
+  const [email, setEmail] = useState<string>(detailNasabah?.email);
+  const [phone, setPhone] = useState<string>(detailNasabah?.phone);
+  const [alamat, setAlamat] = useState<string>(detailNasabah?.alamat);
+  const [ktp, setKtp] = useState<string>(detailNasabah?.ktp);
+  const [tempatLahir, setTempatLahir] = useState<string>(detailNasabah?.tmpt_lahir);
+  const [tanggalLahir, setTanggalLahir] = useState<Date>(detailNasabah?.tgl_lahir);
+  const [ibu, setIbu] = useState<string>(detailNasabah?.ibu_kandung);
+  const [statusNikah, setStatusNikah] = useState<string>(detailNasabah?.status_pernikahan);
+  const [perusahaan, setPerusahaan] = useState<string>(detailNasabah?.nama_perusahaan);
+  const [profesi, setProfesi] = useState<string>(detailNasabah?.jenis_pekerjaan);
+  const [alamatPerusahaan, setAlamatPerusahaan] = useState<string>(detailNasabah?.alamat_kerja);
+  const [penghasilan, setPenghasilan] = useState<string>(detailNasabah?.penghasilan);
+  const [ahliWaris, setAhliWaris] = useState<string>(detailNasabah?.nama_ahli_waris);
+  const [ahliWarisKtp, setAhliWarisKtp] = useState<string>(detailNasabah?.ktp_ahli_waris);
+  const [ahliWarisPhone, setAhliWarisPhone] = useState<string>(detailNasabah?.phone_ahli_waris);
   const [bank, setBank] = useState<string>('');
   const [rekening, setRekening] = useState<string>('');
   const [namaRekening, setNamaRekening] = useState<string>('');
   const [privyId, setPrivyId] = useState<string>('');
   const [showDate, setShowDate] = useState<boolean>(false);
   const [showBank, setShowBank] = useState<boolean>(false);
+  const [showPenghasilan, setShowPenghasilan] = useState<boolean>(false);
+  const [showStatusPernikahan, setShowStatusPernikahan] =
+    useState<boolean>(false);
   const [fotoKtp, setFotoKtp] = useState<Asset>();
   const [fotoNasabah, setFotoNasabah] = useState<Asset>();
   const [fotoKtpAhliWaris, setFotoKtpAhliWaris] = useState<Asset>();
+  const dispatch = useDispatch<RootDispatch>();
+  console.log(detailNasabah,token);
+
+  
+  useEffect(()=>{
+    dispatch(getDetailNasabah())
+  },[dispatch])
+
+  const actionSubmitRegister = () => {
+    if (!fotoKtp || !fotoNasabah || !fotoKtpAhliWaris) {
+      return showToast('Data belum lengkap');
+    }
+    let formdata = new FormData();
+    formdata.append('email', email);
+    formdata.append('nama', nama);
+    formdata.append('ktp', ktp);
+    formdata.append('tmpt_lahir', tempatLahir);
+    formdata.append('tgl_lahir', tanggalLahir);
+    formdata.append('ibu_kandung', ibu);
+    formdata.append('id_privy', privyId);
+    formdata.append('status_pernikahan', statusNikah);
+    formdata.append('jenis_pekerjaan', profesi);
+    formdata.append('alamat', alamat);
+    formdata.append('nama_perusahaan', perusahaan);
+    formdata.append('alamat_kerja', alamatPerusahaan);
+    formdata.append('penghasilan', penghasilan);
+    formdata.append('nama_ahli_waris', ahliWaris);
+    formdata.append('ktp_ahli_waris', ahliWarisKtp);
+    formdata.append('phone_ahli_waris', ahliWarisPhone);
+    formdata.append('image_ktp', fotoKtp);
+    formdata.append('image_selfie', fotoNasabah);
+    formdata.append('image_ktp_ahli_waris', fotoKtpAhliWaris);
+    dispatch(registerNasabah(formdata));
+  };
 
   const onOpeGallery = async (index: number) => {
     const result = await launchImageLibrary({mediaType: 'photo'});
-
     if (result.assets) {
       if (index === 0) {
         setFotoKtp(result.assets[0]);
@@ -101,7 +149,7 @@ export default function Register() {
             <Input
               title="Status Pernikahan"
               value={statusNikah}
-              onChangeText={value => setStatusNikah(value)}
+              onPress={() => setShowStatusPernikahan(true)}
             />
           </View>
         </ScrollView>
@@ -125,6 +173,15 @@ export default function Register() {
             }
 
             setPage(2);
+          }}
+        />
+
+        <ModalStatusPernikahan
+          show={showStatusPernikahan}
+          hide={() => setShowStatusPernikahan(false)}
+          onConfirm={value => {
+            setShowStatusPernikahan(false);
+            setStatusNikah(value);
           }}
         />
 
@@ -173,12 +230,9 @@ export default function Register() {
             />
             <Gap height={10} />
             <Input
-              title="Penghasilan"
               value={penghasilan}
-              onChangeText={value => setPenghasilan(formatRupiah(value))}
-              textInputProps={{
-                keyboardType: 'number-pad',
-              }}
+              onPress={() => setShowPenghasilan(true)}
+              title="Penghasilan"
             />
           </View>
         </ScrollView>
@@ -196,6 +250,15 @@ export default function Register() {
               return showToast('Data belum lengkap');
             }
             setPage(3);
+          }}
+        />
+
+        <ModalPenghasilan
+          show={showPenghasilan}
+          hide={() => setShowPenghasilan(false)}
+          onConfirm={value => {
+            setShowPenghasilan(false);
+            setPenghasilan(value);
           }}
         />
       </DefaultView>
@@ -392,18 +455,16 @@ export default function Register() {
             />
           </View>
         </ScrollView>
-        <Button
-          title="LANJUT"
-          className="bg-primary mx-10 my-5"
-          titleClassName="text-white"
-          onPress={() => {
-            if (!fotoKtp || !fotoNasabah || !fotoKtpAhliWaris) {
-              return showToast('Data belum lengkap');
-            }
-
-            navigationRef.navigate('BuatPassword');
-          }}
-        />
+        {registerLoading ? (
+          <ActivityIndicator />
+        ) : (
+          <Button
+            title="LANJUT"
+            className="bg-primary mx-10 my-5"
+            titleClassName="text-white"
+            onPress={() => actionSubmitRegister()}
+          />
+        )}
       </DefaultView>
     );
   }
@@ -453,10 +514,10 @@ export default function Register() {
         titleClassName="text-white"
         onPress={() => {
           if (
-            nama.trim().length === 0 ||
-            email.trim().length === 0 ||
-            phone.trim().length === 0 ||
-            alamat.trim().length === 0
+            nama?.trim()?.length === 0 ||
+            email?.trim()?.length === 0 ||
+            phone?.trim()?.length === 0 ||
+            alamat?.trim()?.length === 0
           ) {
             return showToast('Data belum lengkap');
           }

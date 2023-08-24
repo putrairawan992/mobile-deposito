@@ -1,13 +1,24 @@
 import {ScrollView, TouchableOpacity, View} from 'react-native';
-import React from 'react';
+import React, { useEffect } from 'react';
 import DefaultView from '../../components/DefaultView';
 import DefaultText from '../../components/DefaultText';
 import DefaultHeader from '../../components/DefaultHeader';
 import {navigationRef} from '../../navigation/RootNavigation';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import Gap from '../../components/Gap';
+import { getDetailNasabah } from '../../services/user';
+import { RootDispatch, RootState } from '../../store';
+import { useDispatch, useSelector } from 'react-redux';
 
 export default function KeamananAkun() {
+  const {detailNasabah} = useSelector(
+    (state: RootState) => state.userReducer,
+  );
+  const dispatch = useDispatch<RootDispatch>();
+  useEffect(()=>{
+    dispatch(getDetailNasabah())
+  },[dispatch])
+  
   return (
     <DefaultView>
       <DefaultHeader title="Keamanan Akun" />
@@ -24,7 +35,7 @@ export default function KeamananAkun() {
               />
               <Gap height={5} />
               <DefaultText
-                title="Heru Ahmad"
+                title={detailNasabah?.nama}
                 titleClassName="font-inter-bold"
               />
             </View>
@@ -41,7 +52,7 @@ export default function KeamananAkun() {
               />
               <Gap height={5} />
               <DefaultText
-                title="heruahmad123@gmail.com"
+                title={detailNasabah?.email}
                 titleClassName="font-inter-bold"
               />
             </View>

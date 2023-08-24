@@ -27,14 +27,14 @@ export default function DefaultText({
       className={`text-black font-inter-regular ${titleClassName}`}
       onPress={titlePress}
       {...titleProps}>
-      {title}
+      {title || "-"}
       {subtitle && (
         <Text
           className={`text-black font-inter-regular ${subtitleClassName}`}
           onPress={subtitlePress}
           {...subtitleProps}>
           {' '}
-          {subtitle}
+          {subtitle || "-"}
         </Text>
       )}
     </Text>

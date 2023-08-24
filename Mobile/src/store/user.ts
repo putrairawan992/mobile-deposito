@@ -1,4 +1,4 @@
-import {createSlice} from '@reduxjs/toolkit';
+import { createSlice } from '@reduxjs/toolkit';
 
 interface User {
   id: number;
@@ -24,14 +24,24 @@ interface User {
 interface InitialState {
   user: User | null;
   token: string | null;
+  checkLogin: any;
+  userProfile: any;
+  detailNasabah:any;
   loginLoading: boolean;
+  checkLoginLoading: boolean;
+  forgotLoading: boolean;
   registerLoading: boolean;
 }
 
 const initialState: InitialState = {
   user: null,
+  userProfile: null,
+  checkLogin: null,
+  detailNasabah: null,
   token: null,
   loginLoading: false,
+  checkLoginLoading: false,
+  forgotLoading: false,
   registerLoading: false,
 };
 
@@ -39,11 +49,23 @@ export const userSlice = createSlice({
   name: 'user',
   initialState,
   reducers: {
+    setCheckLogin: (state, action) => {
+      state.checkLogin = action.payload;
+    },
+    setDetailNasabah: (state, action) => {
+      state.detailNasabah = action.payload;
+    },
+    setCheckLoginLoading: (state, action) => {
+      state.checkLoginLoading = action.payload;
+    },
     setUser: (state, action) => {
       state.user = action.payload;
     },
     setToken: (state, action) => {
       state.token = action.payload;
+    },
+    setUserProfile: (state, action) => {
+      state.userProfile = action.payload;
     },
     setLoginLoading: (state, action) => {
       state.loginLoading = action.payload;
@@ -51,10 +73,22 @@ export const userSlice = createSlice({
     setRegisterLoading: (state, action) => {
       state.registerLoading = action.payload;
     },
+    setForgotLoading: (state, action) => {
+      state.forgotLoading = action.payload;
+    },
   },
 });
 
 export default userSlice.reducer;
 
-export const {setUser, setToken, setLoginLoading, setRegisterLoading} =
-  userSlice.actions;
+export const { 
+  setDetailNasabah,
+  setUser,
+  setUserProfile,
+  setToken,
+  setLoginLoading,
+  setRegisterLoading,
+  setCheckLogin,
+  setCheckLoginLoading,
+  setForgotLoading
+} = userSlice.actions;

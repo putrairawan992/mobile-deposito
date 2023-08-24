@@ -8,13 +8,20 @@ import Input from '../../components/Input';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {navigationRef} from '../../navigation/RootNavigation';
 import {showToast} from '../../utils/toast';
+import {RootDispatch} from '../../store';
+import {useDispatch} from 'react-redux';
+import {registerPasswordPin} from '../../services/user';
+import {RootStackScreenProps} from '../../navigation/interface';
 
-export default function BuatPassword() {
+export default function BuatPassword({
+  route,
+}: RootStackScreenProps<'BuatPassword'>) {
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [showConfirmPassword, setShowConfirmPassword] =
     useState<boolean>(false);
   const [password, setPassword] = useState<string>('');
   const [confirmPassword, setConfirmPassword] = useState<string>('');
+  const dispatch = useDispatch<RootDispatch>();
 
   const onLanjut = () => {
     if (password.trim().length === 0 || confirmPassword.trim().length === 0) {
@@ -25,7 +32,7 @@ export default function BuatPassword() {
       return showToast('Password tidak cocok');
     }
 
-    navigationRef.navigate('PIN');
+    dispatch(registerPasswordPin({ password: confirmPassword }));
   };
 
   return (
