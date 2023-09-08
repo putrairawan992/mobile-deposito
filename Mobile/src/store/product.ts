@@ -6,13 +6,17 @@ interface InitialState {
     showProcutLoading: boolean
     showProductDetail: any
     showProductDetailLoading: boolean
+    showPromo: any
+    showPromoLoading: boolean
 }
 
 const initialState: InitialState = {
     showProduct: null,
     showProcutLoading: false,
     showProductDetail: null,
-    showProductDetailLoading: false
+    showProductDetailLoading: false,
+    showPromo: null,
+    showPromoLoading: false,
 };
 
 export const productSlice = createSlice({
@@ -30,6 +34,12 @@ export const productSlice = createSlice({
         },
         showProductDetailLoading: (state, action) => {
             state.showProductDetailLoading = action.payload;
+        },
+        showPromo: (state, action) => {
+            state.showPromo = action.payload;
+        },
+        showPromoLoading: (state, action) => {
+            state.showPromoLoading = action.payload;
         }
     },
 });
@@ -37,5 +47,5 @@ export const productSlice = createSlice({
 export default productSlice.reducer;
 
 export const {
-    setShowProducts, setShowProductLoading, showProductDetail, showProductDetailLoading
+    setShowProducts, setShowProductLoading, showProductDetail, showProductDetailLoading, showPromo, showPromoLoading
 } = productSlice.actions;

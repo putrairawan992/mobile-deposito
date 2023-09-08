@@ -22,6 +22,8 @@ export default function DefaultText({
   subtitleProps,
   subtitlePress,
 }: DefaultTextProps) {
+  console.log("title===>",title);
+  
   return (
     <Text
       className={`text-black font-inter-regular ${titleClassName}`}

@@ -6,7 +6,7 @@ import {
   View,
   useWindowDimensions,
 } from 'react-native';
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import DefaultView from '../../components/DefaultView';
 import DefaultText from '../../components/DefaultText';
 import {images} from '../../utils/images';
@@ -17,12 +17,25 @@ import LinearGradient from 'react-native-linear-gradient';
 import Carousel from 'react-native-reanimated-carousel';
 import Button from '../../components/Button';
 import {navigationRef} from '../../navigation/RootNavigation';
+import {useDispatch, useSelector} from 'react-redux';
+import {getShowPromo} from '../../services/product';
+import {RootDispatch, RootState} from '../../store';
 
 export default function Beranda() {
   const {width} = useWindowDimensions();
 
   const [promoActive, setPromoActive] = useState<number>(0);
   const [topActive, setTopActive] = useState<number>(0);
+  const {showPromo } = useSelector(
+    (state: RootState) => state.productReducer,
+  );
+  const dispatch = useDispatch<RootDispatch>();
+
+  console.log('showPromo===>', showPromo);
+
+  useEffect(() => {
+    dispatch(getShowPromo());
+  }, [dispatch]);
 
   return (
     <DefaultView>
@@ -45,63 +58,63 @@ export default function Beranda() {
           <Icon name="message" size={24} color={colors.black} />
         </TouchableOpacity>
       </View>
-        <LinearGradient
-          className="mx-2 p-3 rounded-xl"
-          colors={[colors.primary, '#0F3746']}
-          start={{x: 0, y: 0}}
-          end={{x: 1, y: 0}}>
-          <DefaultText
-            title="Selamat datang, Ronal"
-            titleClassName="text-white"
+      <LinearGradient
+        className="mx-2 p-3 rounded-xl"
+        colors={[colors.primary, '#0F3746']}
+        start={{x: 0, y: 0}}
+        end={{x: 1, y: 0}}>
+        <DefaultText
+          title="Selamat datang, Ronal"
+          titleClassName="text-white"
+        />
+        <Gap height={10} />
+        <View className="flex-row items-center">
+          <Carousel
+            loop
+            width={width / 1.2}
+            {...{vertical: true}}
+            height={100}
+            // autoPlay={true}
+            data={[1, 2, 3]}
+            // scrollAnimationDuration={1000}
+            onSnapToItem={index => setTopActive(index)}
+            renderItem={({}) => (
+              <View className="bg-white p-3 rounded-lg flex-1 mr-2">
+                <DefaultText
+                  title="Proyeksi Bagi Hasil"
+                  titleClassName="font-inter-medium"
+                />
+                <DefaultText
+                  title="Rp 500.000"
+                  titleClassName="font-inter-bold text-3xl"
+                />
+              </View>
+            )}
           />
-          <Gap height={10} />
-          <View className="flex-row items-center">
-            <Carousel
-              loop
-              width={width / 1.2}
-              {...{vertical: true }}
-              height={100}
-              // autoPlay={true}
-              data={[1, 2, 3]}
-              // scrollAnimationDuration={1000}
-              onSnapToItem={index => setTopActive(index)}
-              renderItem={({}) => (
-                <View className="bg-white p-3 rounded-lg flex-1 mr-2">
-                  <DefaultText
-                    title="Proyeksi Bagi Hasil"
-                    titleClassName="font-inter-medium"
-                  />
-                  <DefaultText
-                    title="Rp 500.000"
-                    titleClassName="font-inter-bold text-3xl"
-                  />
-                </View>
-              )}
+          <Gap width={10} />
+          <View>
+            <View
+              className={`w-[3] h-[20]  rounded-full ${
+                topActive === 0 ? 'bg-white' : 'bg-neutral-400'
+              }`}
             />
-            <Gap width={10} />
-            <View>
-              <View
-                className={`w-[3] h-[20]  rounded-full ${
-                  topActive === 0 ? 'bg-white' : 'bg-neutral-400'
-                }`}
-              />
-              <Gap height={3} />
-              <View
-                className={`w-[3] h-[20]  rounded-full ${
-                  topActive === 1 ? 'bg-white' : 'bg-neutral-400'
-                }`}
-              />
-              <Gap height={3} />
-              <View
-                className={`w-[3] h-[20]  rounded-full ${
-                  topActive === 2 ? 'bg-white' : 'bg-neutral-400'
-                }`}
-              />
-            </View>
+            <Gap height={3} />
+            <View
+              className={`w-[3] h-[20]  rounded-full ${
+                topActive === 1 ? 'bg-white' : 'bg-neutral-400'
+              }`}
+            />
+            <Gap height={3} />
+            <View
+              className={`w-[3] h-[20]  rounded-full ${
+                topActive === 2 ? 'bg-white' : 'bg-neutral-400'
+              }`}
+            />
           </View>
-        </LinearGradient>
-        <Gap height={20} />
-        
+        </View>
+      </LinearGradient>
+      <Gap height={20} />
+
       <ScrollView showsVerticalScrollIndicator={false}>
         <View className="flex-row items-center px-5">
           <DefaultText
@@ -123,14 +136,14 @@ export default function Beranda() {
           width={width}
           height={width / 2}
           autoPlay={true}
-          data={[1, 2, 3]}
+          data={showPromo}
           scrollAnimationDuration={5000}
           onSnapToItem={index => setPromoActive(index)}
-          renderItem={({}) => (
-            <TouchableOpacity activeOpacity={0.7} className="self-center">
+          renderItem={({item}: any) => (
+            <TouchableOpacity activeOpacity={0.7} style={{alignSelf: 'center'}}>
               <Image
                 style={{width: width / 1.2, height: width / 2.2}}
-                source={images.promo}
+                source={{uri: item.image}}
                 resizeMode="cover"
               />
             </TouchableOpacity>
