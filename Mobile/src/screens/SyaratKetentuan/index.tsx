@@ -16,7 +16,6 @@ export default function SyaratKetentuan() {
   const [agree, setAgree] = useState<boolean>(false);
   const dispatch = useDispatch<RootDispatch>();
   const { detailNasabah } = useSelector((state: RootState) => state.userReducer);
-console.log(detailNasabah);
 
   useEffect(()=>{
     dispatch(getDetailNasabah())

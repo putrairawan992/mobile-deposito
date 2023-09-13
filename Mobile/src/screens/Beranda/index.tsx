@@ -6,35 +6,44 @@ import {
   View,
   useWindowDimensions,
 } from 'react-native';
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import DefaultView from '../../components/DefaultView';
 import DefaultText from '../../components/DefaultText';
-import {images} from '../../utils/images';
+import { images } from '../../utils/images';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import {colors} from '../../utils/colors';
+import { colors } from '../../utils/colors';
 import Gap from '../../components/Gap';
 import LinearGradient from 'react-native-linear-gradient';
 import Carousel from 'react-native-reanimated-carousel';
 import Button from '../../components/Button';
-import {navigationRef} from '../../navigation/RootNavigation';
-import {useDispatch, useSelector} from 'react-redux';
-import {getShowPromo} from '../../services/product';
-import {RootDispatch, RootState} from '../../store';
+import { navigationRef } from '../../navigation/RootNavigation';
+import { useDispatch, useSelector } from 'react-redux';
+import { getShowPromo } from '../../services/product';
+import { RootDispatch, RootState } from '../../store';
+import { getShowDashboard } from '../../services/dasbhoard';
+import { formatRupiah } from '../../utils/currency';
+import { getDetailNasabah } from '../../services/user';
 
 export default function Beranda() {
-  const {width} = useWindowDimensions();
-
-  const [promoActive, setPromoActive] = useState<number>(0);
-  const [topActive, setTopActive] = useState<number>(0);
-  const {showPromo } = useSelector(
+  const { width } = useWindowDimensions();
+  const { showPromo } = useSelector(
     (state: RootState) => state.productReducer,
   );
-  const dispatch = useDispatch<RootDispatch>();
+  const [promoActive, setPromoActive] = useState<number>(0);
+  const [topActive, setTopActive] = useState<number>(0);
+  const { showDashboard } = useSelector(
+    (state: RootState) => state.dashboardReducer,
+  );
+  const {detailNasabah} = useSelector(
+    (state: RootState) => state.userReducer,
+  );
 
-  console.log('showPromo===>', showPromo);
+  const dispatch = useDispatch<RootDispatch>();
 
   useEffect(() => {
     dispatch(getShowPromo());
+    dispatch(getShowDashboard());
+    dispatch(getDetailNasabah());
   }, [dispatch]);
 
   return (
@@ -61,10 +70,10 @@ export default function Beranda() {
       <LinearGradient
         className="mx-2 p-3 rounded-xl"
         colors={[colors.primary, '#0F3746']}
-        start={{x: 0, y: 0}}
-        end={{x: 1, y: 0}}>
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 0 }}>
         <DefaultText
-          title="Selamat datang, Ronal"
+          title={`Selamat datang, ${detailNasabah?.nama}`}
           titleClassName="text-white"
         />
         <Gap height={10} />
@@ -72,20 +81,23 @@ export default function Beranda() {
           <Carousel
             loop
             width={width / 1.2}
-            {...{vertical: true}}
+            {...{ vertical: true }}
             height={100}
             // autoPlay={true}
-            data={[1, 2, 3]}
+            data={
+              [{ val: showDashboard?.bagiHasil, label: "Proyek Bagi Hasil" }, 
+            { val: showDashboard?.deposito, label: "Proyek Deposito" }, 
+            { val: showDashboard?.portofolio, label: "Proyek Portofolio" }]}
             // scrollAnimationDuration={1000}
             onSnapToItem={index => setTopActive(index)}
-            renderItem={({}) => (
+            renderItem={({ item }) => (
               <View className="bg-white p-3 rounded-lg flex-1 mr-2">
                 <DefaultText
-                  title="Proyeksi Bagi Hasil"
+                  title={item.label}
                   titleClassName="font-inter-medium"
                 />
                 <DefaultText
-                  title="Rp 500.000"
+                  title={formatRupiah(String(item.val), "Rp")}
                   titleClassName="font-inter-bold text-3xl"
                 />
               </View>
@@ -94,21 +106,18 @@ export default function Beranda() {
           <Gap width={10} />
           <View>
             <View
-              className={`w-[3] h-[20]  rounded-full ${
-                topActive === 0 ? 'bg-white' : 'bg-neutral-400'
-              }`}
+              className={`w-[3] h-[20]  rounded-full ${topActive === 0 ? 'bg-white' : 'bg-neutral-400'
+                }`}
             />
             <Gap height={3} />
             <View
-              className={`w-[3] h-[20]  rounded-full ${
-                topActive === 1 ? 'bg-white' : 'bg-neutral-400'
-              }`}
+              className={`w-[3] h-[20]  rounded-full ${topActive === 1 ? 'bg-white' : 'bg-neutral-400'
+                }`}
             />
             <Gap height={3} />
             <View
-              className={`w-[3] h-[20]  rounded-full ${
-                topActive === 2 ? 'bg-white' : 'bg-neutral-400'
-              }`}
+              className={`w-[3] h-[20]  rounded-full ${topActive === 2 ? 'bg-white' : 'bg-neutral-400'
+                }`}
             />
           </View>
         </View>
@@ -136,14 +145,14 @@ export default function Beranda() {
           width={width}
           height={width / 2}
           autoPlay={true}
-          data={showPromo}
+          data={(showPromo && showPromo?.length > 0) && showPromo || [1, 2, 3, 4]}
           scrollAnimationDuration={5000}
           onSnapToItem={index => setPromoActive(index)}
-          renderItem={({item}: any) => (
-            <TouchableOpacity activeOpacity={0.7} style={{alignSelf: 'center'}}>
+          renderItem={({ item }: any) => (
+            <TouchableOpacity activeOpacity={0.7} style={{ alignSelf: 'center' }}>
               <Image
-                style={{width: width / 1.2, height: width / 2.2}}
-                source={{uri: item.image}}
+                style={{ width: width / 1.2, height: width / 2.2 }}
+                source={{ uri: item.image }}
                 resizeMode="cover"
               />
             </TouchableOpacity>
@@ -154,9 +163,8 @@ export default function Beranda() {
             return (
               <View
                 key={key}
-                className={`w-[15] h-[3] rounded-full mx-1 ${
-                  key === promoActive ? 'bg-blue-500' : 'bg-neutral-400 '
-                }`}
+                className={`w-[15] h-[3] rounded-full mx-1 ${key === promoActive ? 'bg-blue-500' : 'bg-neutral-400 '
+                  }`}
               />
             );
           })}
@@ -187,9 +195,9 @@ export default function Beranda() {
                 key={key}
                 activeOpacity={0.7}
                 className="p-2 border-[1px] border-primary self-start rounded-xl mx-2"
-                style={{width: width / 2.1, height: width / 2}}>
+                style={{ width: width / 2.1, height: width / 2 }}>
                 <Image
-                  style={{height: width / 4.2}}
+                  style={{ height: width / 4.2 }}
                   className="w-full"
                   source={images.promo}
                   resizeMode="cover"

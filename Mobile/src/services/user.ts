@@ -23,9 +23,9 @@ export const checkLogin =
       axios
         .post(`${API}/ceklogin`, { username: emailOrPhone }, defaultHeaderAxios)
         .then((res) => {
-          dispatch(setCheckLogin(res?.data));
+          dispatch(setCheckLogin(res?.data?.data));
           dispatch(setCheckLoginLoading(false))
-          navigationRef.navigate(res?.data === 'password' ? 'Password' : 'OTP', {
+          navigationRef.navigate(res?.data?.data === 'password' ? 'Password' : 'OTP', {
             emailOrPhone,
           });
         })
@@ -48,18 +48,16 @@ export const login =
         .post(`${API}/login`, { username: emailOrPhone, password: password }, defaultHeaderAxios)
         .then(res => {
           dispatch(setUser(res?.data));
-          addStorage('token', res.data.token);
-          dispatch(setToken(res.data.token));
+          addStorage('token', res?.data?.token);
+          dispatch(setToken(res?.data?.token));
           navigationRef.navigate('SplashLogin');
         })
         .catch(err => {
-          console.log(err.response?.data);
-          
           Toast.show({
             type: 'error',
             text1: 'Error',
             text2:
-            err.response?.data ?? 'Terjadi error, coba lagi nanti.',
+            err.response?.data?.message ?? 'Terjadi error, coba lagi nanti.',
           });
         })
         .finally(() => dispatch(setLoginLoading(false)));
@@ -74,7 +72,9 @@ export const getDetailNasabah = () => async (dispatch: RootDispatch) => {
       },
     })
     .then(res => {
-      dispatch(setDetailNasabah(res.data))
+      console.log("nsb",res?.data);
+      
+      dispatch(setDetailNasabah(res?.data?.data[0]))
     })
     .catch(err => Toast.show({
       type: 'error',
@@ -178,7 +178,6 @@ export const registerPasswordPin =
           navigationRef.navigate(route as any);
         })
         .catch(err => {
-          console.log('err register: ', err.response);
           Toast.show({
             type: 'error',
             text1: 'Error',

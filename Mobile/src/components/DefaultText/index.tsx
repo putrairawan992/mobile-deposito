@@ -22,7 +22,6 @@ export default function DefaultText({
   subtitleProps,
   subtitlePress,
 }: DefaultTextProps) {
-  console.log("title===>",title);
   
   return (
     <Text

@@ -14,7 +14,9 @@ export const getShowPromo = () => async (dispatch: RootDispatch) => {
       },
     })
     .then(res => {
-      dispatch(showPromo(res.data));
+      console.log("getShowPromo",res?.data?.data);
+      
+      dispatch(showPromo(res?.data?.data));
       dispatch(showPromoLoading(false));
     })
     .catch(err => {
@@ -39,7 +41,7 @@ export const getShowProductNasabah = () => async (dispatch: RootDispatch) => {
       },
     })
     .then(res => {
-      dispatch(setShowProducts(res.data));
+      dispatch(setShowProducts(res.data?.data));
       dispatch(setShowProductLoading(false));
     })
     .catch(err => {
@@ -57,24 +59,25 @@ export const getShowProductNasabah = () => async (dispatch: RootDispatch) => {
 export const getShowProductNasabahDetail = (id: any) => async (dispatch: RootDispatch) => {
   dispatch(showProductDetailLoading(true));
   axios
-    .get(`${API}/api/produk/${id}`, {
+    .get(`https://dev.depositosyariah.id/api/produk/D2308636522`, {
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${store.getState().userReducer.token}`,
       },
     })
     .then(res => {
-      dispatch(showProductDetail(res.data));
+      console.log("produk-det",res.data);
+      
+      dispatch(showProductDetail(res.data?.data));
       dispatch(showProductDetailLoading(false));
     })
     .catch(err => {
-      console.log(err?.response);
-
+      console.log("produk-err",store.getState().userReducer.token);
       Toast.show({
         type: 'error',
         text1: 'Error',
         text2:
-          err.response?.data ?? 'Terjadi error, coba lagi nanti.',
+          err.response?.data?.message ?? 'Terjadi error, coba lagi nanti.',
       })
       dispatch(showProductDetailLoading(false));
     });

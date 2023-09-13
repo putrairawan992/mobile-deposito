@@ -103,8 +103,6 @@ export default function Produk() {
   const {showProduct} = useSelector((state: RootState) => state.productReducer);
   const dispatch = useDispatch<RootDispatch>();
 
-  console.log('showProduct===>', showProduct);
-
   useEffect(() => {
     dispatch(getShowProductNasabah());
   }, [dispatch]);

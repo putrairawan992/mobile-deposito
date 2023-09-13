@@ -1,5 +1,5 @@
 import {Image, Linking, ScrollView, TouchableOpacity, View} from 'react-native';
-import React from 'react';
+import React, { useEffect } from 'react';
 import DefaultView from '../../components/DefaultView';
 import DefaultText from '../../components/DefaultText';
 import DefaultHeader from '../../components/DefaultHeader';
@@ -8,8 +8,20 @@ import {colors} from '../../utils/colors';
 import Gap from '../../components/Gap';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {navigationRef, replace} from '../../navigation/RootNavigation';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootDispatch, RootState } from '../../store';
+import { getDetailNasabah } from '../../services/user';
 
 export default function Profile() {
+  const {detailNasabah} = useSelector(
+    (state: RootState) => state.userReducer,
+  );
+  const dispatch = useDispatch<RootDispatch>();
+
+  useEffect(() => {
+    dispatch(getDetailNasabah());
+  }, [dispatch]);
+
   return (
     <DefaultView>
       <LinearGradient
@@ -32,16 +44,16 @@ export default function Profile() {
           <Gap width={15} />
           <View className="flex-1">
             <DefaultText
-              title="Heru Ahmad"
+              title={detailNasabah?.nama}
               titleClassName="text-lg font-inter-bold text-white"
             />
             <Gap height={5} />
             <DefaultText
-              title="heruahmad123@gmail.com"
+              title={detailNasabah?.email}
               titleClassName="text-white"
             />
             <Gap height={5} />
-            <DefaultText title="089694624299" titleClassName="text-white" />
+            <DefaultText title={detailNasabah?.phone} titleClassName="text-white" />
           </View>
         </View>
       </LinearGradient>

@@ -12,6 +12,8 @@ import {RootStackScreenProps} from '../../navigation/interface';
 import {useDispatch, useSelector} from 'react-redux';
 import {RootDispatch, RootState} from '../../store';
 import {getShowProductNasabahDetail} from '../../services/product';
+import { formatRupiah } from '../../utils/currency';
+import moment from 'moment';
 
 export default function ProdukDetail({
   route,
@@ -35,7 +37,7 @@ export default function ProdukDetail({
         <View className="px-10">
           <Gap height={15} />
           <DefaultText
-            title="BPR Kencana Abadi"
+            title={showProductDetail?.nama}
             titleClassName="text-base font-inter-semibold"
           />
           <Gap height={15} />
@@ -87,17 +89,17 @@ export default function ProdukDetail({
               <Gap height={10} />
               <View className="flex-row">
                 <DefaultText title="Kode Produk" titleClassName="flex-1" />
-                <DefaultText title="BPR - 242444" />
+                <DefaultText title={`BPR -  ${showProductDetail?.no_produk}`} />
               </View>
               <Gap height={10} />
               <View className="flex-row">
                 <DefaultText title="Tenor" titleClassName="flex-1" />
-                <DefaultText title="3 Bulan" />
+                <DefaultText title={`${showProductDetail?.tenor} Bulan`} />
               </View>
               <Gap height={10} />
               <View className="flex-row">
                 <DefaultText title="Nisbah" titleClassName="flex-1" />
-                <DefaultText title="40 : 60" />
+                <DefaultText title={`${showProductDetail?.nisbah}`} />
               </View>
               <Gap height={10} />
               <View className="flex-row">
@@ -105,7 +107,7 @@ export default function ProdukDetail({
                   title="Proyeksi Bagi Hasil"
                   titleClassName="flex-1"
                 />
-                <DefaultText title="5% pertahun" />
+                <DefaultText title={`${showProductDetail?.bagi_hasil} pertahun`}/>
               </View>
               <Gap height={10} />
               <View className="flex-row">
@@ -113,17 +115,17 @@ export default function ProdukDetail({
                   title="Transaksi Deposito"
                   titleClassName="flex-1"
                 />
-                <DefaultText title="50 Transaksi" />
+                <DefaultText title="Belum ada dari api ? Transaksi" />
               </View>
               <Gap height={10} />
               <View className="flex-row">
                 <DefaultText title="Minimum Deposito" titleClassName="flex-1" />
-                <DefaultText title="Rp 1.000.000" />
+                <DefaultText title={`${formatRupiah(String(showProductDetail?.minimal),"Rp ")} pertahun`} />
               </View>
               <Gap height={10} />
               <View className="flex-row">
                 <DefaultText title="Dana Terkumpul" titleClassName="flex-1" />
-                <DefaultText title="Rp 50.000.000 | 5%" />
+                <DefaultText title={`${formatRupiah(String(showProductDetail?.terkumpul),"Rp ")} | ${showProductDetail?.terkumpulpersen}`} />
               </View>
             </View>
           )}
@@ -135,11 +137,11 @@ export default function ProdukDetail({
                 titleClassName="font-inter-semibold"
               />
               <Gap height={10} />
-              <DefaultText title="Jl. Bangau 8 Kecamatan Jagaraksa" />
+              <DefaultText title={`${showProductDetail?.alamat}`}/>
               <Gap height={15} />
               <View className="flex-row">
                 <DefaultText title="Kode OJK" titleClassName="flex-1" />
-                <DefaultText title="989790" />
+                <DefaultText title={`${showProductDetail?.kode_ojk}`} />
               </View>
               <Gap height={10} />
               <View className="flex-row">
@@ -147,22 +149,22 @@ export default function ProdukDetail({
                   title="No. Surat keputusan"
                   titleClassName="flex-1"
                 />
-                <DefaultText title="4/1/KEP.88/2012" />
+                <DefaultText title={`${showProductDetail?.no_sk}`} />
               </View>
               <Gap height={10} />
               <View className="flex-row">
                 <DefaultText title="No. Telepon" titleClassName="flex-1" />
-                <DefaultText title="(021) 887662" />
+                <DefaultText title={`${showProductDetail?.phone}`} />
               </View>
               <Gap height={10} />
               <View className="flex-row">
                 <DefaultText title="Website" titleClassName="flex-1" />
-                <DefaultText title="bprkencanaabadi.co.id" />
+                <DefaultText title={`${showProductDetail?.website}`}  />
               </View>
               <Gap height={10} />
               <View className="flex-row">
                 <DefaultText title="Mulai Beroperasi" titleClassName="flex-1" />
-                <DefaultText title="Agustus 1998" />
+                <DefaultText title={`${moment(showProductDetail?.mulai_beroperasi).format("DD-MM-YYYY")}`} />
               </View>
               <Gap height={10} />
               <View className="flex-row">
@@ -184,17 +186,17 @@ export default function ProdukDetail({
               <Gap height={10} />
               <View className="flex-row">
                 <DefaultText title="Aset" titleClassName="flex-1" />
-                <DefaultText title="Rp 10.000.000.000" />
+                <DefaultText title={`${formatRupiah(String(showProductDetail?.asset),"Rp ")}`}/>
               </View>
               <Gap height={10} />
               <View className="flex-row">
                 <DefaultText title="Kewajiban" titleClassName="flex-1" />
-                <DefaultText title="Rp 2.000.000.000" />
+                <DefaultText title={`${formatRupiah(String(showProductDetail?.kewajiban),"Rp ")}`} />
               </View>
               <Gap height={10} />
               <View className="flex-row">
                 <DefaultText title="Ekuitas" titleClassName="flex-1" />
-                <DefaultText title="Rp 1.000.000.000" />
+                <DefaultText title={`${formatRupiah(String(showProductDetail?.ekuitas),"Rp ")}`}/>
               </View>
             </View>
           )}
