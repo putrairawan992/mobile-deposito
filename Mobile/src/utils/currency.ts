@@ -1,5 +1,5 @@
 export function formatRupiah(angka : any, prefix : string) {
-    if (angka !== undefined || angka !== null) {
+    if (angka !== undefined || angka !== null || angka !== '') {
         const number_string = angka?.replace(/[^,\d]/g, '')?.toString();
         const split = number_string.split(',')
         const  sisa = split[0].length % 3

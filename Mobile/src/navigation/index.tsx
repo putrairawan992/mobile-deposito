@@ -78,13 +78,13 @@ function StackNavigator() {
       <Stack.Screen component={GantiPIN} name="GantiPIN" />
       <Stack.Screen component={GantiEmail} name="GantiEmail" />
       <Stack.Screen component={GantiKataSandi} name="GantiKataSandi" />
-      <Stack.Screen component={KeamananAkun} name="KeamananAkun" />
       <Stack.Screen component={Notifikasi} name="Notifikasi" />
       <Stack.Screen component={PIN} name="PIN" />
       <Stack.Screen component={PortofolioDetail} name="PortofolioDetail" />
       <Stack.Screen component={ProdukDetail} name="ProdukDetail" />
       <Stack.Screen component={Register} name="Register" />
       <Stack.Screen component={RekeningSaya} name="RekeningSaya" />
+      <Stack.Screen component={KeamananAkun} name="KeamananAkun" />
       <Stack.Screen component={RekeningSayaDetail} name="RekeningSayaDetail" />
       <Stack.Screen component={RekeningSayaTambah} name="RekeningSayaTambah" />
       <Stack.Screen component={SemuaBlog} name="SemuaBlog" />

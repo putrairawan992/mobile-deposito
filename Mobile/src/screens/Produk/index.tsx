@@ -1,30 +1,30 @@
-import {FlatList, StyleSheet, TouchableOpacity, View} from 'react-native';
-import React, {useEffect, useState} from 'react';
+import { ActivityIndicator, FlatList, StyleSheet, TouchableOpacity, View } from 'react-native';
+import React, { useEffect, useState } from 'react';
 import DefaultView from '../../components/DefaultView';
 
 import DefaultText from '../../components/DefaultText';
 import DefaultHeader from '../../components/DefaultHeader';
 import Gap from '../../components/Gap';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import {colors} from '../../utils/colors';
+import { colors } from '../../utils/colors';
 import LinearGradient from 'react-native-linear-gradient';
-import {navigationRef} from '../../navigation/RootNavigation';
-import {useDispatch, useSelector} from 'react-redux';
-import {RootDispatch, RootState} from '../../store';
-import {getShowProductNasabah} from '../../services/product';
-import {formatRupiah} from '../../utils/currency';
+import { navigationRef } from '../../navigation/RootNavigation';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootDispatch, RootState } from '../../store';
+import { getShowProductNasabah } from '../../services/product';
+import { formatRupiah } from '../../utils/currency';
 
 const Item = (data: any) => {
   let noProduct = data?.data?.item?.no_produk;
   return (
     <TouchableOpacity
       activeOpacity={0.7}
-      onPress={() => navigationRef.navigate('ProdukDetail', {noProduct})}>
+      onPress={() => navigationRef.navigate('ProdukDetail', { noProduct })}>
       <LinearGradient
         className="mx-3 p-2 rounded-xl mb-3"
         colors={[colors.primary, '#0F3746']}
-        start={{x: 0, y: 0}}
-        end={{x: 1, y: 0}}>
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 0 }}>
         <DefaultText
           title={data?.data?.item?.id_mitra}
           titleClassName="text-white font-inter-semibold"
@@ -86,7 +86,7 @@ const Item = (data: any) => {
         <View className="w-full bg-gray-200 rounded-full dark:bg-gray-700">
           <View
             className="bg-green-600 text-xs font-medium text-blue-100 text-center p-0.5 leading-none rounded-full"
-            style={{width: '30%'}}>
+            style={{ width: '30%' }}>
             <DefaultText title="45%" titleClassName="text-center text-white" />
           </View>
         </View>
@@ -100,7 +100,7 @@ export default function Produk() {
   const [showToner, setShowTenor] = useState<boolean>(false);
   const [hasilSetara, setHasilSetara] = useState<string>('5');
   const [tenor, setTenor] = useState<string>('6');
-  const {showProduct} = useSelector((state: RootState) => state.productReducer);
+  const { showProduct, showProcutLoading } = useSelector((state: RootState) => state.productReducer);
   const dispatch = useDispatch<RootDispatch>();
 
   useEffect(() => {
@@ -222,13 +222,13 @@ export default function Produk() {
           )}
         </View>
       </View>
-      <FlatList
+      {showProcutLoading ? <ActivityIndicator /> : <FlatList
         data={showProduct}
         keyExtractor={(_, key) => key.toString()}
         showsVerticalScrollIndicator={false}
         renderItem={e => <Item data={e} />}
         contentContainerStyle={styles.container}
-      />
+      />}
     </DefaultView>
   );
 }

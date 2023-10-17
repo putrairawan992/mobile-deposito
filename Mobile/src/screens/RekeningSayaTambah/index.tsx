@@ -9,6 +9,9 @@ import Gap from '../../components/Gap';
 import ModalAlert from '../../components/ModalAlert';
 import ModalBank from '../../components/ModalBank';
 import {showToast} from '../../utils/toast';
+import { useDispatch } from 'react-redux';
+import { RootDispatch } from '../../store';
+import { postShowBankList } from '../../services/dasbhoard';
 
 export default function RekeningSayaTambah() {
   const [showPin, setShowPin] = useState<boolean>(false);
@@ -18,6 +21,7 @@ export default function RekeningSayaTambah() {
   const [namaBank, setNamaBank] = useState<string>('');
   const [rekening, setRekening] = useState<string>('');
   const [pin, setPin] = useState<string>('');
+  const dispatch = useDispatch<RootDispatch>();
 
   const onTambahBank = () => {
     if (namaBank.trim().length === 0 || rekening.trim().length === 0) {
@@ -27,8 +31,10 @@ export default function RekeningSayaTambah() {
     if (pin.trim().length < 6) {
       return showToast('Masukkan PIN kamu');
     }
+    const payload ={
 
-    setShowModalSuccess(true);
+    }
+    dispatch(postShowBankList(payload,setShowModalSuccess));
   };
 
   return (

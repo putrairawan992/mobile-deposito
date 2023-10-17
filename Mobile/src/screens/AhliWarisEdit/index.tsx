@@ -8,14 +8,20 @@ import {navigationRef} from '../../navigation/RootNavigation';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import ModalAlert from '../../components/ModalAlert';
 import {showToast} from '../../utils/toast';
+import { RootDispatch } from '../../store';
+import { useDispatch } from 'react-redux';
+import { updateNasabah } from '../../services/user';
+import { RootStackScreenProps } from '../../navigation/interface';
 
-export default function AhliWarisEdit() {
-  const [nama, setNama] = useState<string>('');
-  const [ktp, setKtp] = useState<string>('');
-  const [phone, setPhone] = useState<string>('');
+export default function AhliWarisEdit({ route }: RootStackScreenProps<"AhliWarisEdit">) {
+  const detailNasabah =  route.params?.detailNasabah
+  const [nama, setNama] = useState<string>(detailNasabah?.nama_ahli_waris);
+  const [ktp, setKtp] = useState<string>(detailNasabah?.ktp_ahli_waris);
+  const [phone, setPhone] = useState<string>(detailNasabah?.phone_ahli_waris);
   const [pin, setPin] = useState<string>('');
   const [showPin, setShowPin] = useState<boolean>(false);
   const [showModalSuccess, setShowModalSuccess] = useState<boolean>(false);
+  const dispatch = useDispatch<RootDispatch>();
 
   const onSave = () => {
     if (
@@ -33,8 +39,11 @@ export default function AhliWarisEdit() {
     if (pin.trim().length < 6) {
       return showToast('Masukkan PIN kamu');
     }
-
-    setShowModalSuccess(true);
+    let formdata = new FormData();
+    formdata.append('nama_ahli_waris', nama);
+    formdata.append('ktp_ahli_waris', ktp);
+    formdata.append('phone_ahli_waris', phone);
+    dispatch(updateNasabah(formdata,setShowModalSuccess));
   };
 
   return (

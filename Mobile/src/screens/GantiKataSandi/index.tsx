@@ -23,6 +23,8 @@ export default function GantiKataSandi() {
   const [passwordConfirm, setPasswordConfirm] = useState<string>('');
   const [pin, setPin] = useState<string>('');
 
+  
+
   const onSave = () => {
     if (
       passwordSekarang.trim().length === 0 ||

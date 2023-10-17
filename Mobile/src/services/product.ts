@@ -3,6 +3,7 @@ import store, { RootDispatch } from '../store';
 import { API } from '../utils/constant';
 import { setShowProductLoading, setShowProducts, showProductDetail, showProductDetailLoading, showPromo, showPromoLoading } from '../store/product';
 import Toast from 'react-native-toast-message';
+import { getStorage } from '../utils/storage';
 
 export const getShowPromo = () => async (dispatch: RootDispatch) => {
   dispatch(showPromoLoading(true));
@@ -10,12 +11,10 @@ export const getShowPromo = () => async (dispatch: RootDispatch) => {
     .get(`${API}/showpromo`, {
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${store.getState().userReducer.token}`,
+        Authorization: `Bearer ${await getStorage('token')}`,
       },
     })
     .then(res => {
-      console.log("getShowPromo",res?.data?.data);
-      
       dispatch(showPromo(res?.data?.data));
       dispatch(showPromoLoading(false));
     })
@@ -24,7 +23,7 @@ export const getShowPromo = () => async (dispatch: RootDispatch) => {
         type: 'error',
         text1: 'Error',
         text2:
-          err.response?.data ?? 'Terjadi error, coba lagi nanti.',
+          err.response?.data?.message ?? 'Terjadi error, coba lagi nanti.',
       })
       dispatch(showPromoLoading(false));
     });
@@ -37,7 +36,7 @@ export const getShowProductNasabah = () => async (dispatch: RootDispatch) => {
     .get(`${API}/showproduk`, {
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${store.getState().userReducer.token}`,
+        Authorization: `Bearer ${await getStorage('token')}`,
       },
     })
     .then(res => {
@@ -49,7 +48,7 @@ export const getShowProductNasabah = () => async (dispatch: RootDispatch) => {
         type: 'error',
         text1: 'Error',
         text2:
-          err.response?.data ?? 'Terjadi error, coba lagi nanti.',
+          err.response?.data?.message ?? 'Terjadi error, coba lagi nanti.',
       })
       dispatch(setShowProductLoading(false));
     });
@@ -59,20 +58,17 @@ export const getShowProductNasabah = () => async (dispatch: RootDispatch) => {
 export const getShowProductNasabahDetail = (id: any) => async (dispatch: RootDispatch) => {
   dispatch(showProductDetailLoading(true));
   axios
-    .get(`https://dev.depositosyariah.id/api/produk/D2308636522`, {
+    .get(`${API}/produk/${id}`, {
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${store.getState().userReducer.token}`,
+        Authorization: `Bearer ${await getStorage('token')}`,
       },
     })
     .then(res => {
-      console.log("produk-det",res.data);
-      
       dispatch(showProductDetail(res.data?.data));
       dispatch(showProductDetailLoading(false));
     })
     .catch(err => {
-      console.log("produk-err",store.getState().userReducer.token);
       Toast.show({
         type: 'error',
         text1: 'Error',
@@ -83,3 +79,72 @@ export const getShowProductNasabahDetail = (id: any) => async (dispatch: RootDis
     });
 
 };
+
+export const postAjukanDeposito =
+  (payload: any, setShowmodal:any, setLoadings: any) =>
+    async () => {
+      let data;
+      setLoadings(true);
+      axios
+        .post(`${API}/pengajuan`, payload, {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${await getStorage('token')}`,
+          },
+        })
+        .then((res) => {
+          Toast.show({
+            type: 'success',
+            text1: 'Success!',
+            text2: res?.data?.message,
+          });
+          setLoadings(false);
+          setShowmodal(true);
+          data = res.data;
+        })
+        .catch(err => {
+          data = err?.response?.data
+          setLoadings(false);
+          Toast.show({
+            type: 'error',
+            text1: 'Error',
+            text2: err.response?.data?.errors?.amount ?? err.response?.data?.message ?? 'Terjadi error, coba lagi nanti.',
+          });
+        })
+      return data;
+    };
+
+export const estimasiAjukanDeposito =
+  (payload: any, setData: any, setLoadings: any) =>
+    async () => {
+      let data;
+      setLoadings(true);
+      axios
+        .post(`${API}/estimasi`, payload, {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${await getStorage('token')}`,
+          },
+        })
+        .then((res) => {
+          Toast.show({
+            type: 'success',
+            text1: 'Success!',
+            text2: res?.data?.message,
+          });
+          setData(res?.data?.data);
+          setLoadings(false);
+          data = res.data;
+        })
+        .catch(err => {
+          data = err?.response?.data
+          setData(null);
+          setLoadings(false);
+          Toast.show({
+            type: 'error',
+            text1: 'Error',
+            text2: err.response?.data?.errors?.amount ?? err.response?.data?.message ?? 'Terjadi error, coba lagi nanti.',
+          });
+        })
+      return data;
+    };    

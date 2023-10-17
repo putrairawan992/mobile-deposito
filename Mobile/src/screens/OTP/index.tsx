@@ -5,27 +5,26 @@ import {
   View,
   useWindowDimensions,
 } from 'react-native';
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import DefaultView from '../../components/DefaultView';
-import {images} from '../../utils/images';
+import { images } from '../../utils/images';
 import DefaultText from '../../components/DefaultText';
 import Gap from '../../components/Gap';
 import Button from '../../components/Button';
-import {navigationRef} from '../../navigation/RootNavigation';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import {RootStackScreenProps} from '../../navigation/interface';
-import {showToast} from '../../utils/toast';
+import { RootStackScreenProps } from '../../navigation/interface';
+import { showToast } from '../../utils/toast';
 import { RootDispatch } from '../../store';
 import { useDispatch } from 'react-redux';
-import { login } from '../../services/user';
+import { checkLogin, login } from '../../services/user';
 
-export default function OTP({route}: RootStackScreenProps<'OTP'>) {
+export default function OTP({ route }: RootStackScreenProps<'OTP'>) {
   const emailOrPhone = route.params.emailOrPhone;
 
   const [otp, setOtp] = useState<string>('');
   const [timer, setTimer] = useState<number>(60);
 
-  const {width} = useWindowDimensions();
+  const { width } = useWindowDimensions();
 
   const dispatch = useDispatch<RootDispatch>();
 
@@ -45,7 +44,7 @@ export default function OTP({route}: RootStackScreenProps<'OTP'>) {
     if (otp.trim().length < 6) {
       return showToast('Masukkan OTP');
     }
-    dispatch(login(emailOrPhone,otp));
+    dispatch(login(emailOrPhone, otp));
   };
 
   return (
@@ -124,6 +123,7 @@ export default function OTP({route}: RootStackScreenProps<'OTP'>) {
           <Gap height={15} />
           <TouchableOpacity
             activeOpacity={0.7}
+            onPress={()=> dispatch(checkLogin(emailOrPhone))}
             className="border-b-[1px] border-b-blue-400 self-start">
             <DefaultText
               title="Kirim ulang OTP"
@@ -135,7 +135,7 @@ export default function OTP({route}: RootStackScreenProps<'OTP'>) {
       <View className="flex-row flex-wrap justify-end">
         <TouchableOpacity
           className="mb-5"
-          style={{width: width / 3}}
+          style={{ width: width / 3 }}
           onPress={() => otp.length < 6 && setOtp(`${otp}1`)}>
           <DefaultText
             title="1"
@@ -144,7 +144,7 @@ export default function OTP({route}: RootStackScreenProps<'OTP'>) {
         </TouchableOpacity>
         <TouchableOpacity
           className="mb-5"
-          style={{width: width / 3}}
+          style={{ width: width / 3 }}
           onPress={() => otp.length < 6 && setOtp(`${otp}2`)}>
           <DefaultText
             title="2"
@@ -153,7 +153,7 @@ export default function OTP({route}: RootStackScreenProps<'OTP'>) {
         </TouchableOpacity>
         <TouchableOpacity
           className="mb-5"
-          style={{width: width / 3}}
+          style={{ width: width / 3 }}
           onPress={() => otp.length < 6 && setOtp(`${otp}3`)}>
           <DefaultText
             title="3"
@@ -162,7 +162,7 @@ export default function OTP({route}: RootStackScreenProps<'OTP'>) {
         </TouchableOpacity>
         <TouchableOpacity
           className="mb-5"
-          style={{width: width / 3}}
+          style={{ width: width / 3 }}
           onPress={() => otp.length < 6 && setOtp(`${otp}4`)}>
           <DefaultText
             title="4"
@@ -171,7 +171,7 @@ export default function OTP({route}: RootStackScreenProps<'OTP'>) {
         </TouchableOpacity>
         <TouchableOpacity
           className="mb-5"
-          style={{width: width / 3}}
+          style={{ width: width / 3 }}
           onPress={() => otp.length < 6 && setOtp(`${otp}5`)}>
           <DefaultText
             title="5"
@@ -180,7 +180,7 @@ export default function OTP({route}: RootStackScreenProps<'OTP'>) {
         </TouchableOpacity>
         <TouchableOpacity
           className="mb-5"
-          style={{width: width / 3}}
+          style={{ width: width / 3 }}
           onPress={() => otp.length < 6 && setOtp(`${otp}6`)}>
           <DefaultText
             title="6"
@@ -189,7 +189,7 @@ export default function OTP({route}: RootStackScreenProps<'OTP'>) {
         </TouchableOpacity>
         <TouchableOpacity
           className="mb-5"
-          style={{width: width / 3}}
+          style={{ width: width / 3 }}
           onPress={() => otp.length < 6 && setOtp(`${otp}7`)}>
           <DefaultText
             title="7"
@@ -198,7 +198,7 @@ export default function OTP({route}: RootStackScreenProps<'OTP'>) {
         </TouchableOpacity>
         <TouchableOpacity
           className="mb-5"
-          style={{width: width / 3}}
+          style={{ width: width / 3 }}
           onPress={() => otp.length < 6 && setOtp(`${otp}8`)}>
           <DefaultText
             title="8"
@@ -207,7 +207,7 @@ export default function OTP({route}: RootStackScreenProps<'OTP'>) {
         </TouchableOpacity>
         <TouchableOpacity
           className="mb-5"
-          style={{width: width / 3}}
+          style={{ width: width / 3 }}
           onPress={() => otp.length < 6 && setOtp(`${otp}9`)}>
           <DefaultText
             title="9"
@@ -216,7 +216,7 @@ export default function OTP({route}: RootStackScreenProps<'OTP'>) {
         </TouchableOpacity>
         <TouchableOpacity
           className="mb-5"
-          style={{width: width / 3}}
+          style={{ width: width / 3 }}
           onPress={() => otp.length < 6 && setOtp(`${otp}0`)}>
           <DefaultText
             title="0"
@@ -225,7 +225,7 @@ export default function OTP({route}: RootStackScreenProps<'OTP'>) {
         </TouchableOpacity>
         <TouchableOpacity
           className="mb-5 items-center"
-          style={{width: width / 3}}
+          style={{ width: width / 3 }}
           onPress={() => otp.length > 0 && setOtp(otp.slice(0, -1))}>
           <Icon name="backspace-outline" size={30} />
         </TouchableOpacity>

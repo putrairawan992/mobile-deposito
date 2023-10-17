@@ -1,17 +1,17 @@
-import {ScrollView, TouchableOpacity, View} from 'react-native';
-import React, {useState, useEffect} from 'react';
+import { ScrollView, TouchableOpacity, View } from 'react-native';
+import React, { useState, useEffect } from 'react';
 import DefaultView from '../../components/DefaultView';
 import DefaultText from '../../components/DefaultText';
 import DefaultHeader from '../../components/DefaultHeader';
 import Gap from '../../components/Gap';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import {colors} from '../../utils/colors';
+import { colors } from '../../utils/colors';
 import Button from '../../components/Button';
-import {navigationRef} from '../../navigation/RootNavigation';
-import {RootStackScreenProps} from '../../navigation/interface';
-import {useDispatch, useSelector} from 'react-redux';
-import {RootDispatch, RootState} from '../../store';
-import {getShowProductNasabahDetail} from '../../services/product';
+import { navigationRef } from '../../navigation/RootNavigation';
+import { RootStackScreenProps } from '../../navigation/interface';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootDispatch, RootState } from '../../store';
+import { getShowProductNasabahDetail } from '../../services/product';
 import { formatRupiah } from '../../utils/currency';
 import moment from 'moment';
 
@@ -19,17 +19,16 @@ export default function ProdukDetail({
   route,
 }: RootStackScreenProps<'ProdukDetail'>) {
   const [activeNumber, setActiveNumber] = useState<number>(0);
-  const noProduct = route?.params?.noProduct;
-  const {showProductDetail} = useSelector(
+  const id = route?.params?.noProduct;
+  const { showProductDetail } = useSelector(
     (state: RootState) => state.productReducer,
   );
   const dispatch = useDispatch<RootDispatch>();
 
-  console.log('ProdukDetail===>', showProductDetail);
-
   useEffect(() => {
-    dispatch(getShowProductNasabahDetail(noProduct));
+    dispatch(getShowProductNasabahDetail(id));
   }, [dispatch]);
+  
   return (
     <DefaultView>
       <DefaultHeader title="Detail Deposito" />
@@ -107,7 +106,7 @@ export default function ProdukDetail({
                   title="Proyeksi Bagi Hasil"
                   titleClassName="flex-1"
                 />
-                <DefaultText title={`${showProductDetail?.bagi_hasil} pertahun`}/>
+                <DefaultText title={`${showProductDetail?.bagi_hasil} pertahun`} />
               </View>
               <Gap height={10} />
               <View className="flex-row">
@@ -120,12 +119,12 @@ export default function ProdukDetail({
               <Gap height={10} />
               <View className="flex-row">
                 <DefaultText title="Minimum Deposito" titleClassName="flex-1" />
-                <DefaultText title={`${formatRupiah(String(showProductDetail?.minimal),"Rp ")} pertahun`} />
+                <DefaultText title={`${formatRupiah(String(showProductDetail?.minimal), "Rp ")} pertahun`} />
               </View>
               <Gap height={10} />
               <View className="flex-row">
                 <DefaultText title="Dana Terkumpul" titleClassName="flex-1" />
-                <DefaultText title={`${formatRupiah(String(showProductDetail?.terkumpul),"Rp ")} | ${showProductDetail?.terkumpulpersen}`} />
+                <DefaultText title={`${formatRupiah(String(showProductDetail?.terkumpul), "Rp ")} | ${showProductDetail?.terkumpulpersen}`} />
               </View>
             </View>
           )}
@@ -137,7 +136,7 @@ export default function ProdukDetail({
                 titleClassName="font-inter-semibold"
               />
               <Gap height={10} />
-              <DefaultText title={`${showProductDetail?.alamat}`}/>
+              <DefaultText title={`${showProductDetail?.alamat}`} />
               <Gap height={15} />
               <View className="flex-row">
                 <DefaultText title="Kode OJK" titleClassName="flex-1" />
@@ -159,7 +158,7 @@ export default function ProdukDetail({
               <Gap height={10} />
               <View className="flex-row">
                 <DefaultText title="Website" titleClassName="flex-1" />
-                <DefaultText title={`${showProductDetail?.website}`}  />
+                <DefaultText title={`${showProductDetail?.website}`} />
               </View>
               <Gap height={10} />
               <View className="flex-row">
@@ -186,17 +185,17 @@ export default function ProdukDetail({
               <Gap height={10} />
               <View className="flex-row">
                 <DefaultText title="Aset" titleClassName="flex-1" />
-                <DefaultText title={`${formatRupiah(String(showProductDetail?.asset),"Rp ")}`}/>
+                <DefaultText title={`${formatRupiah(String(showProductDetail?.asset), "Rp ")}`} />
               </View>
               <Gap height={10} />
               <View className="flex-row">
                 <DefaultText title="Kewajiban" titleClassName="flex-1" />
-                <DefaultText title={`${formatRupiah(String(showProductDetail?.kewajiban),"Rp ")}`} />
+                <DefaultText title={`${formatRupiah(String(showProductDetail?.kewajiban), "Rp ")}`} />
               </View>
               <Gap height={10} />
               <View className="flex-row">
                 <DefaultText title="Ekuitas" titleClassName="flex-1" />
-                <DefaultText title={`${formatRupiah(String(showProductDetail?.ekuitas),"Rp ")}`}/>
+                <DefaultText title={`${formatRupiah(String(showProductDetail?.ekuitas), "Rp ")}`} />
               </View>
             </View>
           )}
@@ -208,7 +207,7 @@ export default function ProdukDetail({
           title="Ajukan Deposito"
           className="bg-primary rounded-lg"
           titleClassName="text-white"
-          onPress={() => navigationRef.navigate('AjukanDeposito')}
+          onPress={() => navigationRef.navigate('AjukanDeposito', { showProductDetail })}
         />
       </View>
     </DefaultView>

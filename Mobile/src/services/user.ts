@@ -13,7 +13,7 @@ import {
   setUserProfile,
 } from '../store/user';
 import Toast from 'react-native-toast-message';
-import { addStorage, removeStorage } from '../utils/storage';
+import { addStorage, getStorage, removeStorage } from '../utils/storage';
 import { navigationRef } from '../navigation/RootNavigation';
 
 export const checkLogin =
@@ -28,13 +28,19 @@ export const checkLogin =
           navigationRef.navigate(res?.data?.data === 'password' ? 'Password' : 'OTP', {
             emailOrPhone,
           });
+          Toast.show({
+            type: 'success',
+            text1: '',
+            text2:
+              'Berhasil Kirim OTP',
+          });
         })
         .catch(err => {
           Toast.show({
             type: 'error',
             text1: 'Error',
             text2:
-            err.response?.data ?? 'Terjadi error, coba lagi nanti.',
+              err.response?.data?.message ?? 'Terjadi error, coba lagi nanti.',
           });
         })
         .finally(() => dispatch(setCheckLoginLoading(false)));
@@ -42,7 +48,7 @@ export const checkLogin =
 
 export const login =
   (emailOrPhone: string, password: string) =>
-    async (dispatch: RootDispatch) => {
+    async (dispatch: any) => {
       dispatch(setLoginLoading(true));
       axios
         .post(`${API}/login`, { username: emailOrPhone, password: password }, defaultHeaderAxios)
@@ -57,7 +63,7 @@ export const login =
             type: 'error',
             text1: 'Error',
             text2:
-            err.response?.data?.message ?? 'Terjadi error, coba lagi nanti.',
+              err.response?.data?.message ?? 'Terjadi error, coba lagi nanti.',
           });
         })
         .finally(() => dispatch(setLoginLoading(false)));
@@ -68,20 +74,22 @@ export const getDetailNasabah = () => async (dispatch: RootDispatch) => {
     .get(`${API}/nasabah`, {
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${store.getState().userReducer.token}`,
+        Authorization: `Bearer ${await getStorage('token')}`,
       },
     })
     .then(res => {
-      console.log("nsb",res?.data);
-      
       dispatch(setDetailNasabah(res?.data?.data[0]))
     })
-    .catch(err => Toast.show({
-      type: 'error',
-      text1: 'Error',
-      text2:
-      err.response?.data ?? 'Terjadi error, coba lagi nanti.',
-    }));
+    .catch(err => {
+      console.log(err);
+
+      Toast.show({
+        type: 'error',
+        text1: 'Error',
+        text2:
+          err.response?.data?.message ?? 'Terjadi error, coba lagi nanti.',
+      })
+    });
 };
 
 export const getUserProfile = () => async (dispatch: RootDispatch) => {
@@ -89,7 +97,7 @@ export const getUserProfile = () => async (dispatch: RootDispatch) => {
     .get(`${API}/userprofile`, {
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${store.getState().userReducer.token}`,
+        Authorization: `Bearer ${await getStorage('token')}`,
       },
     })
     .then(res => {
@@ -99,36 +107,48 @@ export const getUserProfile = () => async (dispatch: RootDispatch) => {
       type: 'error',
       text1: 'Error',
       text2:
-      err.response?.data ?? 'Terjadi error, coba lagi nanti.',
+        err.response?.data?.message ?? 'Terjadi error, coba lagi nanti.',
     }));
 };
 
-export const logout = () => async (dispatch: RootDispatch) => {
-  axios
-    .get(`${API}/logout`, {
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${store.getState().userReducer.token}`,
-      },
-    })
-    .then(() => {
-      Toast.show({
-        type: 'success',
-        text1: 'Success',
-        text2: 'Logout',
-      });
-      dispatch(setToken(null));
-      dispatch(setUser(null));
-      removeStorage('token');
-      navigationRef.reset({ index: 0, routes: [{ name: 'Login' }] });
-    })
-    .catch(err => Toast.show({
-      type: 'error',
-      text1: 'Error',
-      text2:
-      err.response?.data ?? 'Terjadi error, coba lagi nanti.',
-    }));
+export const logout = () => async (dispatch: any) => {
+  dispatch(setToken(null));
+  dispatch(setUser(null));
+  removeStorage('token');
+  navigationRef.reset({ index: 0, routes: [{ name: 'Splash' }] });
+
 };
+
+export const updateNasabah =
+  (payload: any, setShowModalSuccess: any) =>
+    async () => {
+      axios
+        .post(
+          `${API}/nasabah`,
+          payload, {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${await getStorage('token')}`,
+          },
+        },
+        )
+        .then(() => {
+          Toast.show({
+            type: 'success',
+            text1: 'Success',
+            text2: 'update akun.',
+          });
+          setShowModalSuccess(true);
+        })
+        .catch(err => {
+          Toast.show({
+            type: 'error',
+            text1: 'Error',
+            text2:
+              err.response?.data?.message ?? 'Terjadi error, coba lagi nanti.',
+          });
+        });
+    };
 
 export const registerNasabah =
   (payload: any) =>
@@ -155,7 +175,7 @@ export const registerNasabah =
             type: 'error',
             text1: 'Error',
             text2:
-            err.response?.data ?? 'Terjadi error, coba lagi nanti.',
+              err.response?.data?.message ?? 'Terjadi error, coba lagi nanti.',
           });
         }).finally(() => dispatch(setRegisterLoading(false)));
     };
@@ -188,7 +208,7 @@ export const registerPasswordPin =
     };
 
 export const forgotPasswordPin =
-  (payload: any,emailOrPhone:any) =>
+  (payload: any, emailOrPhone: any) =>
     async (dispatch: RootDispatch) => {
       dispatch(setForgotLoading(true));
       axios
@@ -204,14 +224,14 @@ export const forgotPasswordPin =
             text2: 'Reset Password/Pin',
           });
           dispatch(setForgotLoading(false));
-          navigationRef.navigate('OTP',{emailOrPhone});
+          navigationRef.navigate('OTP', { emailOrPhone });
         })
         .catch(err => {
           Toast.show({
             type: 'error',
             text1: 'Error',
             text2:
-            err.response?.data ?? 'Terjadi error, coba lagi nanti.',
+              err.response?.data?.message ?? 'Terjadi error, coba lagi nanti.',
           });
         }).finally(() => dispatch(setForgotLoading(false)));
     };     

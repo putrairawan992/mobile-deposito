@@ -1,6 +1,4 @@
 import { createSlice } from '@reduxjs/toolkit';
-
-
 interface InitialState {
     showProduct: any
     showProcutLoading: boolean

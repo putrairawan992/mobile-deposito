@@ -4,28 +4,29 @@ import {
   View,
   ActivityIndicator,
 } from 'react-native';
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import DefaultView from '../../components/DefaultView';
 import DefaultText from '../../components/DefaultText';
 import Gap from '../../components/Gap';
 import Input from '../../components/Input';
 import Button from '../../components/Button';
-import {navigationRef} from '../../navigation/RootNavigation';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import {showToast} from '../../utils/toast';
+import { showToast } from '../../utils/toast';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import moment from 'moment';
-import {formatRupiah, isEmail} from '../../utils/function';
+import { formatRupiah, isEmail } from '../../utils/function';
 import ModalBank from '../../components/ModalBank';
-import {launchImageLibrary, Asset} from 'react-native-image-picker';
-import {useDispatch, useSelector} from 'react-redux';
-import {RootDispatch, RootState} from '../../store';
-import {getDetailNasabah, registerNasabah} from '../../services/user';
+import { launchImageLibrary, Asset } from 'react-native-image-picker';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootDispatch, RootState } from '../../store';
+import { getDetailNasabah, registerNasabah } from '../../services/user';
 import ModalPenghasilan from '../../components/ModalPenghasilan';
 import ModalStatusPernikahan from '../../components/ModalStatusPernikahan';
+import { addStorage, getStorage } from '../../utils/storage';
+import { penghasilanValidation, statusNikahValidation } from '../../utils/constant';
 
 export default function Register() {
-  const {registerLoading, detailNasabah,token} = useSelector(
+  const { registerLoading, detailNasabah } = useSelector(
     (state: RootState) => state.userReducer,
   );
   const [page, setPage] = useState<number>(0);
@@ -58,12 +59,11 @@ export default function Register() {
   const [fotoNasabah, setFotoNasabah] = useState<Asset>();
   const [fotoKtpAhliWaris, setFotoKtpAhliWaris] = useState<Asset>();
   const dispatch = useDispatch<RootDispatch>();
-  console.log(detailNasabah,token);
 
-  
-  useEffect(()=>{
+
+  useEffect(() => {
     dispatch(getDetailNasabah())
-  },[dispatch])
+  }, [dispatch])
 
   const actionSubmitRegister = () => {
     if (!fotoKtp || !fotoNasabah || !fotoKtpAhliWaris) {
@@ -93,7 +93,7 @@ export default function Register() {
   };
 
   const onOpeGallery = async (index: number) => {
-    const result = await launchImageLibrary({mediaType: 'photo'});
+    const result = await launchImageLibrary({ mediaType: 'photo' });
     if (result.assets) {
       if (index === 0) {
         setFotoKtp(result.assets[0]);
@@ -148,7 +148,7 @@ export default function Register() {
             <Gap height={10} />
             <Input
               title="Status Pernikahan"
-              value={statusNikah}
+              value={statusNikahValidation(statusNikah)}
               onPress={() => setShowStatusPernikahan(true)}
             />
           </View>
@@ -230,7 +230,7 @@ export default function Register() {
             />
             <Gap height={10} />
             <Input
-              value={penghasilan}
+              value={penghasilanValidation(penghasilan)}
               onPress={() => setShowPenghasilan(true)}
               title="Penghasilan"
             />
@@ -411,7 +411,7 @@ export default function Register() {
               <DefaultText
                 title={fotoKtp ? fotoKtp.fileName : ''}
                 titleClassName="flex-1 text-xs mr-1"
-                titleProps={{numberOfLines: 1}}
+                titleProps={{ numberOfLines: 1 }}
               />
               <Icon name="upload" size={20} />
             </TouchableOpacity>
@@ -427,7 +427,7 @@ export default function Register() {
               <DefaultText
                 title={fotoNasabah ? fotoNasabah.fileName : ''}
                 titleClassName="flex-1 text-xs mr-1"
-                titleProps={{numberOfLines: 1}}
+                titleProps={{ numberOfLines: 1 }}
               />
               <Icon name="upload" size={20} />
             </TouchableOpacity>
@@ -443,7 +443,7 @@ export default function Register() {
               <DefaultText
                 title={fotoKtpAhliWaris ? fotoKtpAhliWaris.fileName : ''}
                 titleClassName="flex-1 text-xs mr-1"
-                titleProps={{numberOfLines: 1}}
+                titleProps={{ numberOfLines: 1 }}
               />
               <Icon name="upload" size={20} />
             </TouchableOpacity>
@@ -525,7 +525,8 @@ export default function Register() {
           if (!isEmail(email)) {
             return showToast('Email tidak valid');
           }
-
+          addStorage('pageRegister', 1);
+          addStorage('dataPageZero', { nama, email, phone, alamat });
           setPage(1);
         }}
       />

@@ -1,4 +1,4 @@
-export const formatRupiah = (angka: string, prefix?: string) => {
+export const formatRupiah = (angka: any, prefix?: string) => {
   var number_string = angka.replace(/[^,\d]/g, '').toString(),
     split = number_string.split(','),
     sisa = split[0].length % 3,

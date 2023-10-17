@@ -10,13 +10,14 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {navigationRef, replace} from '../../navigation/RootNavigation';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootDispatch, RootState } from '../../store';
-import { getDetailNasabah } from '../../services/user';
+import { getDetailNasabah, logout } from '../../services/user';
 
 export default function Profile() {
   const {detailNasabah} = useSelector(
     (state: RootState) => state.userReducer,
   );
   const dispatch = useDispatch<RootDispatch>();
+  
 
   useEffect(() => {
     dispatch(getDetailNasabah());
@@ -34,13 +35,13 @@ export default function Profile() {
           iconColor={colors.white}
         />
         <View className="px-5 pb-3 flex-row items-center">
-          <Image
+          {/* <Image
             source={{
               uri: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8cGVyc29ufGVufDB8fDB8fHww&auto=format&fit=crop&w=400&q=60',
             }}
             resizeMode="cover"
             className="bg-neutral-300 w-[80] h-[80] rounded-full"
-          />
+          /> */}
           <Gap width={15} />
           <View className="flex-1">
             <DefaultText
@@ -148,7 +149,7 @@ export default function Profile() {
         <TouchableOpacity
           activeOpacity={0.7}
           className="self-center bg-primary py-2 px-4 rounded-md"
-          onPress={() => replace('Login' as never)}>
+          onPress={() => dispatch(logout())}>
           <DefaultText
             title="Keluar Akun"
             titleClassName="font-inter-medium text-white"

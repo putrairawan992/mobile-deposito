@@ -3,9 +3,11 @@ import {configureStore} from '@reduxjs/toolkit';
 import userReducer from './user';
 import productReducer from './product';
 import dashboardReducer from "./dashboard";
+import portofolioReducer from "./portofolio";
 
 const store = configureStore({
   reducer: {
+    portofolioReducer,
     userReducer,
     productReducer,
     dashboardReducer

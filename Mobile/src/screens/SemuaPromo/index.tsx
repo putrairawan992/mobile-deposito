@@ -18,34 +18,7 @@ export default function SemuaPromo() {
   useEffect(() => {
     dispatch(getShowPromo());
   }, [dispatch]);
-
-  const renderItem = ({ val }: any) => {
-    console.log("renderItem", val)
-
-    return (
-      <TouchableOpacity
-        activeOpacity={0.7}
-        className="mx-3 flex-row border-[1px] border-primary rounded-xl p-2 my-2">
-        {/* <Image
-          source={{uri:val?.image}}
-          resizeMode="cover"
-          className="w-[100] h-[60]"
-        /> */}
-        <Gap width={10} />
-        <View className="flex-1">
-          <DefaultText title={val?.deskripsi} />
-          <Gap height={5} />
-          <DefaultText
-            title={`deposito by ${val?.user_created}`}
-            titleClassName="text-xs"
-          />
-          <DefaultText title={moment(val?.created_at).format("DD-MM-YYYY")} titleClassName="text-xs" />
-        </View>
-      </TouchableOpacity>
-    );
-  };
-  console.log("showPromo2", showPromo);
-
+  
   return (
     <DefaultView>
       <DefaultHeader title="Semua Promo" />

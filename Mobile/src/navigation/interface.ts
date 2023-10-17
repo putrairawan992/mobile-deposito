@@ -10,26 +10,32 @@ export type RootStackParamList = {
     emailOrPhone: string;
   };
   AhliWaris: undefined;
-  AhliWarisEdit: undefined;
-  AjukanDeposito: undefined;
+  AhliWarisEdit?: {
+    detailNasabah?: undefined;
+  };
+  AjukanDeposito?: {
+    showProductDetail?: undefined;
+  };
   Beranda: undefined;
   Chat: undefined;
   ChatRegistrasi: undefined;
   ChatTransaksi: undefined;
   DetailPribadi: undefined;
-  DetailPribadiEdit: undefined;
+  DetailPribadiEdit?: {
+    detailNasabah?: undefined;
+  }
   Fanpage: undefined;
   GantiEmail: undefined;
   GantiKataSandi: undefined;
   GantiPIN: undefined;
-  KeamananAkun: undefined;
+  KeamananAkun?: undefined;
   Notifikasi: undefined;
   PIN: undefined;
   Portofolio: undefined;
-  PortofolioDetail: undefined;
+  PortofolioDetail?: { no_transaksi: undefined };
   Produk: undefined;
-  ProdukDetail?: { 
-    noProduct?: undefined 
+  ProdukDetail?: {
+    noProduct?: undefined
   };
   Profile: undefined;
   Register: undefined;

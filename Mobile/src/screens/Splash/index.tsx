@@ -1,19 +1,36 @@
-import {Image, View} from 'react-native';
-import React, {createRef, useEffect, useState} from 'react';
+import { Image, View } from 'react-native';
+import React, { createRef, useEffect, useState } from 'react';
 import DefaultView from '../../components/DefaultView';
-import {colors} from '../../utils/colors';
-import {images} from '../../utils/images';
+import { colors } from '../../utils/colors';
+import { images } from '../../utils/images';
 import LinearGradient from 'react-native-linear-gradient';
 import Gap from '../../components/Gap';
 import DefaultText from '../../components/DefaultText';
 import Button from '../../components/Button';
 import PagerView from 'react-native-pager-view';
-import {navigationRef} from '../../navigation/RootNavigation';
+import { navigationRef } from '../../navigation/RootNavigation';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../store';
+import { getStorage } from '../../utils/storage';
 
 export default function Splash() {
   const [initialPage, setInitialPage] = useState<number>(0);
-
+  const { detailNasabah } = useSelector((state: RootState) => state.userReducer);
   const ref = createRef<PagerView>();
+
+  useEffect(() => {
+    const getToken = async () => {
+      if (await getStorage('token') &&
+        (detailNasabah?.validasi !== "0" || detailNasabah?.validasi !== null)) {
+        return navigationRef.navigate('MyTabs');
+      } else {
+        if (await getStorage('token')) {
+          return navigationRef.navigate('Register');
+        }
+      }
+    }
+    getToken()
+  }, []);
 
   useEffect(() => {
     const intervalID = setInterval(() => {
@@ -80,21 +97,18 @@ export default function Splash() {
         <Gap height={20} />
         <View className="flex-row justify-center">
           <View
-            className={`w-[20] h-[4] rounded-full ${
-              initialPage === 0 ? 'bg-white' : 'bg-neutral-500'
-            }`}
+            className={`w-[20] h-[4] rounded-full ${initialPage === 0 ? 'bg-white' : 'bg-neutral-500'
+              }`}
           />
           <Gap width={5} />
           <View
-            className={`w-[20] h-[4] rounded-full ${
-              initialPage === 1 ? 'bg-white' : 'bg-neutral-500'
-            }`}
+            className={`w-[20] h-[4] rounded-full ${initialPage === 1 ? 'bg-white' : 'bg-neutral-500'
+              }`}
           />
           <Gap width={5} />
           <View
-            className={`w-[20] h-[4] rounded-full ${
-              initialPage === 2 ? 'bg-white' : 'bg-neutral-500'
-            }`}
+            className={`w-[20] h-[4] rounded-full ${initialPage === 2 ? 'bg-white' : 'bg-neutral-500'
+              }`}
           />
         </View>
 

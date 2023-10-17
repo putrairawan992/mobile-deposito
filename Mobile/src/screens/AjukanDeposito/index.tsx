@@ -1,33 +1,78 @@
-import {ScrollView, TextInput, TouchableOpacity, View} from 'react-native';
-import React, {useState} from 'react';
+import { ActivityIndicator, ScrollView, TextInput, TouchableOpacity, View } from 'react-native';
+import React, { useEffect, useState } from 'react';
 import DefaultView from '../../components/DefaultView';
 import DefaultText from '../../components/DefaultText';
 import DefaultHeader from '../../components/DefaultHeader';
 import Gap from '../../components/Gap';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import {colors} from '../../utils/colors';
+import { colors } from '../../utils/colors';
 import ModalAlert from '../../components/ModalAlert';
-import {navigationRef} from '../../navigation/RootNavigation';
-import {formatRupiah} from '../../utils/function';
-import {showToast} from '../../utils/toast';
+import { navigationRef } from '../../navigation/RootNavigation';
+import { formatRupiah } from '../../utils/function';
+import { showToast } from '../../utils/toast';
+import { RootStackScreenProps } from '../../navigation/interface';
+import { useDispatch, useSelector } from 'react-redux';
+import { estimasiAjukanDeposito, postAjukanDeposito } from '../../services/product';
+import { RootDispatch, RootState } from '../../store';
+import { debounce } from '../../utils/debounce';
+import { getShowBankList } from '../../services/dasbhoard';
 
-export default function AjukanDeposito() {
+export default function AjukanDeposito({ route }: RootStackScreenProps<"AjukanDeposito">) {
+
+  const showProductDetail = route.params?.showProductDetail as any;
   const [perpanjang, setPerpanjang] = useState<boolean>(false);
   const [agree, setAgree] = useState<boolean>(false);
   const [showModal, setShowModal] = useState<boolean>(false);
   const [nominal, setNominal] = useState<string>('');
+  const [data, setData] = useState<any>(null);
+  const [loadings, setLoadings] = useState<boolean>(false);
+  const { showBankList } = useSelector(
+    (state: RootState) => state.dashboardReducer,
+  );
+  const dispatch = useDispatch<RootDispatch>();
+  const bankDefault = showBankList?.find((li: any) => li?.default === "0");
+
+  useEffect(() => {
+    dispatch(getShowBankList())
+  }, [])
 
   const onLanjut = () => {
     if (nominal.trim().length === 0) {
       return showToast('Masukkan nominal');
     }
-
     if (!agree) {
       return showToast('Centang persetujuan syarat dan ketentuan');
     }
-
-    setShowModal(true);
+    const payload = {
+      id_norek: showBankList[0]?.id,
+      aro: 1,
+      amount: nominal?.replace(/\./g, ""),
+      bagi_hasil: data?.estimasi_akhir?.toString(),
+      tenor: showProductDetail?.tenor,
+      id_produk: showProductDetail?.no_produk,
+    }
+    dispatch(postAjukanDeposito(payload, setShowModal, setLoadings))
   };
+
+  const payload = {
+    amount: nominal?.replace(/\./g, ""),
+    bagi_hasil: showProductDetail?.bagi_hasil,
+    tenor: showProductDetail?.tenor
+  }
+
+  const handleDebouncedSearch = debounce(() => {
+    if (nominal.trim().length > 5) {
+      dispatch(estimasiAjukanDeposito(payload, setData, setLoadings));
+    }
+  }, 3000);
+
+  function tambahkanNominal(nominal: any, hasil: any): any {
+    return parseInt(nominal) + hasil;
+  }
+
+
+  const total: number = tambahkanNominal(nominal?.replace(/\./g, ""), data?.estimasi_akhir);
+
 
   return (
     <DefaultView>
@@ -67,15 +112,19 @@ export default function AjukanDeposito() {
           <DefaultText title="Masukkan Nominal Deposito Anda" />
           <Gap height={10} />
           <View className="border-[1px] border-primary rounded-md px-2 py-2">
-            <TextInput
+            {loadings ? <ActivityIndicator /> : <TextInput
               className="m-0 p-0 font-inter-regular"
               placeholder="Masukkan nominal"
               value={nominal}
-              onChangeText={value => setNominal(formatRupiah(value))}
+              onChangeText={value => {
+                setNominal(formatRupiah(value));
+                handleDebouncedSearch();
+              }}
               keyboardType="number-pad"
-            />
+            />}
           </View>
           <Gap height={20} />
+
           <DefaultText
             title="Estimasi Perhitungan Bagi Hasil"
             titleClassName="font-inter-semibold"
@@ -83,12 +132,12 @@ export default function AjukanDeposito() {
           <Gap height={10} />
           <View className="flex-row">
             <DefaultText title="Penempatan Dana" titleClassName="flex-1" />
-            <DefaultText title="Rp 10.000.000" />
+            <DefaultText title={nominal} />
           </View>
           <Gap height={10} />
           <View className="flex-row">
             <DefaultText title="Bagi Hasil" titleClassName="flex-1" />
-            <DefaultText title="Rp 41.666" />
+            <DefaultText title={data?.estimasi_akhir || 0} />
           </View>
           <Gap height={10} />
           <View className="flex-row">
@@ -96,7 +145,7 @@ export default function AjukanDeposito() {
               title="Estimasi Total Pengembalian"
               titleClassName="flex-1"
             />
-            <DefaultText title="Rp 10.041.666" />
+            <DefaultText title={formatRupiah(total.toString()) || 0} />
           </View>
           <Gap height={20} />
           <DefaultText
@@ -116,7 +165,7 @@ export default function AjukanDeposito() {
           <Gap height={10} />
           <View className="flex-row">
             <DefaultText title="Nama Bank" titleClassName="flex-1" />
-            <DefaultText title="Bank Mandiri" />
+            <DefaultText title={bankDefault?.nama} />
           </View>
           <Gap height={10} />
           <View className="flex-row">
@@ -124,16 +173,17 @@ export default function AjukanDeposito() {
               title="Nama Pemilik Rekening"
               titleClassName="flex-1"
             />
-            <DefaultText title="Heru Ahmad" />
+            <DefaultText title={bankDefault?.atas_nama} />
           </View>
           <Gap height={10} />
           <View className="flex-row">
             <DefaultText title="Nomor Rekening" titleClassName="flex-1" />
-            <DefaultText title="1569377058704" />
+            <DefaultText title={bankDefault?.norek} />
           </View>
           <Gap height={10} />
           <TouchableOpacity
             activeOpacity={0.7}
+            onPress={() => navigationRef.navigate('RekeningSaya')}
             className="self-end bg-primary px-1 py-2 rounded-md">
             <DefaultText title="Ganti Akun Bank" titleClassName="text-white" />
           </TouchableOpacity>
@@ -174,7 +224,7 @@ export default function AjukanDeposito() {
             onPress={onLanjut}
             activeOpacity={0.7}
             className="self-center bg-primary px-5 py-2 rounded-md">
-            <DefaultText title="Lanjut" titleClassName="text-white" />
+            <DefaultText title="Submit" titleClassName="text-white" />
           </TouchableOpacity>
         </View>
       </ScrollView>

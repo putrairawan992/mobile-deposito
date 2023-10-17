@@ -1,31 +1,44 @@
-import {ScrollView, TextInput, TouchableOpacity, View} from 'react-native';
-import React, {useState} from 'react';
+import { ScrollView, TextInput, TouchableOpacity, View } from 'react-native';
+import React, { useState } from 'react';
 import DefaultView from '../../components/DefaultView';
 import DefaultText from '../../components/DefaultText';
 import DefaultHeader from '../../components/DefaultHeader';
 import Gap from '../../components/Gap';
-import {navigationRef} from '../../navigation/RootNavigation';
+import { navigationRef } from '../../navigation/RootNavigation';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import ModalAlert from '../../components/ModalAlert';
 import moment from 'moment';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
-import {showToast} from '../../utils/toast';
-import {formatRupiah} from '../../utils/function';
+import { showToast } from '../../utils/toast';
+import { formatRupiah } from '../../utils/function';
+import { RootStackScreenProps } from '../../navigation/interface';
+import { RootDispatch } from '../../store';
+import { useDispatch } from 'react-redux';
+import { updateNasabah } from '../../services/user';
+import Input from '../../components/Input';
+import { penghasilanValidation, statusNikahValidation } from '../../utils/constant';
+import ModalStatusPernikahan from '../../components/ModalStatusPernikahan';
+import ModalPenghasilan from '../../components/ModalPenghasilan';
 
-export default function DetailPribadi() {
-  const [ktp, setKtp] = useState<string>('');
-  const [tempatLahir, setTempatLahir] = useState<string>('');
-  const [tanggalLahir, setTanggalLahir] = useState<Date>();
-  const [ibu, setIbu] = useState<string>('');
-  const [statusNikah, setStatusNikah] = useState<string>('');
-  const [profesi, setProfesi] = useState<string>('');
-  const [perusahaan, setPerusahaan] = useState<string>('');
-  const [alamatPerusahaan, setAlamatPerusahaan] = useState<string>('');
-  const [penghasilan, setPenghasilan] = useState<string>('');
+export default function DetailPribadiEdit({ route }: RootStackScreenProps<'DetailPribadiEdit'>) {
+  const detailPribadi = route.params?.detailNasabah;
+  const [ktp, setKtp] = useState<string>(detailPribadi?.ktp);
+  const [tempatLahir, setTempatLahir] = useState<string>(detailPribadi?.tmpt_lahir);
+  const [tanggalLahir, setTanggalLahir] = useState<Date>(detailPribadi?.tgl_lahir);
+  const [ibu, setIbu] = useState<string>(detailPribadi?.ibu_kandung);
+  const [statusNikah, setStatusNikah] = useState<string>(detailPribadi?.status_pernikahan);
+  const [profesi, setProfesi] = useState<string>(detailPribadi?.jenis_pekerjaan);
+  const [perusahaan, setPerusahaan] = useState<string>(detailPribadi?.nama_perusahaan);
+  const [alamatPerusahaan, setAlamatPerusahaan] = useState<string>(detailPribadi?.alamat_kerja);
+  const [penghasilan, setPenghasilan] = useState<string>(detailPribadi?.penghasilan);
   const [pin, setPin] = useState<string>('');
   const [showPin, setShowPin] = useState<boolean>(false);
   const [showModalSuccess, setShowModalSuccess] = useState<boolean>(false);
   const [showDate, setShowDate] = useState<boolean>(false);
+  const [showPenghasilan, setShowPenghasilan] = useState<boolean>(false);
+  const [showStatusPernikahan, setShowStatusPernikahan] =
+  useState<boolean>(false);
+  const dispatch = useDispatch<RootDispatch>();
 
   const onSave = () => {
     if (
@@ -50,7 +63,17 @@ export default function DetailPribadi() {
       return showToast('Masukkan PIN kamu');
     }
 
-    setShowModalSuccess(true);
+    let formdata = new FormData();
+    formdata.append('ktp', ktp);
+    formdata.append('tmpt_lahir', tempatLahir);
+    formdata.append('tgl_lahir', tanggalLahir);
+    formdata.append('ibu_kandung', ibu);
+    formdata.append('status_pernikahan', statusNikah);
+    formdata.append('jenis_pekerjaan', profesi);
+    formdata.append('nama_perusahaan', perusahaan);
+    formdata.append('alamat_kerja', alamatPerusahaan);
+    formdata.append('penghasilan', penghasilan);
+    dispatch(updateNasabah(formdata, setShowModalSuccess));
   };
 
   return (
@@ -60,7 +83,7 @@ export default function DetailPribadi() {
         <View className="px-5 py-3">
           <View className="flex-row items-center">
             <DefaultText title="No KTP" titleClassName="flex-1" />
-            <View className="border-[1px] border-primary rounded-md w-[150] px-2 py-2">
+            <View className="border-[1px] border-primary rounded-md w-[200] px-2 py-2">
               <TextInput
                 className="m-0 p-0 font-inter-regular"
                 value={ktp}
@@ -72,7 +95,7 @@ export default function DetailPribadi() {
           <Gap height={5} />
           <View className="flex-row items-center">
             <DefaultText title="Tempat Lahir" titleClassName="flex-1" />
-            <View className="border-[1px] border-primary rounded-md w-[150] px-2 py-2">
+            <View className="border-[1px] border-primary rounded-md w-[200] px-2 py-2">
               <TextInput
                 className="m-0 p-0 font-inter-regular"
                 value={tempatLahir}
@@ -86,7 +109,7 @@ export default function DetailPribadi() {
             className="flex-row items-center"
             onPress={() => setShowDate(true)}>
             <DefaultText title="Tanggal Lahir" titleClassName="flex-1" />
-            <View className="border-[1px] border-primary rounded-md w-[150] px-2 py-2">
+            <View className="border-[1px] border-primary rounded-md w-[200] px-2 py-2">
               <TextInput
                 editable={false}
                 className="m-0 p-0 font-inter-regular text-black"
@@ -102,7 +125,7 @@ export default function DetailPribadi() {
           <Gap height={5} />
           <View className="flex-row items-center">
             <DefaultText title="Nama Ibu Kandung" titleClassName="flex-1" />
-            <View className="border-[1px] border-primary rounded-md w-[150] px-2 py-2">
+            <View className="border-[1px] border-primary rounded-md w-[200] px-2 py-2">
               <TextInput
                 className="m-0 p-0 font-inter-regular"
                 value={ibu}
@@ -113,18 +136,18 @@ export default function DetailPribadi() {
           <Gap height={5} />
           <View className="flex-row items-center">
             <DefaultText title="Status Pernikahan" titleClassName="flex-1" />
-            <View className="border-[1px] border-primary rounded-md w-[150] px-2 py-2">
+            <View className="border-[1px] border-primary rounded-md w-[200] px-2 py-2">
               <TextInput
                 className="m-0 p-0 font-inter-regular"
-                value={statusNikah}
-                onChangeText={value => setStatusNikah(value)}
+                value={statusNikahValidation(statusNikah)}
+                onChange={() => setShowStatusPernikahan(true)}
               />
             </View>
           </View>
           <Gap height={5} />
           <View className="flex-row items-center">
             <DefaultText title="Profesi/Pekerjaan" titleClassName="flex-1" />
-            <View className="border-[1px] border-primary rounded-md w-[150] px-2 py-2">
+            <View className="border-[1px] border-primary rounded-md w-[200] px-2 py-2">
               <TextInput
                 className="m-0 p-0 font-inter-regular"
                 value={profesi}
@@ -135,7 +158,7 @@ export default function DetailPribadi() {
           <Gap height={5} />
           <View className="flex-row items-center">
             <DefaultText title="Nama Perusahaan" titleClassName="flex-1" />
-            <View className="border-[1px] border-primary rounded-md w-[150] px-2 py-2">
+            <View className="border-[1px] border-primary rounded-md w-[200] px-2 py-2">
               <TextInput
                 className="m-0 p-0 font-inter-regular"
                 value={perusahaan}
@@ -146,7 +169,7 @@ export default function DetailPribadi() {
           <Gap height={5} />
           <View className="flex-row items-center">
             <DefaultText title="Alamat Perusahaan" titleClassName="flex-1" />
-            <View className="border-[1px] border-primary rounded-md w-[150] px-2 py-2">
+            <View className="border-[1px] border-primary rounded-md w-[200] px-2 py-2">
               <TextInput
                 className="m-0 p-0 font-inter-regular"
                 value={alamatPerusahaan}
@@ -157,11 +180,11 @@ export default function DetailPribadi() {
           <Gap height={5} />
           <View className="flex-row items-center">
             <DefaultText title="Penghasilan" titleClassName="flex-1" />
-            <View className="border-[1px] border-primary rounded-md w-[150] px-2 py-2">
+            <View className="border-[1px] border-primary rounded-md w-[200] px-2 py-2">
               <TextInput
                 className="m-0 p-0 font-inter-regular"
-                value={penghasilan}
-                onChangeText={value => setPenghasilan(formatRupiah(value))}
+                value={penghasilanValidation(penghasilan)}
+                onChange={() => setShowPenghasilan(true)}
                 keyboardType="number-pad"
               />
             </View>
@@ -207,6 +230,24 @@ export default function DetailPribadi() {
           </TouchableOpacity>
         </View>
       </ScrollView>
+
+      <ModalPenghasilan
+          show={showPenghasilan}
+          hide={() => setShowPenghasilan(false)}
+          onConfirm={value => {
+            setShowPenghasilan(false);
+            setPenghasilan(value);
+          }}
+        />
+
+      <ModalStatusPernikahan
+          show={showStatusPernikahan}
+          hide={() => setShowStatusPernikahan(false)}
+          onConfirm={value => {
+            setShowStatusPernikahan(false);
+            setStatusNikah(value);
+          }}
+        />
 
       <ModalAlert
         show={showModalSuccess}
