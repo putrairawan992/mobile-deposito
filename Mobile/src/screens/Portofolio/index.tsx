@@ -111,23 +111,26 @@ export default function Portofolio() {
   const dispatch = useDispatch<RootDispatch>();
 
   useEffect(() => {
-    if (activeTab === 'Semua') {
-      setParams(undefined);
-    }
-    if (activeTab === 'Proses') {
-      setParams('/status/1');
-    }
-    if (activeTab === 'Aktif') {
-      // setParams('/status/1');
-    }
-    if (activeTab === 'Lunas') {
-      setParams('/status/5');
-    }
-    if (activeTab === 'Batal') {
-      setParams('/status/6');
+    switch (activeTab) {
+      case 'Semua':
+        setParams(undefined);
+        break;
+      case 'Proses':
+        setParams('/status/1');
+        break;
+      case 'Aktif':
+      case 'Lunas':
+        setParams('/status/5');
+        break;
+      case 'Batal':
+        setParams('/status/6');
+        break;
     }
     dispatch(getShowPortofolio(params));
   }, [activeTab, params])
+
+  console.log("showPortofolio", showPortofolio);
+
 
   return (
     <DefaultView>

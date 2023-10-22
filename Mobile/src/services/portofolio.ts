@@ -7,6 +7,8 @@ import { getStorage } from '../utils/storage';
 
 export const getShowPortofolio = (params:string) => async (dispatch: RootDispatch) => {
   dispatch(setshowPortofolioLoading(true));
+  console.log(params ? `${API}/pengajuan${params}` : `${API}/pengajuan`);
+  
   axios
     .get(params ? `${API}/pengajuan${params}` : `${API}/pengajuan`, {
       headers: {

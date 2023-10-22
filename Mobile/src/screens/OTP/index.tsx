@@ -40,6 +40,11 @@ export default function OTP({ route }: RootStackScreenProps<'OTP'>) {
     return () => clearInterval(intervalID);
   }, [timer]);
 
+  const resendOtp = () => {
+    setTimer(60);
+    dispatch(checkLogin(emailOrPhone));
+  }
+
   const onLanjut = () => {
     if (otp.trim().length < 6) {
       return showToast('Masukkan OTP');
@@ -121,15 +126,15 @@ export default function OTP({ route }: RootStackScreenProps<'OTP'>) {
           </View>
 
           <Gap height={15} />
-          <TouchableOpacity
+          {timer === 0 && <TouchableOpacity
             activeOpacity={0.7}
-            onPress={()=> dispatch(checkLogin(emailOrPhone))}
+            onPress={() => resendOtp()}
             className="border-b-[1px] border-b-blue-400 self-start">
             <DefaultText
               title="Kirim ulang OTP"
               titleClassName="text-blue-400"
             />
-          </TouchableOpacity>
+          </TouchableOpacity>}
         </View>
       </ScrollView>
       <View className="flex-row flex-wrap justify-end">

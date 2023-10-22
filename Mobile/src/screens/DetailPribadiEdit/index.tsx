@@ -10,21 +10,19 @@ import ModalAlert from '../../components/ModalAlert';
 import moment from 'moment';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import { showToast } from '../../utils/toast';
-import { formatRupiah } from '../../utils/function';
 import { RootStackScreenProps } from '../../navigation/interface';
 import { RootDispatch } from '../../store';
 import { useDispatch } from 'react-redux';
 import { updateNasabah } from '../../services/user';
-import Input from '../../components/Input';
 import { penghasilanValidation, statusNikahValidation } from '../../utils/constant';
 import ModalStatusPernikahan from '../../components/ModalStatusPernikahan';
 import ModalPenghasilan from '../../components/ModalPenghasilan';
 
 export default function DetailPribadiEdit({ route }: RootStackScreenProps<'DetailPribadiEdit'>) {
-  const detailPribadi = route.params?.detailNasabah;
+  const detailPribadi = route.params?.detailNasabah as any;
   const [ktp, setKtp] = useState<string>(detailPribadi?.ktp);
   const [tempatLahir, setTempatLahir] = useState<string>(detailPribadi?.tmpt_lahir);
-  const [tanggalLahir, setTanggalLahir] = useState<Date>(detailPribadi?.tgl_lahir);
+  const [tanggalLahir, setTanggalLahir] = useState<any>(detailPribadi?.tgl_lahir);
   const [ibu, setIbu] = useState<string>(detailPribadi?.ibu_kandung);
   const [statusNikah, setStatusNikah] = useState<string>(detailPribadi?.status_pernikahan);
   const [profesi, setProfesi] = useState<string>(detailPribadi?.jenis_pekerjaan);
@@ -73,6 +71,7 @@ export default function DetailPribadiEdit({ route }: RootStackScreenProps<'Detai
     formdata.append('nama_perusahaan', perusahaan);
     formdata.append('alamat_kerja', alamatPerusahaan);
     formdata.append('penghasilan', penghasilan);
+    formdata.append('pin',pin);
     dispatch(updateNasabah(formdata, setShowModalSuccess));
   };
 
@@ -113,11 +112,7 @@ export default function DetailPribadiEdit({ route }: RootStackScreenProps<'Detai
               <TextInput
                 editable={false}
                 className="m-0 p-0 font-inter-regular text-black"
-                value={
-                  tanggalLahir
-                    ? moment(tanggalLahir).format('DD MMMM YYYY')
-                    : ''
-                }
+                value={tanggalLahir}
                 onPressIn={() => setShowDate(true)}
               />
             </View>
@@ -140,7 +135,7 @@ export default function DetailPribadiEdit({ route }: RootStackScreenProps<'Detai
               <TextInput
                 className="m-0 p-0 font-inter-regular"
                 value={statusNikahValidation(statusNikah)}
-                onChange={() => setShowStatusPernikahan(true)}
+                onPressIn={() => setShowStatusPernikahan(true)}
               />
             </View>
           </View>
@@ -184,7 +179,7 @@ export default function DetailPribadiEdit({ route }: RootStackScreenProps<'Detai
               <TextInput
                 className="m-0 p-0 font-inter-regular"
                 value={penghasilanValidation(penghasilan)}
-                onChange={() => setShowPenghasilan(true)}
+                onPressIn={() => setShowPenghasilan(true)}
                 keyboardType="number-pad"
               />
             </View>

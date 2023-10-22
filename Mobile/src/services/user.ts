@@ -1,6 +1,6 @@
 import axios from 'axios';
 import store, { RootDispatch } from '../store';
-import { API, defaultHeaderAxios } from '../utils/constant';
+import { API } from '../utils/constant';
 import {
   setCheckLogin,
   setCheckLoginLoading,
@@ -21,7 +21,12 @@ export const checkLogin =
     async (dispatch: RootDispatch) => {
       dispatch(setCheckLoginLoading(true));
       axios
-        .post(`${API}/ceklogin`, { username: emailOrPhone }, defaultHeaderAxios)
+        .post(`${API}/ceklogin`, { username: emailOrPhone }, {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${await getStorage('token')}`
+          }
+        })
         .then((res) => {
           dispatch(setCheckLogin(res?.data?.data));
           dispatch(setCheckLoginLoading(false))
@@ -32,7 +37,7 @@ export const checkLogin =
             type: 'success',
             text1: '',
             text2:
-              'Berhasil Kirim OTP',
+              `Berhasil Kirim ${res?.data?.data === 'password' ? 'Password' : 'OTP'}`,
           });
         })
         .catch(err => {
@@ -51,7 +56,12 @@ export const login =
     async (dispatch: any) => {
       dispatch(setLoginLoading(true));
       axios
-        .post(`${API}/login`, { username: emailOrPhone, password: password }, defaultHeaderAxios)
+        .post(`${API}/login`, { username: emailOrPhone, password: password }, {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${await getStorage('token')}`
+          }
+        })
         .then(res => {
           dispatch(setUser(res?.data));
           addStorage('token', res?.data?.token);
@@ -69,6 +79,30 @@ export const login =
         .finally(() => dispatch(setLoginLoading(false)));
     };
 
+    export const getReqOtp = () => async (dispatch: RootDispatch) => {
+      axios
+        .get(`${API}/reqotp`, {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${await getStorage('token')}`,
+          },
+        })
+        .then(res => {
+          
+          Toast.show({
+            type: 'success',
+            text1: 'Success',
+            text2: 'Req OTP.',
+          });
+        })
+        .catch(err => Toast.show({
+          type: 'error',
+          text1: 'Error',
+          text2:
+            err.response?.data?.message ?? 'Terjadi error, coba lagi nanti.',
+        }));
+    };
+
 export const getDetailNasabah = () => async (dispatch: RootDispatch) => {
   axios
     .get(`${API}/nasabah`, {
@@ -81,14 +115,14 @@ export const getDetailNasabah = () => async (dispatch: RootDispatch) => {
       dispatch(setDetailNasabah(res?.data?.data[0]))
     })
     .catch(err => {
-      console.log(err);
-
-      Toast.show({
-        type: 'error',
-        text1: 'Error',
-        text2:
-          err.response?.data?.message ?? 'Terjadi error, coba lagi nanti.',
-      })
+      if (err.response?.status !== 401) {
+        Toast.show({
+          type: 'error',
+          text1: 'Error',
+          text2:
+            err.response?.data?.message ?? 'Terjadi error, coba lagi nanti.',
+        })
+      }
     });
 };
 
@@ -114,7 +148,7 @@ export const getUserProfile = () => async (dispatch: RootDispatch) => {
 export const logout = () => async (dispatch: any) => {
   dispatch(setToken(null));
   dispatch(setUser(null));
-  removeStorage('token');
+  await removeStorage('token');
   navigationRef.reset({ index: 0, routes: [{ name: 'Splash' }] });
 
 };
@@ -127,7 +161,7 @@ export const updateNasabah =
           `${API}/nasabah`,
           payload, {
           headers: {
-            'Content-Type': 'application/json',
+            'Content-Type': 'multipart/form-data',
             Authorization: `Bearer ${await getStorage('token')}`,
           },
         },
@@ -139,11 +173,14 @@ export const updateNasabah =
             text2: 'update akun.',
           });
           setShowModalSuccess(true);
+          navigationRef.navigate('Profile')
         })
         .catch(err => {
+          console.log(err?.response?.data?.errors?.pin[0]);
+          
           Toast.show({
             type: 'error',
-            text1: 'Error',
+            text1: 'Error' + err?.response?.data?.errors?.pin[0],
             text2:
               err.response?.data?.message ?? 'Terjadi error, coba lagi nanti.',
           });
@@ -153,12 +190,18 @@ export const updateNasabah =
 export const registerNasabah =
   (payload: any) =>
     async (dispatch: RootDispatch) => {
+      console.log(await getStorage('token'));
+      
       dispatch(setRegisterLoading(true));
       axios
         .post(
           `${API}/regnasabah`,
-          payload,
-          defaultHeaderAxios,
+          payload, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+            Authorization: `Bearer ${await getStorage('token')}`
+          }
+        },
         )
         .then(() => {
           Toast.show({
@@ -173,9 +216,8 @@ export const registerNasabah =
         .catch(err => {
           Toast.show({
             type: 'error',
-            text1: 'Error',
-            text2:
-              err.response?.data?.message ?? 'Terjadi error, coba lagi nanti.',
+            text1: err.response?.data?.errors?.ktp[0] ?? 'Error',
+            text2: err.response?.data?.message ?? 'Terjadi error, coba lagi nanti.',
           });
         }).finally(() => dispatch(setRegisterLoading(false)));
     };
@@ -186,23 +228,30 @@ export const registerPasswordPin =
       axios
         .put(
           `${API}/upuser`,
-          payload,
-          defaultHeaderAxios,
+          payload
+          , {
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${await getStorage('token')}`
+            }
+          },
         )
-        .then(() => {
+        .then((res) => {
           Toast.show({
             type: 'success',
             text1: 'Sukses',
-            text2: 'Berhasil Membuat Password/Pin',
+            text2: res?.data ?? 'Berhasil Membuat Password / Pin',
           });
           navigationRef.navigate(route as any);
         })
         .catch(err => {
+          console.log(err.response?.data);
+          
           Toast.show({
             type: 'error',
             text1: 'Error',
             text2:
-              err.response?.data?.message ?? 'Terjadi error, coba lagi nanti.',
+              err.response?.data ?? err.response?.data?.message ?? 'Terjadi error, coba lagi nanti.',
           });
         });
     };
@@ -214,8 +263,13 @@ export const forgotPasswordPin =
       axios
         .post(
           `${API}/forgotpassmobile`,
-          payload,
-          defaultHeaderAxios,
+          payload
+          , {
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${await getStorage('token')}`
+            }
+          },
         )
         .then(() => {
           Toast.show({

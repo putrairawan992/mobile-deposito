@@ -26,7 +26,7 @@ interface InitialState {
   token: string | null;
   checkLogin: any;
   userProfile: any;
-  detailNasabah:any;
+  detailNasabah: any;
   loginLoading: boolean;
   checkLoginLoading: boolean;
   forgotLoading: boolean;
@@ -61,7 +61,7 @@ export const userSlice = createSlice({
     setUser: (state, action) => {
       state.user = action.payload;
     },
-    setToken: (state, action) => {
+    setToken:  (state, action) => {
       state.token = action.payload;
     },
     setUserProfile: (state, action) => {
@@ -81,7 +81,7 @@ export const userSlice = createSlice({
 
 export default userSlice.reducer;
 
-export const { 
+export const {
   setDetailNasabah,
   setUser,
   setUserProfile,

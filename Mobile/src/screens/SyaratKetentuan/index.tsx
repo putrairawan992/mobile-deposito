@@ -25,7 +25,7 @@ export default function SyaratKetentuan() {
     if (!agree) {
       return showToast('Centang syarat dan ketentuan.');
     }
-    navigationRef.navigate(detailNasabah?.validasi == "0" || detailNasabah?.validasi == null ?  'Register' : 'MyTabs');
+    navigationRef.navigate(detailNasabah?.idUserNasabah == "" || detailNasabah?.idUserNasabah == null ?  'Register' : 'MyTabs');
   };
 
   return (

@@ -44,7 +44,7 @@ export default function SemuaPromo() {
                   title={`deposito by ${item?.id_mitra}`}
                   titleClassName="text-xs"
                 />
-                <DefaultText title={moment(item?.end_date).format("DD-MM-YYYY")} titleClassName="text-xs" />
+                <DefaultText title={item?.end_date} titleClassName="text-xs" />
               </View>
             </TouchableOpacity>
           );

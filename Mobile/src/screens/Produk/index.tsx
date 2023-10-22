@@ -13,9 +13,13 @@ import { useDispatch, useSelector } from 'react-redux';
 import { RootDispatch, RootState } from '../../store';
 import { getShowProductNasabah } from '../../services/product';
 import { formatRupiah } from '../../utils/currency';
+import { getStorage, removeStorage } from '../../utils/storage';
+import { setToken } from '../../store/user';
 
 const Item = (data: any) => {
   let noProduct = data?.data?.item?.no_produk;
+  console.log(data);
+
   return (
     <TouchableOpacity
       activeOpacity={0.7}
@@ -85,9 +89,9 @@ const Item = (data: any) => {
         <Gap height={10} />
         <View className="w-full bg-gray-200 rounded-full dark:bg-gray-700">
           <View
-            className="bg-green-600 text-xs font-medium text-blue-100 text-center p-0.5 leading-none rounded-full"
-            style={{ width: '30%' }}>
-            <DefaultText title="45%" titleClassName="text-center text-white" />
+            className={`text-xs font-medium text-blue-100 text-center p-0.5 leading-none rounded-full ${data?.data?.item?.terkumpulpersen > 0 ? 'bg-green-600' : ''}`}
+            style={{ width: `${data?.data?.item?.terkumpulpersen}%` }}>
+            <DefaultText title={`${data?.data?.item?.terkumpulpersen}%`} titleClassName="text-center text-white" />
           </View>
         </View>
       </LinearGradient>
@@ -101,11 +105,29 @@ export default function Produk() {
   const [hasilSetara, setHasilSetara] = useState<string>('5');
   const [tenor, setTenor] = useState<string>('6');
   const { showProduct, showProcutLoading } = useSelector((state: RootState) => state.productReducer);
+  const { detailNasabah } = useSelector(
+    (state: RootState) => state.userReducer,
+  );
   const dispatch = useDispatch<RootDispatch>();
 
   useEffect(() => {
     dispatch(getShowProductNasabah());
   }, [dispatch]);
+
+  useEffect(() => {
+    const useNasabah = async () => {
+      if (await getStorage("token") && (!detailNasabah?.idUserNasabah)) {
+        navigationRef.navigate("Register")
+      } else {
+        if (await getStorage("token") === null) {
+          dispatch(setToken(null));
+          removeStorage("token");
+          navigationRef.reset({ index: 0, routes: [{ name: 'Splash' }] });
+        }
+      }
+    }
+    useNasabah();
+  }, [detailNasabah]);
 
   return (
     <DefaultView>

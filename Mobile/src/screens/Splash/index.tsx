@@ -9,28 +9,11 @@ import DefaultText from '../../components/DefaultText';
 import Button from '../../components/Button';
 import PagerView from 'react-native-pager-view';
 import { navigationRef } from '../../navigation/RootNavigation';
-import { useSelector } from 'react-redux';
-import { RootState } from '../../store';
-import { getStorage } from '../../utils/storage';
+
 
 export default function Splash() {
   const [initialPage, setInitialPage] = useState<number>(0);
-  const { detailNasabah } = useSelector((state: RootState) => state.userReducer);
   const ref = createRef<PagerView>();
-
-  useEffect(() => {
-    const getToken = async () => {
-      if (await getStorage('token') &&
-        (detailNasabah?.validasi !== "0" || detailNasabah?.validasi !== null)) {
-        return navigationRef.navigate('MyTabs');
-      } else {
-        if (await getStorage('token')) {
-          return navigationRef.navigate('Register');
-        }
-      }
-    }
-    getToken()
-  }, []);
 
   useEffect(() => {
     const intervalID = setInterval(() => {

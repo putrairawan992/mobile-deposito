@@ -14,7 +14,7 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { showToast } from '../../utils/toast';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import moment from 'moment';
-import { formatRupiah, isEmail } from '../../utils/function';
+import { isEmail } from '../../utils/function';
 import ModalBank from '../../components/ModalBank';
 import { launchImageLibrary, Asset } from 'react-native-image-picker';
 import { useDispatch, useSelector } from 'react-redux';
@@ -22,7 +22,7 @@ import { RootDispatch, RootState } from '../../store';
 import { getDetailNasabah, registerNasabah } from '../../services/user';
 import ModalPenghasilan from '../../components/ModalPenghasilan';
 import ModalStatusPernikahan from '../../components/ModalStatusPernikahan';
-import { addStorage, getStorage } from '../../utils/storage';
+import { addStorage } from '../../utils/storage';
 import { penghasilanValidation, statusNikahValidation } from '../../utils/constant';
 
 export default function Register() {
@@ -46,6 +46,7 @@ export default function Register() {
   const [ahliWaris, setAhliWaris] = useState<string>(detailNasabah?.nama_ahli_waris);
   const [ahliWarisKtp, setAhliWarisKtp] = useState<string>(detailNasabah?.ktp_ahli_waris);
   const [ahliWarisPhone, setAhliWarisPhone] = useState<string>(detailNasabah?.phone_ahli_waris);
+  const [hubunganAhliWaris,setHubunganAhliWaris] = useState<string>('');
   const [bank, setBank] = useState<string>('');
   const [rekening, setRekening] = useState<string>('');
   const [namaRekening, setNamaRekening] = useState<string>('');
@@ -60,21 +61,17 @@ export default function Register() {
   const [fotoKtpAhliWaris, setFotoKtpAhliWaris] = useState<Asset>();
   const dispatch = useDispatch<RootDispatch>();
 
-
   useEffect(() => {
     dispatch(getDetailNasabah())
   }, [dispatch])
 
   const actionSubmitRegister = () => {
-    if (!fotoKtp || !fotoNasabah || !fotoKtpAhliWaris) {
-      return showToast('Data belum lengkap');
-    }
     let formdata = new FormData();
     formdata.append('email', email);
     formdata.append('nama', nama);
     formdata.append('ktp', ktp);
     formdata.append('tmpt_lahir', tempatLahir);
-    formdata.append('tgl_lahir', tanggalLahir);
+    formdata.append('tgl_lahir', moment(tanggalLahir).format('YYYY-DD-MM'));
     formdata.append('ibu_kandung', ibu);
     formdata.append('id_privy', privyId);
     formdata.append('status_pernikahan', statusNikah);
@@ -86,9 +83,12 @@ export default function Register() {
     formdata.append('nama_ahli_waris', ahliWaris);
     formdata.append('ktp_ahli_waris', ahliWarisKtp);
     formdata.append('phone_ahli_waris', ahliWarisPhone);
-    formdata.append('image_ktp', fotoKtp);
-    formdata.append('image_selfie', fotoNasabah);
-    formdata.append('image_ktp_ahli_waris', fotoKtpAhliWaris);
+    formdata.append('hub_ahli_waris', hubunganAhliWaris);
+    formdata.append('image_ktp', fotoKtp ?? '');
+    formdata.append('image_selfie', fotoNasabah ?? '');
+    formdata.append('image_ktp_ahli_waris', fotoKtpAhliWaris ?? '');
+    console.log("formdata", formdata);
+
     dispatch(registerNasabah(formdata));
   };
 
@@ -125,6 +125,7 @@ export default function Register() {
                 keyboardType: 'number-pad',
               }}
             />
+            <DefaultText title={ktp  && ktp?.length} />
             <Gap height={10} />
             <Input
               title="Tempat Lahir"
@@ -135,7 +136,7 @@ export default function Register() {
             <Input
               title="Tanggal Lahir"
               value={
-                tanggalLahir ? moment(tanggalLahir).format('DD MMMM YYYY') : ''
+                tanggalLahir ? moment(tanggalLahir).format('DD MMMM YYYY') : undefined
               }
               onPress={() => setShowDate(true)}
             />
@@ -154,6 +155,13 @@ export default function Register() {
           </View>
         </ScrollView>
         <Button
+          title="BACK"
+          titleClassName="text-black"
+          onPress={() => {
+            setPage(0);
+          }}
+        />
+        <Button
           title="LANJUT"
           className="bg-primary mx-10 my-5"
           titleClassName="text-white"
@@ -169,7 +177,7 @@ export default function Register() {
             }
 
             if (ktp.trim().length !== 16) {
-              return showToast('No KTP tidak valid');
+              return showToast('No KTP tidak valid, 16 characters');
             }
 
             setPage(2);
@@ -237,6 +245,13 @@ export default function Register() {
           </View>
         </ScrollView>
         <Button
+          title="BACK"
+          titleClassName="text-black"
+          onPress={() => {
+            setPage(1);
+          }}
+        />
+        <Button
           title="LANJUT"
           className="bg-primary mx-10 my-5"
           titleClassName="text-white"
@@ -300,8 +315,21 @@ export default function Register() {
                 keyboardType: 'phone-pad',
               }}
             />
+            <Gap height={10} />
+            <Input
+              title="Hubungan Ahli Waris"
+              value={hubunganAhliWaris}
+              onChangeText={value => setHubunganAhliWaris(value)}
+            />
           </View>
         </ScrollView>
+        <Button
+          title="BACK"
+          titleClassName="text-black"
+          onPress={() => {
+            setPage(2);
+          }}
+        />
         <Button
           title="LANJUT"
           className="bg-primary mx-10 my-5"
@@ -315,9 +343,9 @@ export default function Register() {
               return showToast('Data belum lengkap');
             }
 
-            if (ahliWarisKtp.trim().length !== 16) {
-              return showToast('No KTP tidak valid');
-            }
+            // if (ahliWarisKtp.trim().length !== 16) {
+            //   return showToast('No KTP tidak valid');
+            // }
 
             setPage(4);
           }}
@@ -360,6 +388,13 @@ export default function Register() {
             />
           </View>
         </ScrollView>
+        <Button
+          title="BACK"
+          titleClassName="text-black"
+          onPress={() => {
+            setPage(3);
+          }}
+        />
         <Button
           title="LANJUT"
           className="bg-primary mx-10 my-5"
@@ -414,6 +449,7 @@ export default function Register() {
                 titleProps={{ numberOfLines: 1 }}
               />
               <Icon name="upload" size={20} />
+              <Icon name="trash-can" onPress={() => setFotoKtp(undefined)} size={20} />
             </TouchableOpacity>
             <Gap height={10} />
             <DefaultText
@@ -430,6 +466,7 @@ export default function Register() {
                 titleProps={{ numberOfLines: 1 }}
               />
               <Icon name="upload" size={20} />
+              <Icon name="trash-can" onPress={() => setFotoNasabah(undefined)} size={20} />
             </TouchableOpacity>
             <Gap height={10} />
             <DefaultText
@@ -446,6 +483,7 @@ export default function Register() {
                 titleProps={{ numberOfLines: 1 }}
               />
               <Icon name="upload" size={20} />
+              <Icon name="trash-can" onPress={() => setFotoKtpAhliWaris(undefined)} size={20} />
             </TouchableOpacity>
             <Gap height={10} />
             <Input
@@ -455,6 +493,13 @@ export default function Register() {
             />
           </View>
         </ScrollView>
+        <Button
+          title="BACK"
+          titleClassName="text-black"
+          onPress={() => {
+            setPage(4);
+          }}
+        />
         {registerLoading ? (
           <ActivityIndicator />
         ) : (

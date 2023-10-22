@@ -1,25 +1,28 @@
-import {ScrollView, TextInput, TouchableOpacity, View} from 'react-native';
-import React, {useState} from 'react';
+import { ScrollView, TextInput, TouchableOpacity, View } from 'react-native';
+import React, { useState } from 'react';
 import DefaultView from '../../components/DefaultView';
 import DefaultText from '../../components/DefaultText';
 import DefaultHeader from '../../components/DefaultHeader';
-import {navigationRef} from '../../navigation/RootNavigation';
+import { navigationRef } from '../../navigation/RootNavigation';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import Gap from '../../components/Gap';
 import ModalAlert from '../../components/ModalAlert';
 import ModalBank from '../../components/ModalBank';
-import {showToast} from '../../utils/toast';
+import { showToast } from '../../utils/toast';
 import { useDispatch } from 'react-redux';
 import { RootDispatch } from '../../store';
 import { postShowBankList } from '../../services/dasbhoard';
+import ModalPemilikBank from '../../components/ModalPemilikBank';
 
 export default function RekeningSayaTambah() {
   const [showPin, setShowPin] = useState<boolean>(false);
   const [showModalSuccess, setShowModalSuccess] = useState<boolean>(false);
   const [showBank, setShowBank] = useState<boolean>(false);
-
+  const [showBankPemilik, setShowBankPemilik] = useState<boolean>(false);
   const [namaBank, setNamaBank] = useState<string>('');
   const [rekening, setRekening] = useState<string>('');
+  const [namaRekening, setNamaRekening] = useState<string>('');
+  const [pemilikBank, setPemilikBank] = useState<string>('');
   const [pin, setPin] = useState<string>('');
   const dispatch = useDispatch<RootDispatch>();
 
@@ -31,11 +34,28 @@ export default function RekeningSayaTambah() {
     if (pin.trim().length < 6) {
       return showToast('Masukkan PIN kamu');
     }
-    const payload ={
-
+    const payload = {
+      nama: namaBank,
+      norek: rekening,
+      default: 1,
+      code: 114,
+      jenis:pemilikBank,
+      // pin:pin,
+      atas_nama: namaRekening
     }
-    dispatch(postShowBankList(payload,setShowModalSuccess));
+    dispatch(postShowBankList(payload, setShowModalSuccess));
   };
+
+   const actionRekeningPemilik = (value:string) =>{
+    let text;
+    if (value === '1') {
+      text = 'Nasabah'
+    }
+    if (value === '2') {
+      text='Ahli Waris Nasabah'
+    }
+    return text;
+  }
 
   return (
     <DefaultView>
@@ -70,6 +90,36 @@ export default function RekeningSayaTambah() {
               />
             </View>
           </View>
+
+          <Gap height={15} />
+
+          <View className="bg-green-200 rounded-lg px-3 py-3 flex-row items-center border-[1px] border-primary">
+            <View className="flex-1">
+              <TextInput
+                className="p-0 m-0 font-inter-bold text-black"
+                placeholder="Atas Nama rekening bank"
+                value={namaRekening}
+                onChangeText={value => setNamaRekening(value)}
+              />
+            </View>
+          </View>
+
+          <Gap height={15} />
+
+          <TouchableOpacity
+            className="bg-green-200 rounded-lg px-3 py-3 flex-row items-center border-[1px] border-primary"
+            onPress={() => setShowBankPemilik(true)}>
+            <View className="flex-1">
+              <TextInput
+                editable={false}
+                className="p-0 m-0 font-inter-bold text-black"
+                placeholder="Jenis Pemilik Bank"
+                value={actionRekeningPemilik(pemilikBank)}
+                onChangeText={value => setPemilikBank(value)}
+                onPressIn={() => setShowBankPemilik(true)}
+              />
+            </View>
+          </TouchableOpacity>
 
           <Gap height={20} />
 
@@ -114,6 +164,15 @@ export default function RekeningSayaTambah() {
         onConfirm={() => {
           setShowModalSuccess(false);
           navigationRef.goBack();
+        }}
+      />
+
+      <ModalPemilikBank
+        show={showBankPemilik}
+        hide={() => setShowBankPemilik(false)}
+        onConfirm={value => {
+          setShowBankPemilik(false);
+          setPemilikBank(value);
         }}
       />
 

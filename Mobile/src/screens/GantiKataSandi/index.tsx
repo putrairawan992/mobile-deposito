@@ -1,13 +1,16 @@
-import {ScrollView, TextInput, TouchableOpacity, View} from 'react-native';
-import React, {useState} from 'react';
+import { ScrollView, TextInput, TouchableOpacity, View } from 'react-native';
+import React, { useEffect, useState } from 'react';
 import DefaultView from '../../components/DefaultView';
 import DefaultText from '../../components/DefaultText';
 import DefaultHeader from '../../components/DefaultHeader';
-import {navigationRef} from '../../navigation/RootNavigation';
+import { navigationRef } from '../../navigation/RootNavigation';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import Gap from '../../components/Gap';
 import ModalAlert from '../../components/ModalAlert';
-import {showToast} from '../../utils/toast';
+import { showToast } from '../../utils/toast';
+import { RootDispatch, RootState } from '../../store';
+import { useDispatch, useSelector } from 'react-redux';
+import { checkLogin, getDetailNasabah, getReqOtp, registerPasswordPin } from '../../services/user';
 
 export default function GantiKataSandi() {
   const [showPasswordSekarang, setShowPasswordSekarang] =
@@ -17,13 +20,30 @@ export default function GantiKataSandi() {
     useState<boolean>(false);
   const [showPin, setShowPin] = useState<boolean>(false);
   const [showModalSuccess, setShowModalSuccess] = useState<boolean>(false);
-
+  const [otp, setOtp] = useState<string>('');
   const [passwordSekarang, setPasswordSekarang] = useState<string>('');
   const [passwordBaru, setPasswordBaru] = useState<string>('');
   const [passwordConfirm, setPasswordConfirm] = useState<string>('');
   const [pin, setPin] = useState<string>('');
+  const [timer, setTimer] = useState<number>(0);
+  const dispatch = useDispatch<RootDispatch>();
 
-  
+  useEffect(() => {
+    const intervalID = setInterval(() => {
+      if (timer === 0) {
+        clearInterval(intervalID);
+      } else {
+        setTimer(timer - 1);
+      }
+    }, 1000);
+
+    return () => clearInterval(intervalID);
+  }, [timer]);
+
+  const resendOtp = () => {
+    setTimer(60);
+    dispatch(getReqOtp());
+  }
 
   const onSave = () => {
     if (
@@ -42,7 +62,7 @@ export default function GantiKataSandi() {
       return showToast('Masukkan PIN anda');
     }
 
-    setShowModalSuccess(true);
+    dispatch(registerPasswordPin({ password: passwordConfirm, otp: otp, pin: pin }, 'Profile'))
   };
 
   return (
@@ -111,6 +131,40 @@ export default function GantiKataSandi() {
               onPress={() => setShowPasswordConfirm(!showPasswordConfirm)}>
               <Icon name={showPasswordConfirm ? 'eye-off' : 'eye'} size={24} />
             </TouchableOpacity>
+          </View>
+
+          <Gap height={15} />
+
+
+          <View className="bg-primary-light rounded-2xl px-5 py-5 flex-row items-center">
+            <View className="flex-1">
+              <TextInput
+                className="p-0 m-0 font-inter-bold"
+                placeholder="OTP"
+                value={otp}
+                onChangeText={value => setOtp(value)}
+              />
+            </View>
+            <Gap height={5} />
+
+            {timer > 0 && (
+              <DefaultText
+                title={`00:${timer}`}
+                titleClassName="font-inter-semibold"
+              />
+            )}
+
+
+            <Gap height={15} />
+            {timer === 0 && <TouchableOpacity
+              activeOpacity={0.7}
+              onPress={() => resendOtp()}
+              className="border-b-[1px] border-b-blue-400 self-start">
+              <DefaultText
+                title="Kirim OTP"
+                titleClassName="text-blue-400"
+              />
+            </TouchableOpacity>}
           </View>
 
           <Gap height={15} />

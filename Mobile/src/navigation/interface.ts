@@ -16,7 +16,7 @@ export type RootStackParamList = {
   AjukanDeposito?: {
     showProductDetail?: undefined;
   };
-  Beranda: undefined;
+  Beranda?: { fromUrl?: undefined };
   Chat: undefined;
   ChatRegistrasi: undefined;
   ChatTransaksi: undefined;
@@ -40,7 +40,7 @@ export type RootStackParamList = {
   Profile: undefined;
   Register: undefined;
   RekeningSaya: undefined;
-  RekeningSayaDetail: undefined;
+  RekeningSayaDetail?: {id?:undefined};
   RekeningSayaTambah: undefined;
   SemuaBlog: undefined;
   SemuaPromo: undefined;

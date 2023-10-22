@@ -1,23 +1,23 @@
-import {Image, Linking, ScrollView, TouchableOpacity, View} from 'react-native';
+import { Linking, ScrollView, TouchableOpacity, View } from 'react-native';
 import React, { useEffect } from 'react';
 import DefaultView from '../../components/DefaultView';
 import DefaultText from '../../components/DefaultText';
 import DefaultHeader from '../../components/DefaultHeader';
 import LinearGradient from 'react-native-linear-gradient';
-import {colors} from '../../utils/colors';
+import { colors } from '../../utils/colors';
 import Gap from '../../components/Gap';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import {navigationRef, replace} from '../../navigation/RootNavigation';
+import { navigationRef } from '../../navigation/RootNavigation';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootDispatch, RootState } from '../../store';
 import { getDetailNasabah, logout } from '../../services/user';
 
 export default function Profile() {
-  const {detailNasabah} = useSelector(
+  const { detailNasabah } = useSelector(
     (state: RootState) => state.userReducer,
   );
   const dispatch = useDispatch<RootDispatch>();
-  
+
 
   useEffect(() => {
     dispatch(getDetailNasabah());
@@ -27,8 +27,8 @@ export default function Profile() {
     <DefaultView>
       <LinearGradient
         colors={[colors.primary, '#0F3746']}
-        start={{x: 0, y: 0}}
-        end={{x: 1, y: 0}}>
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 0 }}>
         <DefaultHeader
           title="Profil"
           titleClassName="text-white"

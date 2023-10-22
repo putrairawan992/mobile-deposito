@@ -14,10 +14,11 @@ import { updateNasabah } from '../../services/user';
 import { RootStackScreenProps } from '../../navigation/interface';
 
 export default function AhliWarisEdit({ route }: RootStackScreenProps<"AhliWarisEdit">) {
-  const detailNasabah =  route.params?.detailNasabah
+  const detailNasabah =  route.params?.detailNasabah as any;
   const [nama, setNama] = useState<string>(detailNasabah?.nama_ahli_waris);
   const [ktp, setKtp] = useState<string>(detailNasabah?.ktp_ahli_waris);
   const [phone, setPhone] = useState<string>(detailNasabah?.phone_ahli_waris);
+  const [hubunganAhliWaris, setHubunganAhliWaris] = useState<string>(detailNasabah?.hub_ahli_waris);
   const [pin, setPin] = useState<string>('');
   const [showPin, setShowPin] = useState<boolean>(false);
   const [showModalSuccess, setShowModalSuccess] = useState<boolean>(false);
@@ -33,7 +34,7 @@ export default function AhliWarisEdit({ route }: RootStackScreenProps<"AhliWaris
     }
 
     if (ktp.trim().length !== 16) {
-      return showToast('No KTP tidak valid');
+      return showToast('No KTP tidak valid, 16 Angka');
     }
 
     if (pin.trim().length < 6) {
@@ -43,6 +44,10 @@ export default function AhliWarisEdit({ route }: RootStackScreenProps<"AhliWaris
     formdata.append('nama_ahli_waris', nama);
     formdata.append('ktp_ahli_waris', ktp);
     formdata.append('phone_ahli_waris', phone);
+    formdata.append('hub_ahli_waris',hubunganAhliWaris);
+    formdata.append('pin',pin);
+    console.log("formEditAhli===>",formdata);
+    
     dispatch(updateNasabah(formdata,setShowModalSuccess));
   };
 
@@ -85,6 +90,20 @@ export default function AhliWarisEdit({ route }: RootStackScreenProps<"AhliWaris
                 value={phone}
                 onChangeText={value => setPhone(value)}
                 keyboardType="number-pad"
+              />
+            </View>
+          </View>
+          <Gap height={5} />
+          <View className="flex-row items-center">
+            <DefaultText
+              title="Hubungan Ahli Waris"
+              titleClassName="flex-1"
+            />
+            <View className="border-[1px] border-primary rounded-md w-[150] px-2 py-2">
+              <TextInput
+                className="m-0 p-0 font-inter-regular"
+                value={hubunganAhliWaris}
+                onChangeText={value => setHubunganAhliWaris(value)}
               />
             </View>
           </View>

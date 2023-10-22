@@ -23,6 +23,7 @@ import { RootDispatch, RootState } from '../../store';
 import { getShowDashboard } from '../../services/dasbhoard';
 import { formatRupiah } from '../../utils/currency';
 import { getDetailNasabah } from '../../services/user';
+import { removeStorage } from '../../utils/storage';
 
 export default function Beranda() {
   const { width } = useWindowDimensions();
@@ -34,10 +35,9 @@ export default function Beranda() {
   const { showDashboard } = useSelector(
     (state: RootState) => state.dashboardReducer,
   );
-  const {detailNasabah} = useSelector(
+  const { detailNasabah } = useSelector(
     (state: RootState) => state.userReducer,
   );
-
   const dispatch = useDispatch<RootDispatch>();
 
   useEffect(() => {
@@ -85,9 +85,9 @@ export default function Beranda() {
             height={100}
             // autoPlay={true}
             data={
-              [{ val: showDashboard?.bagiHasil, label: "Proyek Bagi Hasil" }, 
-            { val: showDashboard?.deposito, label: "Proyek Deposito" }, 
-            { val: showDashboard?.portofolio, label: "Proyek Portofolio" }]}
+              [{ val: showDashboard?.bagiHasil, label: "Proyek Bagi Hasil" },
+              { val: showDashboard?.deposito, label: "Proyek Deposito" },
+              { val: showDashboard?.portofolio, label: "Proyek Portofolio" }]}
             // scrollAnimationDuration={1000}
             onSnapToItem={index => setTopActive(index)}
             renderItem={({ item }) => (
@@ -146,7 +146,7 @@ export default function Beranda() {
           height={width / 2}
           autoPlay={true}
           data={(showPromo && showPromo?.length > 0) && showPromo || [1, 2, 3, 4]}
-          scrollAnimationDuration={5000}
+          scrollAnimationDuration={100}
           onSnapToItem={index => setPromoActive(index)}
           renderItem={({ item }: any) => (
             <TouchableOpacity activeOpacity={0.7} style={{ alignSelf: 'center' }}>

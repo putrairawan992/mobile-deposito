@@ -1,20 +1,34 @@
-import {ScrollView, TouchableOpacity, View} from 'react-native';
-import React, {useState} from 'react';
+import { ScrollView, TouchableOpacity, View } from 'react-native';
+import React, { useEffect, useState } from 'react';
 import DefaultView from '../../components/DefaultView';
 import DefaultText from '../../components/DefaultText';
 import DefaultHeader from '../../components/DefaultHeader';
 import Gap from '../../components/Gap';
-import {navigationRef} from '../../navigation/RootNavigation';
-import {TextInput} from 'react-native';
+import { navigationRef } from '../../navigation/RootNavigation';
+import { TextInput } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import ModalAlert from '../../components/ModalAlert';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootDispatch, RootState } from '../../store';
+import { getDetailNasabah } from '../../services/user';
+import { deleteBankDetailList, getBankDetailList } from '../../services/dasbhoard';
+import { RootStackScreenProps } from '../../navigation/interface';
 
-export default function RekeningSayaDetail() {
+export default function RekeningSayaDetail({ route }: RootStackScreenProps<'RekeningSayaDetail'>) {
   const [pin, setPin] = useState<string>('');
+  const idParams = route.params?.id;
   const [showPin, setShowPin] = useState<boolean>(false);
   const [showModalSuccess, setShowModalSuccess] = useState<boolean>(false);
   const [isDelete, setIsDelete] = useState<boolean>(false);
+  const { showBankDetails } = useSelector(
+    (state: RootState) => state.dashboardReducer,
+  );
+  const dispatch = useDispatch<RootDispatch>();
 
+  useEffect(() => {
+    dispatch(getBankDetailList(idParams))
+  }, [dispatch])
+  
   return (
     <DefaultView>
       <DefaultHeader title="Detail Akun Bank" />
@@ -23,7 +37,7 @@ export default function RekeningSayaDetail() {
           <DefaultText title="Nama Bank" />
           <Gap height={5} />
           <View className="bg-green-200 border-[1px] border-primary p-3 rounded-md">
-            <DefaultText title="PT Bank Negara Indonesia TBK" />
+            <DefaultText title={showBankDetails?.nama} />
           </View>
 
           <Gap height={10} />
@@ -31,7 +45,7 @@ export default function RekeningSayaDetail() {
           <DefaultText title="Nomor Rekening Bank" />
           <Gap height={5} />
           <View className="bg-green-200 border-[1px] border-primary p-3 rounded-md">
-            <DefaultText title="1234567890" />
+            <DefaultText title={showBankDetails?.norek} />
           </View>
 
           <Gap height={10} />
@@ -39,7 +53,7 @@ export default function RekeningSayaDetail() {
           <DefaultText title="Nama Akun Bank" />
           <Gap height={5} />
           <View className="bg-green-200 border-[1px] border-primary p-3 rounded-md">
-            <DefaultText title="Heru Ahmad" />
+            <DefaultText title={showBankDetails?.atas_nama} />
           </View>
 
           {isDelete && (
@@ -85,7 +99,7 @@ export default function RekeningSayaDetail() {
         <TouchableOpacity
           onPress={() => {
             if (isDelete) {
-              setShowModalSuccess(true);
+              dispatch(deleteBankDetailList(idParams,setShowModalSuccess))
             } else {
               setIsDelete(true);
             }

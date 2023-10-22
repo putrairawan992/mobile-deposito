@@ -1,5 +1,5 @@
 import {ScrollView, TextInput, TouchableOpacity, View} from 'react-native';
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import DefaultView from '../../components/DefaultView';
 import DefaultText from '../../components/DefaultText';
 import DefaultHeader from '../../components/DefaultHeader';
@@ -9,17 +9,30 @@ import Gap from '../../components/Gap';
 import ModalAlert from '../../components/ModalAlert';
 import {showToast} from '../../utils/toast';
 import {isEmail} from '../../utils/function';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootDispatch, RootState } from '../../store';
+import { getDetailNasabah, updateNasabah } from '../../services/user';
 
 export default function GantiEmail() {
+
+
+  const { detailNasabah } = useSelector(
+    (state: RootState) => state.userReducer,
+  );
   const [showPin, setShowPin] = useState<boolean>(false);
   const [showModalSuccess, setShowModalSuccess] = useState<boolean>(false);
 
   const [emailSekarang, setEmailSekarang] = useState<string>(
-    'heruahmad123@gmail.com',
+   detailNasabah?.email,
   );
   const [emailBaru, setEmailBaru] = useState<string>('');
   const [emailConfirm, setEmailConfirm] = useState<string>('');
   const [pin, setPin] = useState<string>('');
+  const dispatch = useDispatch<RootDispatch>();
+
+  useEffect(() => {
+    dispatch(getDetailNasabah())
+  }, [dispatch])
 
   const onSave = () => {
     if (
@@ -49,8 +62,10 @@ export default function GantiEmail() {
     if (pin.trim().length < 6) {
       return showToast('Masukkan PIN anda');
     }
-
-    setShowModalSuccess(true);
+    let formdata = new FormData();
+    formdata.append('email', emailConfirm);
+    formdata.append('pin',pin);
+    dispatch(updateNasabah(formdata, setShowModalSuccess));
   };
 
   return (

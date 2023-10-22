@@ -5,12 +5,14 @@ interface InitialState {
     showDashboard: any
     showDashboardLoading: boolean
     showBankList: any
+    showBankDetails: any,
     showBankListLoading: boolean
 }
 
 const initialState: InitialState = {
     showDashboard: null,
     showBankList: null,
+    showBankDetails: null,
     showBankListLoading: false,
     showDashboardLoading: false,
 };
@@ -31,6 +33,9 @@ export const dashboardSlice = createSlice({
         setShowBankListLoading: (state, action) => {
             state.showBankListLoading = action.payload;
         },
+        setShowBankDetail: (state, action) => {
+            state.showBankDetails = action.payload;
+        },
 
     },
 });
@@ -38,4 +43,4 @@ export const dashboardSlice = createSlice({
 export default dashboardSlice.reducer;
 
 export const {
-    setShowDashboard, setShowDashboardLoading, setShowBankList, setShowBankListLoading } = dashboardSlice.actions;
+    setShowDashboard, setShowDashboardLoading, setShowBankList, setShowBankListLoading, setShowBankDetail } = dashboardSlice.actions;

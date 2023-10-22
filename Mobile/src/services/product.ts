@@ -19,12 +19,14 @@ export const getShowPromo = () => async (dispatch: RootDispatch) => {
       dispatch(showPromoLoading(false));
     })
     .catch(err => {
-      Toast.show({
-        type: 'error',
-        text1: 'Error',
-        text2:
-          err.response?.data?.message ?? 'Terjadi error, coba lagi nanti.',
-      })
+      if (err.response?.status !== 401) {
+        Toast.show({
+          type: 'error',
+          text1: 'Error',
+          text2:
+            err.response?.data?.message ?? 'Terjadi error, coba lagi nanti.',
+        })
+      }
       dispatch(showPromoLoading(false));
     });
 

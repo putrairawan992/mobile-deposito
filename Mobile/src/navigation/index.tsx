@@ -1,8 +1,8 @@
-import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import React from 'react';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import React, { useCallback, useEffect, useState } from 'react';
 
-import {RootStackParamList} from './interface';
+import { RootStackParamList } from './interface';
 import Login from '../screens/Login';
 import Splash from '../screens/Splash';
 import OTP from '../screens/OTP';
@@ -39,15 +39,23 @@ import SemuaPromo from '../screens/SemuaPromo';
 import BottomNavigator from '../components/BottomNavigator';
 import BuatPassword from '../screens/BuatPassword';
 import Password from '../screens/Password';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootDispatch, RootState } from '../store';
+import { getDetailNasabah } from '../services/user';
+import { useFocusEffect } from '@react-navigation/native';
+import { setToken } from '../store/user';
+import { getStorage, removeStorage } from '../utils/storage';
+import { ActivityIndicator } from 'react-native';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 const Tab = createBottomTabNavigator();
 
+
 function MyTabs() {
   return (
     <Tab.Navigator
-      screenOptions={{headerShown: false}}
-      tabBar={props => BottomNavigator({...props})}>
+      screenOptions={{ headerShown: false }}
+      tabBar={props => BottomNavigator({ ...props })}>
       <Tab.Screen component={Beranda} name="Beranda" />
       <Tab.Screen component={Produk} name="Produk" />
       <Tab.Screen component={Portofolio} name="Portofolio" />
@@ -57,14 +65,43 @@ function MyTabs() {
 }
 
 function StackNavigator() {
+  const { token, detailNasabah } = useSelector((state: RootState) => state.userReducer);
+  const dispatch = useDispatch<RootDispatch>();
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [isShowContent, setIsShowContent] = useState<boolean>(false);
+
+  useEffect(() => {
+    dispatch(getDetailNasabah());
+  }, [dispatch]);
+
+  useEffect(
+    useCallback(() => {
+      const useToken = async () => {
+        if (await getStorage("token") && (detailNasabah?.idUserNasabah !== "" || detailNasabah?.idUserNasabah !== null)) {
+          setIsShowContent(true)
+          setIsLoading(false);
+        } else {
+          dispatch(setToken(null));
+          setIsLoading(false);
+          removeStorage("token");
+          setIsShowContent(false);
+        }
+      }
+      useToken();
+    }, [detailNasabah, token, isShowContent]),
+  );
+
   return (
+    isLoading ? <ActivityIndicator style={{ position: 'absolute', top: 150, left: 0, right: 0 }}
+    size={'large'} /> :
     <Stack.Navigator
-      initialRouteName="Splash"
-      screenOptions={{animation: 'slide_from_right', headerShown: false}}>
+      initialRouteName={!isShowContent ? "Splash" : "MyTabs"}
+      screenOptions={{ animation: 'slide_from_right', headerShown: false }}>
       <Stack.Screen component={Splash} name="Splash" />
-      <Stack.Screen component={MyTabs} name="MyTabs" />
       <Stack.Screen component={Login} name="Login" />
       <Stack.Screen component={OTP} name="OTP" />
+      <Stack.Screen component={Register} name="Register" />
+      <Stack.Screen component={MyTabs} name="MyTabs" />
       <Stack.Screen component={AhliWaris} name="AhliWaris" />
       <Stack.Screen component={AhliWarisEdit} name="AhliWarisEdit" />
       <Stack.Screen component={AjukanDeposito} name="AjukanDeposito" />
@@ -82,7 +119,7 @@ function StackNavigator() {
       <Stack.Screen component={PIN} name="PIN" />
       <Stack.Screen component={PortofolioDetail} name="PortofolioDetail" />
       <Stack.Screen component={ProdukDetail} name="ProdukDetail" />
-      <Stack.Screen component={Register} name="Register" />
+
       <Stack.Screen component={RekeningSaya} name="RekeningSaya" />
       <Stack.Screen component={KeamananAkun} name="KeamananAkun" />
       <Stack.Screen component={RekeningSayaDetail} name="RekeningSayaDetail" />
@@ -98,5 +135,5 @@ function StackNavigator() {
 }
 
 export default function Router() {
-  return <StackNavigator />;
+  return  <StackNavigator />;
 }
