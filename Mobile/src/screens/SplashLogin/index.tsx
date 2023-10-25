@@ -1,15 +1,25 @@
-import {Image, View} from 'react-native';
-import React from 'react';
+import { Image, View } from 'react-native';
+import React, { useCallback, useEffect } from 'react';
 import DefaultView from '../../components/DefaultView';
-import {colors} from '../../utils/colors';
-import {images} from '../../utils/images';
+import { colors } from '../../utils/colors';
+import { images } from '../../utils/images';
 import LinearGradient from 'react-native-linear-gradient';
 import Gap from '../../components/Gap';
 import DefaultText from '../../components/DefaultText';
 import Button from '../../components/Button';
-import {navigationRef} from '../../navigation/RootNavigation';
+import { navigationRef } from '../../navigation/RootNavigation';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootDispatch, RootState } from '../../store';
+import { getDetailNasabah } from '../../services/user';
 
 export default function SplashLogin() {
+  const { detailNasabah } = useSelector((state: RootState) => state.userReducer);
+  const dispatch = useDispatch<RootDispatch>();
+
+  useEffect(() => {
+    dispatch(getDetailNasabah());
+  }, [dispatch]);
+
   return (
     <DefaultView statusBarColor={colors.primaryLight}>
       <LinearGradient
@@ -25,7 +35,7 @@ export default function SplashLogin() {
         <View className="items-center absolute bottom-7 self-center">
           <Button
             title="MASUK"
-            onPress={() => navigationRef.navigate('SyaratKetentuan')}
+            onPress={() => navigationRef.navigate((detailNasabah?.idUserNasabah !== "" || detailNasabah?.idUserNasabah !== null) ? 'MyTabs' : 'SyaratKetentuan')}
           />
           <Gap height={15} />
           <DefaultText

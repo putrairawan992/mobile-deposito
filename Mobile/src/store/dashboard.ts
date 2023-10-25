@@ -3,6 +3,7 @@ import { createSlice } from '@reduxjs/toolkit';
 
 interface InitialState {
     showDashboard: any
+    showSplashDashboard:any,
     showDashboardLoading: boolean
     showBankList: any
     showBankDetails: any,
@@ -10,6 +11,7 @@ interface InitialState {
 }
 
 const initialState: InitialState = {
+    showSplashDashboard:null,
     showDashboard: null,
     showBankList: null,
     showBankDetails: null,
@@ -23,6 +25,9 @@ export const dashboardSlice = createSlice({
     reducers: {
         setShowDashboard: (state, action) => {
             state.showDashboard = action.payload;
+        },
+        setSplashDashboard: (state, action) => {
+            state.showSplashDashboard = action.payload;
         },
         setShowDashboardLoading: (state, action) => {
             state.showDashboardLoading = action.payload;
@@ -43,4 +48,4 @@ export const dashboardSlice = createSlice({
 export default dashboardSlice.reducer;
 
 export const {
-    setShowDashboard, setShowDashboardLoading, setShowBankList, setShowBankListLoading, setShowBankDetail } = dashboardSlice.actions;
+    setSplashDashboard,setShowDashboard, setShowDashboardLoading, setShowBankList, setShowBankListLoading, setShowBankDetail } = dashboardSlice.actions;

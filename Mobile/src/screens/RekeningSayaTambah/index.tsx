@@ -11,7 +11,7 @@ import ModalBank from '../../components/ModalBank';
 import { showToast } from '../../utils/toast';
 import { useDispatch } from 'react-redux';
 import { RootDispatch } from '../../store';
-import { postShowBankList } from '../../services/dasbhoard';
+import { getShowBankList, postShowBankList } from '../../services/dasbhoard';
 import ModalPemilikBank from '../../components/ModalPemilikBank';
 
 export default function RekeningSayaTambah() {
@@ -37,10 +37,10 @@ export default function RekeningSayaTambah() {
     const payload = {
       nama: namaBank,
       norek: rekening,
+      pin:pin,
       default: 1,
       code: 114,
       jenis:pemilikBank,
-      // pin:pin,
       atas_nama: namaRekening
     }
     dispatch(postShowBankList(payload, setShowModalSuccess));
@@ -164,6 +164,7 @@ export default function RekeningSayaTambah() {
         onConfirm={() => {
           setShowModalSuccess(false);
           navigationRef.goBack();
+          dispatch(getShowBankList());
         }}
       />
 

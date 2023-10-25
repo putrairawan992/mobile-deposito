@@ -22,7 +22,6 @@ export default function GantiPIN() {
   const [showPINBaru, setShowPINBaru] = useState<boolean>(false);
   const [showPINConfirm, setShowPINConfirm] = useState<boolean>(false);
   const [showModalSuccess, setShowModalSuccess] = useState<boolean>(false);
-  const [passwordSekarang, setPasswordSekarang] = useState<string>('');
   const [PINSekarang, setPINSekarang] = useState<string>('');
   const [PINBaru, setPINBaru] = useState<string>('');
   const [PINConfirm, setPINConfirm] = useState<string>('');
@@ -61,8 +60,6 @@ export default function GantiPIN() {
     if (otp.length < 6) {
       return showToast('Masukkan OTP');
     }
-    console.log('====>',{ otp: otp, pin: PINConfirm });
-    
     dispatch(registerPasswordPin({ otp: otp, pin: PINConfirm }, 'Profile'))
   };
 

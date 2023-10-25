@@ -13,7 +13,7 @@ import { showToast } from '../../utils/toast';
 import { RootStackScreenProps } from '../../navigation/interface';
 import { RootDispatch } from '../../store';
 import { useDispatch } from 'react-redux';
-import { updateNasabah } from '../../services/user';
+import { getDetailNasabah, updateNasabah } from '../../services/user';
 import { penghasilanValidation, statusNikahValidation } from '../../utils/constant';
 import ModalStatusPernikahan from '../../components/ModalStatusPernikahan';
 import ModalPenghasilan from '../../components/ModalPenghasilan';
@@ -21,8 +21,9 @@ import ModalPenghasilan from '../../components/ModalPenghasilan';
 export default function DetailPribadiEdit({ route }: RootStackScreenProps<'DetailPribadiEdit'>) {
   const detailPribadi = route.params?.detailNasabah as any;
   const [ktp, setKtp] = useState<string>(detailPribadi?.ktp);
+  const [nama,setNama] = useState<string>(detailPribadi?.nama);
   const [tempatLahir, setTempatLahir] = useState<string>(detailPribadi?.tmpt_lahir);
-  const [tanggalLahir, setTanggalLahir] = useState<any>(detailPribadi?.tgl_lahir);
+  const [tanggalLahir, setTanggalLahir] = useState<Date>();
   const [ibu, setIbu] = useState<string>(detailPribadi?.ibu_kandung);
   const [statusNikah, setStatusNikah] = useState<string>(detailPribadi?.status_pernikahan);
   const [profesi, setProfesi] = useState<string>(detailPribadi?.jenis_pekerjaan);
@@ -35,43 +36,28 @@ export default function DetailPribadiEdit({ route }: RootStackScreenProps<'Detai
   const [showDate, setShowDate] = useState<boolean>(false);
   const [showPenghasilan, setShowPenghasilan] = useState<boolean>(false);
   const [showStatusPernikahan, setShowStatusPernikahan] =
-  useState<boolean>(false);
+    useState<boolean>(false);
   const dispatch = useDispatch<RootDispatch>();
 
   const onSave = () => {
-    if (
-      ktp.trim().length === 0 ||
-      tempatLahir.trim().length === 0 ||
-      !tanggalLahir ||
-      ibu.trim().length === 0 ||
-      statusNikah.trim().length === 0 ||
-      profesi.trim().length === 0 ||
-      perusahaan.trim().length === 0 ||
-      alamatPerusahaan.trim().length === 0 ||
-      penghasilan.trim().length === 0
-    ) {
-      return showToast('Data belum lengkap');
-    }
-
     if (ktp.trim().length !== 16) {
       return showToast('No KTP tidak valid');
     }
-
     if (pin.trim().length < 6) {
       return showToast('Masukkan PIN kamu');
     }
-
     let formdata = new FormData();
     formdata.append('ktp', ktp);
+    formdata.append('nama', nama);
     formdata.append('tmpt_lahir', tempatLahir);
-    formdata.append('tgl_lahir', tanggalLahir);
+    formdata.append('tgl_lahir', moment(tanggalLahir).format('YYYY-DD-MM'));
     formdata.append('ibu_kandung', ibu);
     formdata.append('status_pernikahan', statusNikah);
     formdata.append('jenis_pekerjaan', profesi);
     formdata.append('nama_perusahaan', perusahaan);
     formdata.append('alamat_kerja', alamatPerusahaan);
     formdata.append('penghasilan', penghasilan);
-    formdata.append('pin',pin);
+    formdata.append('pin', pin);
     dispatch(updateNasabah(formdata, setShowModalSuccess));
   };
 
@@ -88,6 +74,17 @@ export default function DetailPribadiEdit({ route }: RootStackScreenProps<'Detai
                 value={ktp}
                 onChangeText={value => setKtp(value)}
                 keyboardType="number-pad"
+              />
+            </View>
+          </View>
+          <Gap height={5} />
+          <View className="flex-row items-center">
+            <DefaultText title="Nama" titleClassName="flex-1" />
+            <View className="border-[1px] border-primary rounded-md w-[200] px-2 py-2">
+              <TextInput
+                className="m-0 p-0 font-inter-regular"
+                value={nama}
+                onChangeText={value => setNama(value)}
               />
             </View>
           </View>
@@ -112,7 +109,7 @@ export default function DetailPribadiEdit({ route }: RootStackScreenProps<'Detai
               <TextInput
                 editable={false}
                 className="m-0 p-0 font-inter-regular text-black"
-                value={tanggalLahir}
+                value={tanggalLahir ? moment(tanggalLahir).format('DD-MMMM-YYYY') : detailPribadi?.tgl_lahir}
                 onPressIn={() => setShowDate(true)}
               />
             </View>
@@ -227,22 +224,22 @@ export default function DetailPribadiEdit({ route }: RootStackScreenProps<'Detai
       </ScrollView>
 
       <ModalPenghasilan
-          show={showPenghasilan}
-          hide={() => setShowPenghasilan(false)}
-          onConfirm={value => {
-            setShowPenghasilan(false);
-            setPenghasilan(value);
-          }}
-        />
+        show={showPenghasilan}
+        hide={() => setShowPenghasilan(false)}
+        onConfirm={value => {
+          setShowPenghasilan(false);
+          setPenghasilan(value);
+        }}
+      />
 
       <ModalStatusPernikahan
-          show={showStatusPernikahan}
-          hide={() => setShowStatusPernikahan(false)}
-          onConfirm={value => {
-            setShowStatusPernikahan(false);
-            setStatusNikah(value);
-          }}
-        />
+        show={showStatusPernikahan}
+        hide={() => setShowStatusPernikahan(false)}
+        onConfirm={value => {
+          setShowStatusPernikahan(false);
+          setStatusNikah(value);
+        }}
+      />
 
       <ModalAlert
         show={showModalSuccess}
@@ -251,6 +248,7 @@ export default function DetailPribadiEdit({ route }: RootStackScreenProps<'Detai
         onConfirm={() => {
           setShowModalSuccess(false);
           navigationRef.goBack();
+          dispatch(getDetailNasabah());
         }}
       />
 

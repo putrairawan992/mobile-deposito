@@ -3,7 +3,6 @@ import React, { useEffect } from 'react';
 import DefaultView from '../../components/DefaultView';
 import DefaultText from '../../components/DefaultText';
 import DefaultHeader from '../../components/DefaultHeader';
-import LinearGradient from 'react-native-linear-gradient';
 import { colors } from '../../utils/colors';
 import Gap from '../../components/Gap';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -25,14 +24,10 @@ export default function Profile() {
 
   return (
     <DefaultView>
-      <LinearGradient
-        colors={[colors.primary, '#0F3746']}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 0 }}>
         <DefaultHeader
           title="Profil"
-          titleClassName="text-white"
-          iconColor={colors.white}
+          titleClassName="text-black"
+          iconColor={colors.black}
         />
         <View className="px-5 pb-3 flex-row items-center">
           {/* <Image
@@ -46,18 +41,16 @@ export default function Profile() {
           <View className="flex-1">
             <DefaultText
               title={detailNasabah?.nama}
-              titleClassName="text-lg font-inter-bold text-white"
+              titleClassName="text-lg font-inter-bold"
             />
             <Gap height={5} />
             <DefaultText
               title={detailNasabah?.email}
-              titleClassName="text-white"
             />
             <Gap height={5} />
-            <DefaultText title={detailNasabah?.phone} titleClassName="text-white" />
+            <DefaultText title={detailNasabah?.phone} />
           </View>
         </View>
-      </LinearGradient>
 
       <ScrollView showsVerticalScrollIndicator={false}>
         <View className="bg-neutral-300 px-3 py-1">
@@ -137,7 +130,9 @@ export default function Profile() {
         <TouchableOpacity
           onPress={() => Linking.openURL('https://google.com')}
           activeOpacity={0.7}
-          className="bg-primary-light rounded-full px-3 py-2 flex-row items-center">
+          className="bg-primary-light rounded-full 
+          px-3 py-2 flex-row 
+          items-center">
           <DefaultText
             title="Nilai Kami"
             titleClassName="font-inter-bold flex-1"

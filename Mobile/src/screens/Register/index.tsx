@@ -84,11 +84,12 @@ export default function Register() {
     formdata.append('ktp_ahli_waris', ahliWarisKtp);
     formdata.append('phone_ahli_waris', ahliWarisPhone);
     formdata.append('hub_ahli_waris', hubunganAhliWaris);
+    formdata.append('nama_bank', bank);
+    formdata.append('norek', rekening);
+    formdata.append('atas_nama', namaRekening);
     formdata.append('image_ktp', fotoKtp ?? '');
     formdata.append('image_selfie', fotoNasabah ?? '');
     formdata.append('image_ktp_ahli_waris', fotoKtpAhliWaris ?? '');
-    console.log("formdata", formdata);
-
     dispatch(registerNasabah(formdata));
   };
 

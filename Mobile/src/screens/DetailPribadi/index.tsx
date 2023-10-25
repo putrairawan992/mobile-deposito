@@ -36,6 +36,13 @@ export default function DetailPribadi() {
           </View>
           <Gap height={5} />
           <View className="flex-row items-center">
+            <DefaultText title="Nama" titleClassName="flex-1" />
+            <View className="border-[1px] border-primary rounded-md w-[150] px-2 py-2">
+              <DefaultText title={detailNasabah?.nama} />
+            </View>
+          </View>
+          <Gap height={5} />
+          <View className="flex-row items-center">
             <DefaultText title="Tempat Lahir" titleClassName="flex-1" />
             <View className="border-[1px] border-primary rounded-md w-[150] px-2 py-2">
               <DefaultText title={detailNasabah?.tmpt_lahir} />

@@ -48,3 +48,7 @@ export const statusNikahValidation = (val: string) => {
   }
   return textVal;
 }
+
+export function capitalizeFirstLetter(val:string) {
+  return val?.charAt(0)?.toUpperCase() + val?.slice(1)?.replace(/[0-9]|[_]|[-]/g, ' ');
+}

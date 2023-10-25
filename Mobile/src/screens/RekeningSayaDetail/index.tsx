@@ -11,7 +11,7 @@ import ModalAlert from '../../components/ModalAlert';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootDispatch, RootState } from '../../store';
 import { getDetailNasabah } from '../../services/user';
-import { deleteBankDetailList, getBankDetailList } from '../../services/dasbhoard';
+import { deleteBankDetailList, getBankDetailList, getShowBankList } from '../../services/dasbhoard';
 import { RootStackScreenProps } from '../../navigation/interface';
 
 export default function RekeningSayaDetail({ route }: RootStackScreenProps<'RekeningSayaDetail'>) {
@@ -28,7 +28,7 @@ export default function RekeningSayaDetail({ route }: RootStackScreenProps<'Reke
   useEffect(() => {
     dispatch(getBankDetailList(idParams))
   }, [dispatch])
-  
+
   return (
     <DefaultView>
       <DefaultHeader title="Detail Akun Bank" />
@@ -99,7 +99,7 @@ export default function RekeningSayaDetail({ route }: RootStackScreenProps<'Reke
         <TouchableOpacity
           onPress={() => {
             if (isDelete) {
-              dispatch(deleteBankDetailList(idParams,setShowModalSuccess))
+              dispatch(deleteBankDetailList(idParams, setShowModalSuccess, { pin: pin }))
             } else {
               setIsDelete(true);
             }
@@ -116,6 +116,7 @@ export default function RekeningSayaDetail({ route }: RootStackScreenProps<'Reke
         title={'Selamat, proses hapus akun bank\nanda berhasil'}
         onConfirm={() => {
           setShowModalSuccess(false);
+          dispatch(getShowBankList());
           navigationRef.goBack();
         }}
       />

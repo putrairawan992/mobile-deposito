@@ -22,8 +22,7 @@ export default function PortofolioDetail({ route }: RootStackScreenProps<'Portof
   const dispatch = useDispatch<RootDispatch>();
 
   useEffect(() => {
-    let params = no_transaksi;
-    dispatch(getShowPortofolioDetail(params))
+    dispatch(getShowPortofolioDetail(no_transaksi))
   }, [no_transaksi])
 
   return (

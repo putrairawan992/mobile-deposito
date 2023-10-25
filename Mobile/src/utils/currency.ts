@@ -7,7 +7,7 @@ export function formatRupiah(angka: any, prefix: string) {
         const ribuan = split && split[0]?.substr(sisa)?.match(/\d{3}/gi);
         if (ribuan) {
             const separator = sisa ? '.' : '';
-            rupiah += separator + ribuan.join('.');
+            rupiah += separator + ribuan?.join('.');
         }
         rupiah = split &&  split[1] != undefined ? rupiah + ',' + split &&  split[1] : rupiah;
         return prefix == undefined ? rupiah : (rupiah ? 'Rp. ' + rupiah : '');

@@ -18,24 +18,28 @@ import { useDispatch, useSelector } from 'react-redux';
 import { RootDispatch, RootState } from '../../store';
 import { getShowPortofolio } from '../../services/portofolio';
 import { formatRupiah } from '../../utils/currency';
+import { capitalizeFirstLetter } from '../../utils/constant';
 
 const Item = ({ item }: any) => {
   const statusVal = () => {
-    let status = 'ON PROCESS';
+    let status = 'On Process';
     if (item.status === 0) {
-      status = 'BATAL'
+      status = 'Batal'
     }
     if (item.status === 4) {
-      status = 'PEMBAYARAN BERHASIL'
+      status = 'Pembayaran Berhasil'
     }
     if (item.status === 5) {
-      status = 'SELESAI'
+      status = 'Selesai'
     }
     if (item.status === 6) {
-      status = 'DI TOLAK'
+      status = 'Di Tolak'
     }
     return status;
   }
+
+  const percentage = (item.bagi_hasil / item.bagi_hasil) * 100;
+
 
   return (
     <LinearGradient
@@ -68,7 +72,7 @@ const Item = ({ item }: any) => {
             title="Proyeksi Bagi Hasil"
             titleClassName="text-xs text-white"
           />
-          <DefaultText title={`${item.bagi_hasil}% / Tahun`} titleClassName="text-xs text-white" />
+          <DefaultText title={`${percentage.toFixed(2)}% / Tahun`} titleClassName="text-xs text-white" />
           <Gap height={5} />
           <DefaultText title="Nisbah" titleClassName="text-xs text-white" />
           <DefaultText title="40 : 60" titleClassName="text-xs text-white" />
@@ -77,7 +81,7 @@ const Item = ({ item }: any) => {
         <View className="">
           <View className="bg-yellow-600 px-1 py-1 rounded-sm self-center">
             <DefaultText
-              title={statusVal()}
+              title={capitalizeFirstLetter(statusVal())}
               titleClassName="text-xs text-white"
             />
           </View>
@@ -127,10 +131,7 @@ export default function Portofolio() {
         break;
     }
     dispatch(getShowPortofolio(params));
-  }, [activeTab, params])
-
-  console.log("showPortofolio", showPortofolio);
-
+  }, [activeTab, params]);
 
   return (
     <DefaultView>
@@ -159,7 +160,8 @@ export default function Portofolio() {
           })}
         </ScrollView>
       </View>
-      {showPortofolioLoading ? <ActivityIndicator /> : <FlatList
+      {showPortofolioLoading ? <ActivityIndicator style={{ position: 'absolute', top: 150, left: 0, right: 0 }}
+        size={'large'} /> : <FlatList
         data={showPortofolio?.data}
         keyExtractor={(_, key) => key.toString()}
         showsVerticalScrollIndicator={false}

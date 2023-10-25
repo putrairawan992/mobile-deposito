@@ -85,9 +85,9 @@ export default function Beranda() {
             height={100}
             // autoPlay={true}
             data={
-              [{ val: showDashboard?.bagiHasil, label: "Proyek Bagi Hasil" },
-              { val: showDashboard?.deposito, label: "Proyek Deposito" },
-              { val: showDashboard?.portofolio, label: "Proyek Portofolio" }]}
+              [{ val: showDashboard?.bagiHasil, label: "Proyeksih Bagi Hasil" },
+              { val: showDashboard?.deposito, label: "Proyeksih Deposito" },
+              { val: showDashboard?.portofolio, label: "Proyeksih Portofolio" }]}
             // scrollAnimationDuration={1000}
             onSnapToItem={index => setTopActive(index)}
             renderItem={({ item }) => (
@@ -146,7 +146,7 @@ export default function Beranda() {
           height={width / 2}
           autoPlay={true}
           data={(showPromo && showPromo?.length > 0) && showPromo || [1, 2, 3, 4]}
-          scrollAnimationDuration={100}
+          scrollAnimationDuration={1000}
           onSnapToItem={index => setPromoActive(index)}
           renderItem={({ item }: any) => (
             <TouchableOpacity activeOpacity={0.7} style={{ alignSelf: 'center' }}>
@@ -159,7 +159,7 @@ export default function Beranda() {
           )}
         />
         <View className="flex-row justify-center">
-          {[1, 2, 3].map((item, key) => {
+          {(showPromo && showPromo?.length > 0) && showPromo.map((item:any, key:any) => {
             return (
               <View
                 key={key}

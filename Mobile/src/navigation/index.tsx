@@ -42,7 +42,6 @@ import Password from '../screens/Password';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootDispatch, RootState } from '../store';
 import { getDetailNasabah } from '../services/user';
-import { useFocusEffect } from '@react-navigation/native';
 import { setToken } from '../store/user';
 import { getStorage, removeStorage } from '../utils/storage';
 import { ActivityIndicator } from 'react-native';

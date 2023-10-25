@@ -17,7 +17,7 @@ export default function AhliWaris() {
 
   useEffect(() => {
     dispatch(getDetailNasabah())
-  }, [])
+  }, [dispatch])
 
   return (
     <DefaultView>

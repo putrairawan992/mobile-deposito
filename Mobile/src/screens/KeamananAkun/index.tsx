@@ -70,11 +70,11 @@ export default function KeamananAkun() {
               />
               <Gap height={5} />
               <DefaultText
-                title="089694624299"
+                title={detailNasabah?.phone}
                 titleClassName="font-inter-bold"
               />
             </View>
-            <Icon name="chevron-right" size={30} />
+            {/* <Icon name="chevron-right" size={30} /> */}
           </TouchableOpacity>
           <Gap height={15} />
           <TouchableOpacity

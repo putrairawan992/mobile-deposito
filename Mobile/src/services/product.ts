@@ -3,7 +3,9 @@ import store, { RootDispatch } from '../store';
 import { API } from '../utils/constant';
 import { setShowProductLoading, setShowProducts, showProductDetail, showProductDetailLoading, showPromo, showPromoLoading } from '../store/product';
 import Toast from 'react-native-toast-message';
-import { getStorage } from '../utils/storage';
+import { getStorage, removeStorage } from '../utils/storage';
+import { setToken } from '../store/user';
+import { navigationRef } from '../navigation/RootNavigation';
 
 export const getShowPromo = () => async (dispatch: RootDispatch) => {
   dispatch(showPromoLoading(true));
@@ -19,14 +21,17 @@ export const getShowPromo = () => async (dispatch: RootDispatch) => {
       dispatch(showPromoLoading(false));
     })
     .catch(err => {
-      if (err.response?.status !== 401) {
-        Toast.show({
-          type: 'error',
-          text1: 'Error',
-          text2:
-            err.response?.data?.message ?? 'Terjadi error, coba lagi nanti.',
-        })
+      if (err?.response?.status === 401) {
+        removeStorage('token');
+        dispatch(setToken(null));
+        navigationRef.navigate('Login');
       }
+      Toast.show({
+        type: 'error',
+        text1: 'Error',
+        text2:
+          err.response?.data?.message ?? 'Terjadi error, coba lagi nanti.',
+      })
       dispatch(showPromoLoading(false));
     });
 
@@ -52,6 +57,11 @@ export const getShowProductNasabah = () => async (dispatch: RootDispatch) => {
         text2:
           err.response?.data?.message ?? 'Terjadi error, coba lagi nanti.',
       })
+      if (err?.response?.status === 401) {
+        removeStorage('token');
+        dispatch(setToken(null));
+        navigationRef.navigate('Login');
+      }
       dispatch(setShowProductLoading(false));
     });
 
@@ -77,14 +87,19 @@ export const getShowProductNasabahDetail = (id: any) => async (dispatch: RootDis
         text2:
           err.response?.data?.message ?? 'Terjadi error, coba lagi nanti.',
       })
+      if (err?.response?.status === 401) {
+        removeStorage('token');
+        dispatch(setToken(null));
+        navigationRef.navigate('Login');
+      }
       dispatch(showProductDetailLoading(false));
     });
 
 };
 
 export const postAjukanDeposito =
-  (payload: any, setShowmodal:any, setLoadings: any) =>
-    async () => {
+  (payload: any, setShowmodal: any, setLoadings: any) =>
+    async (dispatch: RootDispatch) => {
       let data;
       setLoadings(true);
       axios
@@ -112,13 +127,18 @@ export const postAjukanDeposito =
             text1: 'Error',
             text2: err.response?.data?.errors?.amount ?? err.response?.data?.message ?? 'Terjadi error, coba lagi nanti.',
           });
+          if (err?.response?.status === 401) {
+            removeStorage('token');
+            dispatch(setToken(null));
+            navigationRef.navigate('Login');
+          }
         })
       return data;
     };
 
 export const estimasiAjukanDeposito =
   (payload: any, setData: any, setLoadings: any) =>
-    async () => {
+    async (dispatch: RootDispatch) => {
       let data;
       setLoadings(true);
       axios
@@ -147,6 +167,11 @@ export const estimasiAjukanDeposito =
             text1: 'Error',
             text2: err.response?.data?.errors?.amount ?? err.response?.data?.message ?? 'Terjadi error, coba lagi nanti.',
           });
+          if (err?.response?.status === 401) {
+            removeStorage('token');
+            dispatch(setToken(null));
+            navigationRef.navigate('Login');
+          }
         })
       return data;
     };    

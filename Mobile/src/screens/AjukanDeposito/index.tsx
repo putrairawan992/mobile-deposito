@@ -30,7 +30,7 @@ export default function AjukanDeposito({ route }: RootStackScreenProps<"AjukanDe
     (state: RootState) => state.dashboardReducer,
   );
   const dispatch = useDispatch<RootDispatch>();
-  const bankDefault = showBankList?.find((li: any) => li?.default === "0");
+  const bankDefault = showBankList?.find((li: any) => li?.default === "1");
 
   useEffect(() => {
     dispatch(getShowBankList())
@@ -45,7 +45,7 @@ export default function AjukanDeposito({ route }: RootStackScreenProps<"AjukanDe
     }
     const payload = {
       id_norek: showBankList[0]?.id,
-      aro: 1,
+      aro: agree ? 1 : 0,
       amount: nominal?.replace(/\./g, ""),
       bagi_hasil: data?.estimasi_akhir?.toString(),
       tenor: showProductDetail?.tenor,
@@ -132,12 +132,12 @@ export default function AjukanDeposito({ route }: RootStackScreenProps<"AjukanDe
           <Gap height={10} />
           <View className="flex-row">
             <DefaultText title="Penempatan Dana" titleClassName="flex-1" />
-            <DefaultText title={nominal} />
+            <DefaultText title={formatRupiah(nominal)} />
           </View>
           <Gap height={10} />
           <View className="flex-row">
             <DefaultText title="Bagi Hasil" titleClassName="flex-1" />
-            <DefaultText title={data?.estimasi_akhir || 0} />
+            <DefaultText title={formatRupiah(String(data?.estimasi_akhir)) || 0} />
           </View>
           <Gap height={10} />
           <View className="flex-row">

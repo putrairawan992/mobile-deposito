@@ -17,9 +17,9 @@ import { getStorage, removeStorage } from '../../utils/storage';
 import { setToken } from '../../store/user';
 
 const Item = (data: any) => {
-  let noProduct = data?.data?.item?.no_produk;
-  console.log(data);
-
+  const noProduct = data?.data?.item?.no_produk;
+  const angkaSebagaiPersentase = (data?.data?.item?.terkumpulpersen * 100).toFixed(2);
+  const percentage = Math.ceil(parseFloat(angkaSebagaiPersentase));
   return (
     <TouchableOpacity
       activeOpacity={0.7}
@@ -38,7 +38,7 @@ const Item = (data: any) => {
           <View className="flex-1">
             <DefaultText title="Target" titleClassName="text-xs text-white" />
             <DefaultText
-              title={data?.data?.item?.target}
+              title={formatRupiah(data?.data?.item?.target,'Rp ')}
               titleClassName="text-xs text-white"
             />
             <Gap height={5} />
@@ -89,9 +89,9 @@ const Item = (data: any) => {
         <Gap height={10} />
         <View className="w-full bg-gray-200 rounded-full dark:bg-gray-700">
           <View
-            className={`text-xs font-medium text-blue-100 text-center p-0.5 leading-none rounded-full ${data?.data?.item?.terkumpulpersen > 0 ? 'bg-green-600' : ''}`}
-            style={{ width: `${data?.data?.item?.terkumpulpersen}%` }}>
-            <DefaultText title={`${data?.data?.item?.terkumpulpersen}%`} titleClassName="text-center text-white" />
+            className={`text-xs font-medium text-blue-100 text-center p-0.5 leading-none rounded-full ${percentage > 1 ? 'bg-green-600' : null}`}
+            style={{ width: `${percentage}%`, height: 35 }}>
+            <DefaultText title={`${percentage}%`} titleClassName="text-center mt-1 text-white" />
           </View>
         </View>
       </LinearGradient>

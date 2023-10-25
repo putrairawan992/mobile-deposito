@@ -3,12 +3,12 @@ import { RootDispatch } from '../store';
 import { API } from '../utils/constant';
 import Toast from 'react-native-toast-message';
 import { setshowPortofolio, setshowPortofolioDetail, setshowPortofolioLoading, setshowPortofolioLoadingDetail } from '../store/portofolio';
-import { getStorage } from '../utils/storage';
+import { getStorage, removeStorage } from '../utils/storage';
+import { setToken } from '../store/user';
+import { navigationRef } from '../navigation/RootNavigation';
 
-export const getShowPortofolio = (params:string) => async (dispatch: RootDispatch) => {
+export const getShowPortofolio = (params: string) => async (dispatch: RootDispatch) => {
   dispatch(setshowPortofolioLoading(true));
-  console.log(params ? `${API}/pengajuan${params}` : `${API}/pengajuan`);
-  
   axios
     .get(params ? `${API}/pengajuan${params}` : `${API}/pengajuan`, {
       headers: {
@@ -28,10 +28,15 @@ export const getShowPortofolio = (params:string) => async (dispatch: RootDispatc
           err.response?.data?.message ?? 'Terjadi error, coba lagi nanti.',
       })
       dispatch(setshowPortofolioLoading(false));
+      if (err?.response?.status === 401) {
+        removeStorage('token');
+        dispatch(setToken(null));
+        navigationRef.navigate('Login');
+      }
     });
 };
 
-export const getShowPortofolioDetail = (params:any) => async (dispatch: RootDispatch) => {
+export const getShowPortofolioDetail = (params: any) => async (dispatch: RootDispatch) => {
   dispatch(setshowPortofolioLoadingDetail(true));
   axios
     .get(`${API}/pengajuan/${params}`, {
@@ -52,5 +57,10 @@ export const getShowPortofolioDetail = (params:any) => async (dispatch: RootDisp
           err.response?.data?.message ?? 'Terjadi error, coba lagi nanti.',
       })
       dispatch(setshowPortofolioLoadingDetail(false));
+      if (err?.response?.status === 401) {
+        removeStorage('token');
+        dispatch(setToken(null));
+        navigationRef.navigate('Login');
+      }
     });
 };

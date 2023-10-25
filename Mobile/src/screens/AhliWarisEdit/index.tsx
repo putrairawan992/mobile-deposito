@@ -25,13 +25,6 @@ export default function AhliWarisEdit({ route }: RootStackScreenProps<"AhliWaris
   const dispatch = useDispatch<RootDispatch>();
 
   const onSave = () => {
-    if (
-      nama.trim().length === 0 ||
-      ktp.trim().length === 0 ||
-      phone.trim().length === 0
-    ) {
-      return showToast('Data belum lengkap');
-    }
 
     if (ktp.trim().length !== 16) {
       return showToast('No KTP tidak valid, 16 Angka');
@@ -46,7 +39,6 @@ export default function AhliWarisEdit({ route }: RootStackScreenProps<"AhliWaris
     formdata.append('phone_ahli_waris', phone);
     formdata.append('hub_ahli_waris',hubunganAhliWaris);
     formdata.append('pin',pin);
-    console.log("formEditAhli===>",formdata);
     
     dispatch(updateNasabah(formdata,setShowModalSuccess));
   };

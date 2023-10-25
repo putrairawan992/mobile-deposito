@@ -27,7 +27,7 @@ const Item = ({
         <TouchableOpacity
           activeOpacity={0.7}
           className="flex-1"
-          onPress={() => navigationRef.navigate('RekeningSayaDetail', { id: item.id_owner })}>
+          onPress={() => navigationRef.navigate('RekeningSayaDetail', { id: item.id })}>
           <DefaultText title={item.nama} />
           <Gap height={2.5} />
           <DefaultText title={item.norek} />
@@ -37,7 +37,7 @@ const Item = ({
         <Icon name="chevron-right" size={30} />
       </View>
       <Gap width={10} />
-      <TouchableOpacity activeOpacity={0.7} onPress={() => onPress(item, index)}>
+      <TouchableOpacity activeOpacity={0.7} onPress={() => onPress(item.id, index)}>
         {isActive ? (
           <View className="w-[20] h-[20] border-[1px] border-primary rounded-full bg-primary" />
         ) : (
@@ -59,9 +59,10 @@ export default function RekeningSaya() {
     dispatch(getShowBankList())
   }, [dispatch]);
 
-  const actionDefaultBankShowList = (data: any, index: any) => {
+  const actionDefaultBankShowList = (id: any, index: any) => {
     setActive(index)
-    dispatch(defaultBankShowList(data?.id, dispatch(getShowBankList())))
+    dispatch(defaultBankShowList(id));
+    dispatch(getShowBankList())
   }
 
   return (

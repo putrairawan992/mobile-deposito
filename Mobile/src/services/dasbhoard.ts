@@ -2,10 +2,19 @@ import axios from 'axios';
 import { RootDispatch } from '../store';
 import { API } from '../utils/constant';
 import Toast from 'react-native-toast-message';
-import { setShowBankDetail, setShowBankList, setShowBankListLoading, setShowDashboard, setShowDashboardLoading } from '../store/dashboard';
+import { setShowBankDetail, setShowBankList, setShowBankListLoading, setShowDashboard, setShowDashboardLoading, setSplashDashboard } from '../store/dashboard';
 import { getStorage, removeStorage } from '../utils/storage';
 import { setToken } from '../store/user';
 import { navigationRef } from '../navigation/RootNavigation';
+
+
+export const getSplashDashboard = () => async (dispatch: RootDispatch) => {
+  axios
+    .get(`${API}/splash`)
+    .then(res => {
+      dispatch(setSplashDashboard(res?.data));
+    });
+};
 
 export const getShowDashboard = () => async (dispatch: RootDispatch) => {
   dispatch(setShowDashboardLoading(true));
@@ -88,10 +97,9 @@ export const postShowBankList = (payload: any, setShowModalSuccess: any) => asyn
 };
 
 
-export const defaultBankShowList = (id: any, actionGetBankList: any) => async (dispatch: RootDispatch) => {
+export const defaultBankShowList = (id: any) => async (dispatch: RootDispatch) => {
   axios
-    .put(
-      `${API}/rekbank/${id}`, {
+    .put(`${API}/defrekbank/${id}`, null, {
       headers: {
         Authorization: `Bearer ${await getStorage('token')}`
       }
@@ -101,21 +109,15 @@ export const defaultBankShowList = (id: any, actionGetBankList: any) => async (d
       Toast.show({
         type: 'success',
         text1: 'Sukses',
-        text2: res?.data ?? 'Berhasil Default Bank',
+        text2: res?.data?.message ?? 'Berhasil Default Bank',
       });
-      actionGetBankList();
     })
     .catch(err => {
-      // if (err?.response?.status === 401) {
-      //   removeStorage('token');
-      //   dispatch(setToken(null));
-      //   navigationRef.navigate('Login');
-      // }
       Toast.show({
         type: 'error',
         text1: 'Error',
         text2:
-          err.response?.data ?? err.response?.data?.message ?? 'Terjadi error, coba lagi nanti.',
+          err.response?.data?.message ?? 'Terjadi error, coba lagi nanti.',
       });
     });
 };
@@ -134,25 +136,20 @@ export const getBankDetailList = (id: any) => async (dispatch: RootDispatch) => 
       dispatch(setShowBankDetail(res.data));
     })
     .catch(err => {
-      if (err?.response?.status === 401) {
-        removeStorage('token');
-        dispatch(setToken(null));
-        navigationRef.navigate('Login');
-      }
       Toast.show({
         type: 'error',
         text1: 'Error',
         text2:
-          err.response?.data ?? err.response?.data?.message ?? 'Terjadi error, coba lagi nanti.',
+          err.response?.data?.message ?? 'Terjadi error, coba lagi nanti.',
       });
     });
 };
 
 
-export const deleteBankDetailList = (id: any,setShowModalSuccess:any) => async (dispatch: RootDispatch) => {
+export const deleteBankDetailList = (id: any, setShowModalSuccess: any, payload: any) => async (dispatch: RootDispatch) => {
   axios
-    .delete(
-      `${API}/rekbank/${id}`, {
+    .put(
+      `${API}/rekbank/${id}`, payload, {
       headers: {
         Authorization: `Bearer ${await getStorage('token')}`
       }
@@ -162,18 +159,11 @@ export const deleteBankDetailList = (id: any,setShowModalSuccess:any) => async (
       setShowModalSuccess(true);
     })
     .catch(err => {
-      console.log(err?.response?.data);
-      
-      if (err?.response?.status === 401) {
-        removeStorage('token');
-        dispatch(setToken(null));
-        navigationRef.navigate('Login');
-      }
       Toast.show({
         type: 'error',
         text1: 'Error',
         text2:
-          err.response?.data ?? err.response?.data?.message ?? 'Terjadi error, coba lagi nanti.',
+          err.response?.data?.message ?? 'Terjadi error, coba lagi nanti.',
       });
     });
 };

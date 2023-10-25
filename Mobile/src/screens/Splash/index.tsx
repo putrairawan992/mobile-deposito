@@ -9,11 +9,22 @@ import DefaultText from '../../components/DefaultText';
 import Button from '../../components/Button';
 import PagerView from 'react-native-pager-view';
 import { navigationRef } from '../../navigation/RootNavigation';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootDispatch, RootState } from '../../store';
+import { getSplashDashboard } from '../../services/dasbhoard';
 
 
 export default function Splash() {
   const [initialPage, setInitialPage] = useState<number>(0);
   const ref = createRef<PagerView>();
+  const dispatch = useDispatch<RootDispatch>();
+  const { showSplashDashboard } = useSelector(
+    (state: RootState) => state.dashboardReducer,
+  );
+
+  useEffect(() => {
+    dispatch(getSplashDashboard())
+  }, [dispatch])
 
   useEffect(() => {
     const intervalID = setInterval(() => {
@@ -43,27 +54,15 @@ export default function Splash() {
           ref={ref}
           initialPage={initialPage}
           onPageSelected={e => setInitialPage(e.nativeEvent.position)}>
-          <View key="1">
-            <Image
-              className="w-[200] h-[200] self-center"
-              source={images.splashOne}
-              resizeMode="contain"
-            />
-          </View>
-          <View key="2">
-            <Image
-              className="w-[200] h-[200] self-center"
-              source={images.splashTwo}
-              resizeMode="contain"
-            />
-          </View>
-          <View key="3">
-            <Image
-              className="w-[200] h-[200] self-center"
-              source={images.splashThree}
-              resizeMode="contain"
-            />
-          </View>
+          {showSplashDashboard.map((list: any, index: any) => {
+            return <View key={index + 1}>
+              <Image
+                className="w-[200] h-[200] self-center"
+                source={{ uri: list.image }}
+                resizeMode="contain"
+              />
+            </View>
+          })}
         </PagerView>
 
         <DefaultText
