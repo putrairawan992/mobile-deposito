@@ -41,7 +41,7 @@ import BuatPassword from '../screens/BuatPassword';
 import Password from '../screens/Password';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootDispatch, RootState } from '../store';
-import { getDetailNasabah } from '../services/user';
+import { getUserProfile } from '../services/user';
 import { getItem } from '../utils/storage';
 import { ActivityIndicator } from 'react-native';
 
@@ -67,20 +67,16 @@ function StackNavigator() {
   const dispatch = useDispatch<RootDispatch>();
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isShowContent, setIsShowContent] = useState<boolean>(false);
-  const [dtNasabah, setDtNasabah] = useState<any>();
 
   useEffect(() => {
-    dispatch(getDetailNasabah());
+    dispatch(getUserProfile());
   }, [dispatch]);
 
-  useEffect(() => {
-    setDtNasabah(detailNasabah);
-  }, [detailNasabah])
 
   useEffect(
     useCallback(() => {
       const useToken = async () => {
-        if (await getItem("token-expired") && (dtNasabah?.idUserNasabah !== "" || dtNasabah?.idUserNasabah !== null)) {
+        if (await getItem("token-expired") &&  detailNasabah?.idUserNasabah) {
           setIsShowContent(true)
           setIsLoading(false);
         } else {
@@ -88,10 +84,12 @@ function StackNavigator() {
           setIsShowContent(false);
         }
       }
-      if (!detailNasabahDetailLoading) {
-        useToken();
-      }
-    }, [dtNasabah, detailNasabahDetailLoading, isShowContent]),
+      setTimeout(()=>{
+        if (!detailNasabahDetailLoading) {
+          useToken();
+        }
+      }, 3333 )
+    }, [detailNasabah, detailNasabahDetailLoading, isShowContent]),
   );
 
   return (

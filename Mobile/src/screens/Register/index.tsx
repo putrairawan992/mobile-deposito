@@ -24,7 +24,9 @@ import ModalPenghasilan from '../../components/ModalPenghasilan';
 import ModalStatusPernikahan from '../../components/ModalStatusPernikahan';
 import { addStorage } from '../../utils/storage';
 import { penghasilanValidation, statusNikahValidation } from '../../utils/constant';
-import { navigationRef } from '../../navigation/RootNavigation';
+import ModalImageSelfie from '../../components/ModalImage';
+import ModalImageAhliWaris from '../../components/ModalImage';
+import ModalImage from '../../components/ModalImage';
 
 export default function Register() {
   const { registerLoading, detailNasabah } = useSelector(
@@ -37,7 +39,7 @@ export default function Register() {
   const [alamat, setAlamat] = useState<string>(detailNasabah?.alamat);
   const [ktp, setKtp] = useState<string>(detailNasabah?.ktp);
   const [tempatLahir, setTempatLahir] = useState<string>(detailNasabah?.tmpt_lahir);
-  const [tanggalLahir, setTanggalLahir] = useState<Date>(detailNasabah?.tgl_lahir);
+  const [tanggalLahir, setTanggalLahir] = useState<Date>();
   const [ibu, setIbu] = useState<string>(detailNasabah?.ibu_kandung);
   const [statusNikah, setStatusNikah] = useState<string>(detailNasabah?.status_pernikahan);
   const [perusahaan, setPerusahaan] = useState<string>(detailNasabah?.nama_perusahaan);
@@ -47,11 +49,14 @@ export default function Register() {
   const [ahliWaris, setAhliWaris] = useState<string>(detailNasabah?.nama_ahli_waris);
   const [ahliWarisKtp, setAhliWarisKtp] = useState<string>(detailNasabah?.ktp_ahli_waris);
   const [ahliWarisPhone, setAhliWarisPhone] = useState<string>(detailNasabah?.phone_ahli_waris);
-  const [hubunganAhliWaris,setHubunganAhliWaris] = useState<string>('');
-  const [bank, setBank] = useState<string>('');
-  const [rekening, setRekening] = useState<string>('');
-  const [namaRekening, setNamaRekening] = useState<string>('');
+  const [hubunganAhliWaris, setHubunganAhliWaris] = useState<string>(detailNasabah?.hub_ahli_waris);
+  const [bank, setBank] = useState<string>(detailNasabah?.nama_bank);
+  const [rekening, setRekening] = useState<string>(detailNasabah?.norek);
+  const [namaRekening, setNamaRekening] = useState<string>(detailNasabah?.atas_nama);
   const [privyId, setPrivyId] = useState<string>('');
+  const [showImageKtp, setShowImageKtp] = useState<boolean>(false);
+  const [showImageSelfieKtp, setShowImageSelfieKtp] = useState<boolean>(false);
+  const [showImageKtpAhliWaris, setShowImageKtpAhliWaris] = useState<boolean>(false);
   const [showDate, setShowDate] = useState<boolean>(false);
   const [showBank, setShowBank] = useState<boolean>(false);
   const [showPenghasilan, setShowPenghasilan] = useState<boolean>(false);
@@ -65,6 +70,7 @@ export default function Register() {
   useEffect(() => {
     dispatch(getDetailNasabah())
   }, [dispatch])
+
 
   const actionSubmitRegister = () => {
     let formdata = new FormData();
@@ -88,9 +94,24 @@ export default function Register() {
     formdata.append('nama_bank', bank);
     formdata.append('norek', rekening);
     formdata.append('atas_nama', namaRekening);
-    formdata.append('image_ktp', fotoKtp ?? '');
-    formdata.append('image_selfie', fotoNasabah ?? '');
-    formdata.append('image_ktp_ahli_waris', fotoKtpAhliWaris ?? '');
+    formdata.append('image_ktp', {
+      size: fotoKtp?.fileSize,
+      uri: fotoKtp?.uri,
+      name: fotoKtp?.fileName,
+      type: fotoKtp?.type,
+    } ?? '');
+    formdata.append('image_selfie', {
+      size: fotoNasabah?.fileSize,
+      uri: fotoNasabah?.uri,
+      name: fotoNasabah?.fileName,
+      type: fotoNasabah?.type,
+    } ?? '');
+    formdata.append('image_ktp_ahli_waris', {
+      size: fotoNasabah?.fileSize,
+      uri: fotoKtpAhliWaris?.uri,
+      name: fotoKtpAhliWaris?.fileName,
+      type: fotoKtpAhliWaris?.type,
+    } ?? '');
     dispatch(registerNasabah(formdata));
   };
 
@@ -137,7 +158,7 @@ export default function Register() {
             <Input
               title="Tanggal Lahir"
               value={
-                tanggalLahir ? moment(tanggalLahir).format('DD MMMM YYYY') : undefined
+                tanggalLahir ? moment(tanggalLahir).format('DD-MMMM-YYYY') : ''
               }
               onPress={() => setShowDate(true)}
             />
@@ -443,14 +464,17 @@ export default function Register() {
             <Gap height={10} />
             <TouchableOpacity
               className="border-[1px] border-neutral-400 p-1 flex-row items-center"
-              onPress={() => onOpeGallery(0)}>
+            >
               <DefaultText
-                title={fotoKtp ? fotoKtp.fileName : ''}
+                title={fotoKtp ? fotoKtp?.fileName?.slice(0, 30) + '...' : 'Upload File'}
                 titleClassName="flex-1 text-xs mr-1"
                 titleProps={{ numberOfLines: 1 }}
               />
-              <Icon name="upload" size={20} />
-              <Icon name="trash-can" onPress={() => setFotoKtp(undefined)} size={20} />
+              <Icon name="upload" onPress={() => onOpeGallery(0)} size={22} />
+              <Gap width={25} />
+              <Icon name="eye" onPress={() => setShowImageKtp(true)} size={22} />
+              <Gap width={25} />
+              <Icon name="trash-can" onPress={() => setFotoKtp(undefined)} size={22} />
             </TouchableOpacity>
             <Gap height={10} />
             <DefaultText
@@ -460,14 +484,17 @@ export default function Register() {
             <Gap height={10} />
             <TouchableOpacity
               className="border-[1px] border-neutral-400 p-1 flex-row items-center"
-              onPress={() => onOpeGallery(1)}>
+            >
               <DefaultText
-                title={fotoNasabah ? fotoNasabah.fileName : ''}
+                title={fotoNasabah ? fotoNasabah.fileName?.slice(0, 30) + '...' : 'Upload File'}
                 titleClassName="flex-1 text-xs mr-1"
                 titleProps={{ numberOfLines: 1 }}
               />
-              <Icon name="upload" size={20} />
-              <Icon name="trash-can" onPress={() => setFotoNasabah(undefined)} size={20} />
+              <Icon name="upload" onPress={() => onOpeGallery(1)} size={22} />
+              <Gap width={25} />
+              <Icon name="eye" onPress={() => setShowImageSelfieKtp(true)} size={22} />
+              <Gap width={25} />
+              <Icon name="trash-can" onPress={() => setFotoNasabah(undefined)} size={22} />
             </TouchableOpacity>
             <Gap height={10} />
             <DefaultText
@@ -477,14 +504,17 @@ export default function Register() {
             <Gap height={10} />
             <TouchableOpacity
               className="border-[1px] border-neutral-400 p-1 flex-row items-center"
-              onPress={() => onOpeGallery(2)}>
+            >
               <DefaultText
-                title={fotoKtpAhliWaris ? fotoKtpAhliWaris.fileName : ''}
+                title={fotoKtpAhliWaris ? fotoKtpAhliWaris.fileName?.slice(0, 30) + '...' : 'Upload File'}
                 titleClassName="flex-1 text-xs mr-1"
                 titleProps={{ numberOfLines: 1 }}
               />
-              <Icon name="upload" size={20} />
-              <Icon name="trash-can" onPress={() => setFotoKtpAhliWaris(undefined)} size={20} />
+              <Icon name="upload" onPress={() => onOpeGallery(2)} size={22} />
+              <Gap width={25} />
+              <Icon name="eye" onPress={() => setShowImageKtpAhliWaris(true)} size={22} />
+              <Gap width={25} />
+              <Icon name="trash-can" onPress={() => setFotoKtpAhliWaris(undefined)} size={22} />
             </TouchableOpacity>
             <Gap height={10} />
             <Input
@@ -501,6 +531,24 @@ export default function Register() {
             setPage(4);
           }}
         />
+        <ModalImage
+          title='Preview Image KTP'
+          hide={() => setShowImageKtp(false)}
+          data={fotoKtp?.uri as string}
+          show={showImageKtp}
+          onConfirm={() => setShowImageKtp(false)} />
+        <ModalImageSelfie
+          title='Preview Selfie KTP'
+          hide={() => setShowImageSelfieKtp(false)}
+          data={fotoNasabah?.uri as string}
+          show={showImageSelfieKtp}
+          onConfirm={() => setShowImageSelfieKtp(false)} />
+        <ModalImageAhliWaris
+          title='Preview Ktp Ahli Waris'
+          hide={() => setShowImageKtpAhliWaris(false)}
+          data={fotoKtpAhliWaris?.uri as string}
+          show={showImageKtpAhliWaris}
+          onConfirm={() => setShowImageKtpAhliWaris(false)} />
         {registerLoading ? (
           <ActivityIndicator />
         ) : (

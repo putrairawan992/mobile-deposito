@@ -1,5 +1,6 @@
 import {
   ActivityIndicator,
+  Alert,
   Image,
   ScrollView,
   StyleSheet,
@@ -23,9 +24,10 @@ import { getShowPromo } from '../../services/product';
 import { RootDispatch, RootState } from '../../store';
 import { getShowDashboard } from '../../services/dasbhoard';
 import { formatRupiah } from '../../utils/currency';
-import { getDetailNasabah } from '../../services/user';
+import { getDetailNasabah, getUserProfile, logout } from '../../services/user';
 import { getItem, getStorage } from '../../utils/storage';
 import { useFocusEffect } from '@react-navigation/native';
+import ModalAlert from '../../components/ModalAlert';
 
 export default function Beranda() {
   const { width } = useWindowDimensions();
@@ -37,44 +39,60 @@ export default function Beranda() {
   const { showDashboard } = useSelector(
     (state: RootState) => state.dashboardReducer,
   );
-  const { detailNasabah, detailNasabahDetailLoading,phone_email } = useSelector(
+  const { detailNasabah, detailNasabahDetailLoading, phone_email, userProfile, token } = useSelector(
     (state: RootState) => state.userReducer,
   );
+  const [loading, setLoading] = useState<boolean>(true);
+  const [updateProfile, setUpdateProfile] = useState<boolean>(false);
   const [dtNasabah, setDtNasabah] = useState<any>();
   const dispatch = useDispatch<RootDispatch>();
 
   useEffect(() => {
     dispatch(getShowPromo());
+    dispatch(getUserProfile());
     dispatch(getShowDashboard());
     dispatch(getDetailNasabah());
   }, [dispatch]);
 
+  useEffect(() => {
+    if (token && !userProfile?.data?.statuse?.profile && detailNasabah?.idUserNasabah) {
+      setUpdateProfile(true);
+    }
+  }, [detailNasabah])
+
+  console.log("detailNasabah?.idUserNasabah", userProfile?.data?.statuse?.profile);
+
   useFocusEffect(useCallback(() => {
     if (!detailNasabahDetailLoading) {
       const useNasabah = async () => {
-        if (await getItem("token-expired") && (detailNasabah?.idUserNasabah === null || detailNasabah?.idUserNasabah === '')) {
-          if (await getStorage('register-completed') === null && await getStorage('loginIsOke') !== null) {
-            navigationRef.navigate("SyaratKetentuan");
-          } else {
-            if (await getStorage('register-completed') === null) {
+        setLoading(false);
+        if (await getStorage('register-completed') === null) {
+          if (await getItem("token-expired") && !detailNasabah.idUserNasabah) {
+            if (await getStorage('skIsTrue') === null) {
+              navigationRef.navigate("SyaratKetentuan");
+            } else {
               navigationRef.navigate("Register");
             }
           }
-        }
-        if (!phone_email && await getItem("token-expired") === undefined &&
-          await getStorage('loginIsOke') === null &&
-          (detailNasabah?.idUserNasabah === null || detailNasabah?.idUserNasabah === '')) {
-          navigationRef.reset({ index: 0, routes: [{ name: 'Splash' }] });
+          if (phone_email && await getItem("token-expired") === undefined && detailNasabah.idUserNasabah && userProfile?.data?.statuse?.profile) {
+            navigationRef.navigate("Splash");
+          } else {
+            if (await getItem("token-expired") === undefined && !detailNasabah.idUserNasabah) {
+              dispatch(logout());
+            }
+          }
         }
       }
-      useNasabah();
+      setTimeout(() => {
+        useNasabah();
+      }, 3333)
       setDtNasabah(detailNasabah);
     }
   }, [detailNasabah, detailNasabahDetailLoading])
   );
 
   return (
-    detailNasabahDetailLoading ? <ActivityIndicator size="large" style={{ position: 'absolute', top: 150, left: 0, right: 0 }} /> :
+    loading ? <ActivityIndicator size="large" style={{ position: 'absolute', top: 150, left: 0, right: 0 }} /> :
       <DefaultView>
         <View className="flex-row items-center px-5 py-2 border-b-[1px] border-b-neutral-300">
           <Image
@@ -316,6 +334,16 @@ export default function Beranda() {
 
           <Gap height={50} />
         </ScrollView>
+        <ModalAlert show={updateProfile}
+          hide={() =>
+            setUpdateProfile(false)
+          }
+          title='Lengkapi Data Profile'
+          onConfirm={() => {
+            setUpdateProfile(false);
+            navigationRef.navigate('DetailPribadi');
+          }}
+          type='warning' />
       </DefaultView>
   );
 }

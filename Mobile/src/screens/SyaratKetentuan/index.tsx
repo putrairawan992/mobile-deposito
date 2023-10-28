@@ -29,6 +29,7 @@ export default function SyaratKetentuan() {
     dispatch(getDetailNasabah());
     dispatch(getSkDashboard())
   }, [dispatch]);
+console.log(detailNasabah?.idUserNasabah);
 
   useEffect(() => {
     setDtNasabah(detailNasabah);
@@ -43,9 +44,9 @@ export default function SyaratKetentuan() {
   };
 
   const { width } = useWindowDimensions();
-  // const regex = /(<([^>]+)>)/ig;
+  const regex = /(<([^>]+)>)/;
   const source = {
-    html: showSkDashboard?.data[0]?.syarat
+    html: showSkDashboard?.data[0]?.syarat?.replace(regex, '')
   };
   return (
     <DefaultView

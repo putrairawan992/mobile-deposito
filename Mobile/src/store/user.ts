@@ -1,24 +1,16 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 interface User {
-  id: number;
-  fullname: string;
-  email: string | null;
-  phone: string;
-  foto: string | null;
-  fcm: string | null;
-  is_blocked: number;
-  verified_at: string | null;
-  created_at: string;
-  toko?: {
-    id: number;
-    account_id: number;
-    toko_id: number | null;
-    address_id: number;
-    is_delivery_product: number;
-    is_picked_product: number;
-    created_at: string;
-  };
+    "status": string
+    "message": string
+    "token": string
+    "token_type": string
+    "expires_in": number
+    "statuses": {
+        "profile": boolean
+        "pin": boolean
+        "password": boolean
+    }
 }
 
 interface InitialState {
@@ -32,6 +24,7 @@ interface InitialState {
   checkLoginLoading: boolean;
   forgotLoading: boolean;
   registerLoading: boolean;
+  userProfileLoading:boolean;
   detailNasabahDetailLoading: boolean;
 }
 
@@ -44,6 +37,7 @@ const initialState: InitialState = {
   token: null,
   loginLoading: false,
   checkLoginLoading: false,
+  userProfileLoading:false,
   forgotLoading: false,
   registerLoading: false,
   detailNasabahDetailLoading: false,
@@ -77,6 +71,9 @@ export const userSlice = createSlice({
     setUserProfile: (state, action) => {
       state.userProfile = action.payload;
     },
+    setUserProfileLoading: (state, action) => {
+      state.userProfileLoading = action.payload;
+    },
     setLoginLoading: (state, action) => {
       state.loginLoading = action.payload;
     },
@@ -92,6 +89,7 @@ export const userSlice = createSlice({
 export default userSlice.reducer;
 
 export const {
+  setUserProfileLoading,
   setPhoneEmail,
   setDetailNasabah,
   setDetailNasabahDetailLoading,

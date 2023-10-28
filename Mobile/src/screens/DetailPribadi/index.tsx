@@ -1,4 +1,4 @@
-import { ScrollView, TouchableOpacity, View } from 'react-native';
+import { Image, ScrollView, TouchableOpacity, View } from 'react-native';
 import React, { useEffect } from 'react';
 import DefaultView from '../../components/DefaultView';
 import DefaultText from '../../components/DefaultText';
@@ -8,8 +8,8 @@ import { navigationRef } from '../../navigation/RootNavigation';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootDispatch, RootState } from '../../store';
 import { getDetailNasabah } from '../../services/user';
-import { formatRupiah } from '../../utils/currency';
 import { penghasilanValidation, statusNikahValidation } from '../../utils/constant';
+
 
 export default function DetailPribadi() {
   const { detailNasabah } = useSelector(
@@ -19,8 +19,9 @@ export default function DetailPribadi() {
   
   useEffect(() => {
     dispatch(getDetailNasabah())
-  }, [])
+  }, [dispatch])
 
+ console.log(detailNasabah);
  
 
   return (
@@ -53,6 +54,27 @@ export default function DetailPribadi() {
             <DefaultText title="Tanggal Lahir" titleClassName="flex-1" />
             <View className="border-[1px] border-primary rounded-md w-[160] px-2 py-2">
               <DefaultText title={detailNasabah?.tgl_lahir} />
+            </View>
+          </View>
+          <Gap height={5} />
+          <View className="flex-row items-center">
+            <DefaultText title="Foto Ktp" titleClassName="flex-1" />
+            <View className="border-[1px] border-primary rounded-md w-[160] px-2 py-2">
+              <Image source={{uri:'https://dev.depositosyariah.id/'+ detailNasabah?.image_ktp}} style={{width:150,height:100}} />
+            </View>
+          </View>
+          <Gap height={5} />
+          <View className="flex-row items-center">
+            <DefaultText title="Foto Selfie" titleClassName="flex-1" />
+            <View className="border-[1px] border-primary rounded-md w-[160] px-2 py-2">
+              <Image source={{uri:'https://dev.depositosyariah.id/'+ detailNasabah?.image_selfie}} style={{width:150,height:100}} />
+            </View>
+          </View>
+          <Gap height={5} />
+          <View className="flex-row items-center">
+            <DefaultText title="Foto Ktp Ahli Waris" titleClassName="flex-1" />
+            <View className="border-[1px] border-primary rounded-md w-[160] px-2 py-2">
+              <Image source={{uri:'https://dev.depositosyariah.id/'+ detailNasabah?.image_ktp_ahli_waris}} style={{width:150,height:100}} />
             </View>
           </View>
           <Gap height={5} />

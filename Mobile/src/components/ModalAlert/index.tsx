@@ -36,6 +36,13 @@ export default function ModalAlert({
         <DefaultText title={title} titleClassName="text-center" />
         <Gap height={15} />
         <TouchableOpacity
+          onPress={hide}
+          activeOpacity={0.7}
+          className="self-center px-5 py-2 rounded-md">
+          <DefaultText title="Close" titleClassName="text-black" />
+        </TouchableOpacity>
+        <Gap height={15} />
+        <TouchableOpacity
           onPress={onConfirm}
           activeOpacity={0.7}
           className="self-center bg-primary px-5 py-2 rounded-md">

@@ -60,7 +60,7 @@ export const login =
   (emailOrPhone: string, password: string) =>
     async (dispatch: any) => {
       dispatch(setLoginLoading(true));
-      axios
+      await axios
         .post(`${API}/login`, { username: emailOrPhone, password: password }, {
           headers: {
             'Content-Type': 'application/json',
@@ -70,9 +70,17 @@ export const login =
         .then(res => {
           dispatch(setUser(res?.data));
           addStorage('token', res?.data?.token);
-          addStorage('loginIsOke', 'loginIsOkeTrue');
-          setItem("token-expired", res?.data?.token, 10);
+          setItem("token-expired", res?.data?.token, 15);
           dispatch(setToken(res?.data?.token));
+          dispatch(getUserProfile())
+          dispatch(getDetailNasabah()).then((res: any) => {
+            if (res?.idUserNasabah) {
+              navigationRef.navigate("MyTabs");
+              removeStorage("register-completed");
+            } else {
+              navigationRef.navigate("SplashLogin")
+            }
+          });
         })
         .catch(err => {
           Toast.show({
@@ -110,7 +118,8 @@ export const getReqOtp = () => async (dispatch: RootDispatch) => {
 
 export const getDetailNasabah = () => async (dispatch: RootDispatch) => {
   dispatch(setDetailNasabahDetailLoading(true));
-  axios
+  let data;
+  await axios
     .get(`${API}/nasabah`, {
       headers: {
         'Content-Type': 'application/json',
@@ -119,6 +128,7 @@ export const getDetailNasabah = () => async (dispatch: RootDispatch) => {
     })
     .then(res => {
       dispatch(setDetailNasabah(res?.data?.data[0]))
+      data = res?.data?.data[0]
     })
     .catch(err => {
       if (err?.response?.status !== 401) {
@@ -132,10 +142,12 @@ export const getDetailNasabah = () => async (dispatch: RootDispatch) => {
     }).finally(() => {
       dispatch(setDetailNasabahDetailLoading(false));
     });
+  return data;
 };
 
 export const getUserProfile = () => async (dispatch: RootDispatch) => {
-  axios
+  let data;
+  await axios
     .get(`${API}/userprofile`, {
       headers: {
         'Content-Type': 'application/json',
@@ -143,13 +155,12 @@ export const getUserProfile = () => async (dispatch: RootDispatch) => {
       },
     })
     .then(res => {
-      dispatch(setUserProfile(res.data))
+      dispatch(setUserProfile(res.data));
+      data = res.data;
     })
     .catch(err => {
       if (err?.response?.status === 401) {
-        removeStorage('token');
-        dispatch(setToken(null));
-        navigationRef.navigate('Login');
+        dispatch(logout());
       }
       if (err?.response?.status !== 401) {
         Toast.show({
@@ -160,12 +171,14 @@ export const getUserProfile = () => async (dispatch: RootDispatch) => {
         })
       }
     });
+  return data;
 };
 
 export const logout = () => async (dispatch: any) => {
   dispatch(setToken(null));
   dispatch(setUser(null));
   dispatch(setPhoneEmail(null));
+  dispatch(setUserProfile(null));
   const keys = await AsyncStorage.getAllKeys()
   await AsyncStorage.multiRemove(keys)
   navigationRef.reset({ index: 0, routes: [{ name: 'Splash' }] });
@@ -179,8 +192,14 @@ export const updateNasabah =
           `${API}/nasabah`,
           payload, {
           headers: {
-            'Content-Type': 'multipart/form-data',
-            Authorization: `Bearer ${await getStorage('token')}`,
+            "Content-Type": "multipart/form-data",
+            "Accept": "application/json",
+            "type": "formData",
+            Authorization: `Bearer ${await getStorage('token')}`
+          },
+          transformRequest: (data) => {
+            console.log("transformRequest", data);
+            return data; // thats enough
           },
         },
         )
@@ -194,6 +213,8 @@ export const updateNasabah =
           navigationRef.navigate('Profile')
         })
         .catch(err => {
+          console.log("err.response.data",err.response.data);
+          
           if (err?.response?.status === 401) {
             removeStorage('token');
             dispatch(setToken(null));
@@ -219,15 +240,19 @@ export const registerNasabah =
           `${API}/regnasabah`,
           payload, {
           headers: {
-            'Content-Type': 'multipart/form-data',
+            "Content-Type": "multipart/form-data",
+            "Accept": "application/json",
+            "type": "formData",
             Authorization: `Bearer ${await getStorage('token')}`
           },
           transformRequest: (data) => {
+            console.log("transformRequest", data);
             return data; // thats enough
           },
         },
         )
-        .then(() => {
+        .then((res) => {
+          console.log("response", res);
           Toast.show({
             type: 'success',
             text1: 'Success',
@@ -239,15 +264,17 @@ export const registerNasabah =
           addStorage('register-completed', 'yes');
         })
         .catch(err => {
+          console.log(" err.response", err.response?.data);
+
           Toast.show({
             type: 'error',
-            text1: err.response?.data?.errors?.ktp[0] ?? 'Error',
-            text2: err.response?.data?.message ?? 'Terjadi error, coba lagi nanti.',
+            text1: err.response?.data?.errors?.ktp[0] ?? err.response?.data?.message?.image_ktp[0] ?? 'Error',
+            text2: err.response?.data?.message ?? err.response?.data ?? 'Terjadi error, coba lagi nanti.',
           });
           if (err?.response?.status === 401) {
             // removeStorage('token');
             // dispatch(setToken(null));
-            navigationRef.navigate('Login');
+            dispatch(logout());
           }
         }).finally(() => dispatch(setRegisterLoading(false)));
     };

@@ -12,8 +12,9 @@ import { navigationRef } from '../../navigation/RootNavigation';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootDispatch, RootState } from '../../store';
 import { getSplashDashboard } from '../../services/dasbhoard';
-import { getStorage } from '../../utils/storage';
-import { getDetailNasabah } from '../../services/user';
+import { getItem, getStorage } from '../../utils/storage';
+import { useFocusEffect } from '@react-navigation/native';
+import { logout } from '../../services/user';
 
 
 export default function Splash() {
@@ -27,24 +28,20 @@ export default function Splash() {
     (state: RootState) => state.userReducer,
   );
 
-  useEffect(() => {
-    dispatch(getDetailNasabah());
-  }, [dispatch]);
-
-
   const funcFetchValid = async () => {
     if (phone_email && detailNasabah?.idUserNasabah) {
-      return navigationRef.navigate(await getStorage('typeLogin'), {
+      navigationRef.navigate(await getStorage('typeLogin'), {
         emailOrPhone: phone_email,
       });
     }
   }
 
-  // useEffect(useCallback(() => {
-  //   if (!detailNasabahDetailLoading) {
-  //     funcFetchValid();
-  //   }
-  // }, [detailNasabahDetailLoading]));
+  useFocusEffect(
+    useCallback(() => {
+      if (!detailNasabahDetailLoading) {
+        funcFetchValid();
+      }
+    }, [detailNasabah]));
 
 
   useEffect(() => {

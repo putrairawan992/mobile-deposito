@@ -20,7 +20,7 @@ export const statusNikahValidation = (val: string) => {
   if (val === '1') {
     textVal = 'Belum Menikah'
   }
-  if (val === '1') {
+  if (val === '2') {
     textVal = 'Menikah'
   } 
   if (val === '3') {

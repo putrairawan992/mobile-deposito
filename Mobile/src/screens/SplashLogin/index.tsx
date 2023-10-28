@@ -35,7 +35,7 @@ export default function SplashLogin() {
         <View className="items-center absolute bottom-7 self-center">
           {detailNasabahDetailLoading ? <ActivityIndicator /> : <Button
             title="MASUK"
-            onPress={() => navigationRef.navigate((detailNasabah?.idUserNasabah !== "" || detailNasabah?.idUserNasabah !== null) ? 'MyTabs' : 'SyaratKetentuan')}
+            onPress={() => navigationRef.navigate(!detailNasabah?.idUserNasabah ? 'SyaratKetentuan' : 'MyTabs')}
           />}
           <Gap height={15} />
           <DefaultText

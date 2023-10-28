@@ -13,8 +13,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { RootDispatch, RootState } from '../../store';
 import { getShowProductNasabah } from '../../services/product';
 import { formatRupiah } from '../../utils/currency';
-import { getStorage, removeStorage } from '../../utils/storage';
-import { setToken } from '../../store/user';
 
 const Item = (data: any) => {
   const noProduct = data?.data?.item?.no_produk;
@@ -105,29 +103,11 @@ export default function Produk() {
   const [hasilSetara, setHasilSetara] = useState<string>('5');
   const [tenor, setTenor] = useState<string>('6');
   const { showProduct, showProcutLoading } = useSelector((state: RootState) => state.productReducer);
-  const { detailNasabah } = useSelector(
-    (state: RootState) => state.userReducer,
-  );
   const dispatch = useDispatch<RootDispatch>();
 
   useEffect(() => {
     dispatch(getShowProductNasabah());
   }, [dispatch]);
-
-  useEffect(() => {
-    const useNasabah = async () => {
-      if (await getStorage("token") && (!detailNasabah?.idUserNasabah)) {
-        navigationRef.navigate("Register")
-      } else {
-        if (await getStorage("token") === null) {
-          dispatch(setToken(null));
-          removeStorage("token");
-          navigationRef.reset({ index: 0, routes: [{ name: 'Splash' }] });
-        }
-      }
-    }
-    useNasabah();
-  }, [detailNasabah]);
 
   return (
     <DefaultView>

@@ -5,7 +5,7 @@ import {
   View,
   useWindowDimensions,
 } from 'react-native';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useLayoutEffect, useState } from 'react';
 import DefaultView from '../../components/DefaultView';
 import { images } from '../../utils/images';
 import DefaultText from '../../components/DefaultText';
@@ -17,19 +17,17 @@ import { showToast } from '../../utils/toast';
 import { RootDispatch, RootState } from '../../store';
 import { useDispatch, useSelector } from 'react-redux';
 import BackgroundTimer from 'react-native-background-timer';
-import { checkLogin, getDetailNasabah, login } from '../../services/user';
+import { checkLogin, login } from '../../services/user';
 import { navigationRef } from '../../navigation/RootNavigation';
+import { useFocusEffect } from '@react-navigation/native';
 
 export default function OTP({ route }: RootStackScreenProps<'OTP'>) {
   const emailOrPhone = route?.params?.emailOrPhone;
-
   const [otp, setOtp] = useState<string>('');
   const { width } = useWindowDimensions();
   const dispatch = useDispatch<RootDispatch>();
   const [timer, setTimer] = useState<number>(60);
-  const { detailNasabah, user } = useSelector(
-    (state: RootState) => state.userReducer,
-  );
+
 
   useEffect(useCallback(() => {
     const intervalID = BackgroundTimer.setInterval(() => {
@@ -44,16 +42,6 @@ export default function OTP({ route }: RootStackScreenProps<'OTP'>) {
       BackgroundTimer.clearInterval(intervalID);
     };
   }, [timer]));
-
-  useEffect(() => {
-    if (user) {
-      navigationRef.navigate(detailNasabah?.idUserNasabah ? 'MyTabs' : 'SplashLogin');
-    }
-  }, [user, detailNasabah])
-
-  useEffect(() => {
-    dispatch(getDetailNasabah());
-  }, [dispatch]);
 
   const resendOtp = () => {
     setTimer(60);
