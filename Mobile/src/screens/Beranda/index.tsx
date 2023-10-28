@@ -25,6 +25,7 @@ import { getShowDashboard } from '../../services/dasbhoard';
 import { formatRupiah } from '../../utils/currency';
 import { getDetailNasabah } from '../../services/user';
 import { getItem, getStorage } from '../../utils/storage';
+import { useFocusEffect } from '@react-navigation/native';
 
 export default function Beranda() {
   const { width } = useWindowDimensions();
@@ -36,7 +37,7 @@ export default function Beranda() {
   const { showDashboard } = useSelector(
     (state: RootState) => state.dashboardReducer,
   );
-  const { detailNasabah, detailNasabahDetailLoading } = useSelector(
+  const { detailNasabah, detailNasabahDetailLoading,phone_email } = useSelector(
     (state: RootState) => state.userReducer,
   );
   const [dtNasabah, setDtNasabah] = useState<any>();
@@ -48,28 +49,28 @@ export default function Beranda() {
     dispatch(getDetailNasabah());
   }, [dispatch]);
 
-  useEffect(() => {
+  useFocusEffect(useCallback(() => {
     if (!detailNasabahDetailLoading) {
       const useNasabah = async () => {
-        setTimeout(async () => {
-          if (await getItem("token-expired") && (detailNasabah?.idUserNasabah === null || detailNasabah?.idUserNasabah === '')) {
-            if (await getStorage('register-completed') === null && await getStorage('loginIsOke') !== null) {
-              navigationRef.navigate("SyaratKetentuan");
-            } else {
-              if (await getStorage('register-completed') === null) {
-                navigationRef.navigate("Register");
-              }
+        if (await getItem("token-expired") && (detailNasabah?.idUserNasabah === null || detailNasabah?.idUserNasabah === '')) {
+          if (await getStorage('register-completed') === null && await getStorage('loginIsOke') !== null) {
+            navigationRef.navigate("SyaratKetentuan");
+          } else {
+            if (await getStorage('register-completed') === null) {
+              navigationRef.navigate("Register");
             }
           }
-          if (await getItem("token-expired") === undefined && await getStorage('loginIsOke') === null && (detailNasabah?.idUserNasabah === null || detailNasabah?.idUserNasabah === '')) {
-            navigationRef.reset({ index: 0, routes: [{ name: 'Splash' }] });
-          }
-        }, 6666)
+        }
+        if (!phone_email && await getItem("token-expired") === undefined &&
+          await getStorage('loginIsOke') === null &&
+          (detailNasabah?.idUserNasabah === null || detailNasabah?.idUserNasabah === '')) {
+          navigationRef.reset({ index: 0, routes: [{ name: 'Splash' }] });
+        }
       }
       useNasabah();
       setDtNasabah(detailNasabah);
     }
-  }, [detailNasabah]
+  }, [detailNasabah, detailNasabahDetailLoading])
   );
 
   return (

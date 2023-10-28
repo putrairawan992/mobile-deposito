@@ -40,11 +40,11 @@ export default function Splash() {
     }
   }
 
-  useEffect(useCallback(() => {
-    if (!detailNasabahDetailLoading) {
-      funcFetchValid();
-    }
-  }, [detailNasabahDetailLoading]));
+  // useEffect(useCallback(() => {
+  //   if (!detailNasabahDetailLoading) {
+  //     funcFetchValid();
+  //   }
+  // }, [detailNasabahDetailLoading]));
 
 
   useEffect(() => {

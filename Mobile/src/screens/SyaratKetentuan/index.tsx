@@ -43,7 +43,7 @@ export default function SyaratKetentuan() {
   };
 
   const { width } = useWindowDimensions();
-
+  // const regex = /(<([^>]+)>)/ig;
   const source = {
     html: showSkDashboard?.data[0]?.syarat
   };
@@ -72,7 +72,7 @@ export default function SyaratKetentuan() {
           <Gap height={10} />
 
           {showSkDashboardLoading ?
-            <ActivityIndicator size={"large"} style={{ position: 'absolute', top: 150, left: 0, right: 0 }} /> :
+            <ActivityIndicator size={"large"} style={{ position: 'absolute', top: 22, left: 0, right: 0, zIndex: 10 }} /> :
             <ScrollView style={{ flex: 1 }}>
               <View>
                 <RenderHTML contentWidth={width} source={source} />

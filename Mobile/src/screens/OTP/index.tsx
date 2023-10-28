@@ -14,10 +14,11 @@ import Button from '../../components/Button';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { RootStackScreenProps } from '../../navigation/interface';
 import { showToast } from '../../utils/toast';
-import { RootDispatch } from '../../store';
-import { useDispatch } from 'react-redux';
+import { RootDispatch, RootState } from '../../store';
+import { useDispatch, useSelector } from 'react-redux';
 import BackgroundTimer from 'react-native-background-timer';
-import { checkLogin, login } from '../../services/user';
+import { checkLogin, getDetailNasabah, login } from '../../services/user';
+import { navigationRef } from '../../navigation/RootNavigation';
 
 export default function OTP({ route }: RootStackScreenProps<'OTP'>) {
   const emailOrPhone = route?.params?.emailOrPhone;
@@ -26,6 +27,9 @@ export default function OTP({ route }: RootStackScreenProps<'OTP'>) {
   const { width } = useWindowDimensions();
   const dispatch = useDispatch<RootDispatch>();
   const [timer, setTimer] = useState<number>(60);
+  const { detailNasabah, user } = useSelector(
+    (state: RootState) => state.userReducer,
+  );
 
   useEffect(useCallback(() => {
     const intervalID = BackgroundTimer.setInterval(() => {
@@ -41,6 +45,15 @@ export default function OTP({ route }: RootStackScreenProps<'OTP'>) {
     };
   }, [timer]));
 
+  useEffect(() => {
+    if (user) {
+      navigationRef.navigate(detailNasabah?.idUserNasabah ? 'MyTabs' : 'SplashLogin');
+    }
+  }, [user, detailNasabah])
+
+  useEffect(() => {
+    dispatch(getDetailNasabah());
+  }, [dispatch]);
 
   const resendOtp = () => {
     setTimer(60);

@@ -73,7 +73,6 @@ export const login =
           addStorage('loginIsOke', 'loginIsOkeTrue');
           setItem("token-expired", res?.data?.token, 10);
           dispatch(setToken(res?.data?.token));
-          navigationRef.navigate(store.getState().userReducer?.detailNasabah?.idUserNasabah ? 'MyTabs' : 'SplashLogin');
         })
         .catch(err => {
           Toast.show({
@@ -166,6 +165,7 @@ export const getUserProfile = () => async (dispatch: RootDispatch) => {
 export const logout = () => async (dispatch: any) => {
   dispatch(setToken(null));
   dispatch(setUser(null));
+  dispatch(setPhoneEmail(null));
   const keys = await AsyncStorage.getAllKeys()
   await AsyncStorage.multiRemove(keys)
   navigationRef.reset({ index: 0, routes: [{ name: 'Splash' }] });

@@ -85,8 +85,6 @@ function StackNavigator() {
           setIsLoading(false);
         } else {
           setIsLoading(false);
-          // dispatch(setToken(null));
-          // removeStorage("token");
           setIsShowContent(false);
         }
       }
