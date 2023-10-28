@@ -3,20 +3,26 @@ import { createSlice } from '@reduxjs/toolkit';
 
 interface InitialState {
     showDashboard: any
-    showSplashDashboard:any,
+    showSplashDashboard: any,
     showDashboardLoading: boolean
     showBankList: any
     showBankDetails: any,
-    showBankListLoading: boolean
+    showSplashListLoading: boolean,
+    showBankListLoading: boolean,
+    showSkDashboard:any,
+    showSkDashboardLoading: boolean
 }
 
 const initialState: InitialState = {
-    showSplashDashboard:null,
+    showSplashListLoading: false,
+    showSplashDashboard: null,
     showDashboard: null,
     showBankList: null,
     showBankDetails: null,
     showBankListLoading: false,
     showDashboardLoading: false,
+    showSkDashboardLoading:false,
+    showSkDashboard:null
 };
 
 export const dashboardSlice = createSlice({
@@ -41,6 +47,15 @@ export const dashboardSlice = createSlice({
         setShowBankDetail: (state, action) => {
             state.showBankDetails = action.payload;
         },
+        setShowSplashListLoading: (state, action) => {
+            state.showSplashListLoading = action.payload;
+        },
+        setShowSkDashboard: (state, action) => {
+            state.showSkDashboard = action.payload;
+        },
+        setShowDashboardSkLoading: (state, action) => {
+            state.showSkDashboardLoading = action.payload;
+        },
 
     },
 });
@@ -48,4 +63,4 @@ export const dashboardSlice = createSlice({
 export default dashboardSlice.reducer;
 
 export const {
-    setSplashDashboard,setShowDashboard, setShowDashboardLoading, setShowBankList, setShowBankListLoading, setShowBankDetail } = dashboardSlice.actions;
+    setShowSkDashboard, setShowDashboardSkLoading, setShowSplashListLoading, setSplashDashboard, setShowDashboard, setShowDashboardLoading, setShowBankList, setShowBankListLoading, setShowBankDetail } = dashboardSlice.actions;

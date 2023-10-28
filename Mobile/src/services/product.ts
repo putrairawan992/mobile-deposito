@@ -21,6 +21,8 @@ export const getShowPromo = () => async (dispatch: RootDispatch) => {
       dispatch(showPromoLoading(false));
     })
     .catch(err => {
+      console.log("err",err);
+      
       if (err?.response?.status === 401) {
         removeStorage('token');
         dispatch(setToken(null));

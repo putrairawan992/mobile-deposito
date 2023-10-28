@@ -5,7 +5,7 @@ import {
   View,
   useWindowDimensions,
 } from 'react-native';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import DefaultView from '../../components/DefaultView';
 import { images } from '../../utils/images';
 import DefaultText from '../../components/DefaultText';
@@ -16,29 +16,31 @@ import { RootStackScreenProps } from '../../navigation/interface';
 import { showToast } from '../../utils/toast';
 import { RootDispatch } from '../../store';
 import { useDispatch } from 'react-redux';
+import BackgroundTimer from 'react-native-background-timer';
 import { checkLogin, login } from '../../services/user';
 
 export default function OTP({ route }: RootStackScreenProps<'OTP'>) {
-  const emailOrPhone = route.params.emailOrPhone;
+  const emailOrPhone = route?.params?.emailOrPhone;
 
   const [otp, setOtp] = useState<string>('');
+  const { width } = useWindowDimensions();
+  const dispatch = useDispatch<RootDispatch>();
   const [timer, setTimer] = useState<number>(60);
 
-  const { width } = useWindowDimensions();
-
-  const dispatch = useDispatch<RootDispatch>();
-
-  useEffect(() => {
-    const intervalID = setInterval(() => {
+  useEffect(useCallback(() => {
+    const intervalID = BackgroundTimer.setInterval(() => {
       if (timer === 0) {
-        clearInterval(intervalID);
+        BackgroundTimer.clearInterval(intervalID);
       } else {
         setTimer(timer - 1);
       }
     }, 1000);
 
-    return () => clearInterval(intervalID);
-  }, [timer]);
+    return () => {
+      BackgroundTimer.clearInterval(intervalID);
+    };
+  }, [timer]));
+
 
   const resendOtp = () => {
     setTimer(60);

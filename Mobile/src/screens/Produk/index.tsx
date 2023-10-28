@@ -30,7 +30,7 @@ const Item = (data: any) => {
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 0 }}>
         <DefaultText
-          title={data?.data?.item?.id_mitra}
+          title={data?.data?.item?.namaMitra}
           titleClassName="text-white font-inter-semibold"
         />
         <Gap height={10} />
@@ -38,7 +38,7 @@ const Item = (data: any) => {
           <View className="flex-1">
             <DefaultText title="Target" titleClassName="text-xs text-white" />
             <DefaultText
-              title={formatRupiah(data?.data?.item?.target,'Rp ')}
+              title={formatRupiah(data?.data?.item?.target, 'Rp ')}
               titleClassName="text-xs text-white"
             />
             <Gap height={5} />
@@ -244,13 +244,18 @@ export default function Produk() {
           )}
         </View>
       </View>
-      {showProcutLoading ? <ActivityIndicator /> : <FlatList
-        data={showProduct}
-        keyExtractor={(_, key) => key.toString()}
-        showsVerticalScrollIndicator={false}
-        renderItem={e => <Item data={e} />}
-        contentContainerStyle={styles.container}
-      />}
+      {showProcutLoading ?
+        <ActivityIndicator
+          style={{ position: 'absolute', top: 150, left: 0, right: 0 }}
+          size={'large'}
+        /> : 
+        <FlatList
+          data={showProduct}
+          keyExtractor={(_, key) => key.toString()}
+          showsVerticalScrollIndicator={false}
+          renderItem={e => <Item data={e} />}
+          contentContainerStyle={styles.container}
+        />}
     </DefaultView>
   );
 }

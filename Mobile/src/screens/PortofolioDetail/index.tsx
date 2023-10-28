@@ -80,7 +80,7 @@ export default function PortofolioDetail({ route }: RootStackScreenProps<'Portof
               title="Estimasi Total Pengembalian"
               titleClassName="flex-1"
             />
-            <DefaultText title="?" />
+            <DefaultText title={`${formatRupiah(showPortofolioDetail?.data?.amount + showPortofolioDetail?.data?.bagi_hasil, 'Rp')}`} />
           </View>
           <Gap height={20} />
           <View className="flex-row">

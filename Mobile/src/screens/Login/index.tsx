@@ -1,21 +1,20 @@
-import {Image, ScrollView, View, ActivityIndicator} from 'react-native';
-import React, {useState} from 'react';
+import { Image, ScrollView, View, ActivityIndicator } from 'react-native';
+import React, { useState } from 'react';
 import DefaultView from '../../components/DefaultView';
-import {images} from '../../utils/images';
+import { images } from '../../utils/images';
 import DefaultText from '../../components/DefaultText';
 import Gap from '../../components/Gap';
 import Input from '../../components/Input';
 import Button from '../../components/Button';
-import {navigationRef} from '../../navigation/RootNavigation';
-import {showToast} from '../../utils/toast';
-import {useDispatch, useSelector} from 'react-redux';
-import {RootDispatch, RootState} from '../../store';
-import {checkLogin} from '../../services/user';
+import { showToast } from '../../utils/toast';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootDispatch, RootState } from '../../store';
+import { checkLogin } from '../../services/user';
 
 export default function Login() {
   const [phone, setPhone] = useState<string>('');
   const dispatch = useDispatch<RootDispatch>();
-  const {checkLoginLoading} = useSelector(
+  const { checkLoginLoading } = useSelector(
     (state: RootState) => state.userReducer,
   );
   const onLogin = () => {

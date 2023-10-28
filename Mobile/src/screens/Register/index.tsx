@@ -24,6 +24,7 @@ import ModalPenghasilan from '../../components/ModalPenghasilan';
 import ModalStatusPernikahan from '../../components/ModalStatusPernikahan';
 import { addStorage } from '../../utils/storage';
 import { penghasilanValidation, statusNikahValidation } from '../../utils/constant';
+import { navigationRef } from '../../navigation/RootNavigation';
 
 export default function Register() {
   const { registerLoading, detailNasabah } = useSelector(
@@ -71,7 +72,7 @@ export default function Register() {
     formdata.append('nama', nama);
     formdata.append('ktp', ktp);
     formdata.append('tmpt_lahir', tempatLahir);
-    formdata.append('tgl_lahir', moment(tanggalLahir).format('YYYY-DD-MM'));
+    formdata.append('tgl_lahir', detailNasabah?.tgl_lahir ?? moment(tanggalLahir).format('YYYY-MM-DD'));
     formdata.append('ibu_kandung', ibu);
     formdata.append('id_privy', privyId);
     formdata.append('status_pernikahan', statusNikah);
@@ -126,7 +127,6 @@ export default function Register() {
                 keyboardType: 'number-pad',
               }}
             />
-            <DefaultText title={ktp  && ktp?.length} />
             <Gap height={10} />
             <Input
               title="Tempat Lahir"
@@ -505,7 +505,7 @@ export default function Register() {
           <ActivityIndicator />
         ) : (
           <Button
-            title="LANJUT"
+            title="Submit"
             className="bg-primary mx-10 my-5"
             titleClassName="text-white"
             onPress={() => actionSubmitRegister()}

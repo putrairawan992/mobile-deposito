@@ -5,31 +5,36 @@ import {
   setCheckLogin,
   setCheckLoginLoading,
   setDetailNasabah,
+  setDetailNasabahDetailLoading,
   setForgotLoading,
   setLoginLoading,
+  setPhoneEmail,
   setRegisterLoading,
   setToken,
   setUser,
   setUserProfile,
 } from '../store/user';
 import Toast from 'react-native-toast-message';
-import { addStorage, getStorage, removeStorage } from '../utils/storage';
+import { addStorage, getStorage, removeStorage, setItem } from '../utils/storage';
 import { navigationRef } from '../navigation/RootNavigation';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export const checkLogin =
   (emailOrPhone: string) =>
     async (dispatch: RootDispatch) => {
       dispatch(setCheckLoginLoading(true));
       axios
-        .post(`${API}/ceklogin`, { username: emailOrPhone }, {
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${await getStorage('token')}`
-          }
-        })
+        .post(`${API}/ceklogin`, { username: emailOrPhone },
+          {
+            headers: {
+              'Content-Type': 'application/json'
+            }
+          })
         .then((res) => {
           dispatch(setCheckLogin(res?.data?.data));
-          dispatch(setCheckLoginLoading(false))
+          dispatch(setCheckLoginLoading(false));
+          dispatch(setPhoneEmail(emailOrPhone));
+          addStorage('typeLogin', res?.data?.data === 'password' ? 'Password' : 'OTP');
           navigationRef.navigate(res?.data?.data === 'password' ? 'Password' : 'OTP', {
             emailOrPhone,
           });
@@ -65,15 +70,17 @@ export const login =
         .then(res => {
           dispatch(setUser(res?.data));
           addStorage('token', res?.data?.token);
+          addStorage('loginIsOke', 'loginIsOkeTrue');
+          setItem("token-expired", res?.data?.token, 10);
           dispatch(setToken(res?.data?.token));
-          navigationRef.navigate('SplashLogin');
+          navigationRef.navigate(store.getState().userReducer?.detailNasabah?.idUserNasabah ? 'MyTabs' : 'SplashLogin');
         })
         .catch(err => {
           Toast.show({
             type: 'error',
             text1: 'Error',
             text2:
-              err.response?.data?.message ?? 'Terjadi error, coba lagi nanti.',
+              err.response?.data?.message ?? err.response?.data ?? 'Terjadi error, coba lagi nanti.',
           });
         })
         .finally(() => dispatch(setLoginLoading(false)));
@@ -103,6 +110,7 @@ export const getReqOtp = () => async (dispatch: RootDispatch) => {
 };
 
 export const getDetailNasabah = () => async (dispatch: RootDispatch) => {
+  dispatch(setDetailNasabahDetailLoading(true));
   axios
     .get(`${API}/nasabah`, {
       headers: {
@@ -114,11 +122,6 @@ export const getDetailNasabah = () => async (dispatch: RootDispatch) => {
       dispatch(setDetailNasabah(res?.data?.data[0]))
     })
     .catch(err => {
-      if (err?.response?.status === 401) {
-        removeStorage('token');
-        dispatch(setToken(null));
-        navigationRef.navigate('Login');
-      }
       if (err?.response?.status !== 401) {
         Toast.show({
           type: 'error',
@@ -127,6 +130,8 @@ export const getDetailNasabah = () => async (dispatch: RootDispatch) => {
             err.response?.data?.message ?? 'Terjadi error, coba lagi nanti.',
         })
       }
+    }).finally(() => {
+      dispatch(setDetailNasabahDetailLoading(false));
     });
 };
 
@@ -161,9 +166,9 @@ export const getUserProfile = () => async (dispatch: RootDispatch) => {
 export const logout = () => async (dispatch: any) => {
   dispatch(setToken(null));
   dispatch(setUser(null));
-  await removeStorage('token');
+  const keys = await AsyncStorage.getAllKeys()
+  await AsyncStorage.multiRemove(keys)
   navigationRef.reset({ index: 0, routes: [{ name: 'Splash' }] });
-
 };
 
 export const updateNasabah =
@@ -216,7 +221,10 @@ export const registerNasabah =
           headers: {
             'Content-Type': 'multipart/form-data',
             Authorization: `Bearer ${await getStorage('token')}`
-          }
+          },
+          transformRequest: (data) => {
+            return data; // thats enough
+          },
         },
         )
         .then(() => {
@@ -226,8 +234,9 @@ export const registerNasabah =
             text2: 'mendaftarkan akun.',
           });
           navigationRef.navigate(
-            store.getState().userReducer.checkLogin === 'password' ? 'MyTabs' : 'BuatPassword'
+            store.getState().userReducer?.checkLogin === 'password' ? 'MyTabs' : 'BuatPassword'
           );
+          addStorage('register-completed', 'yes');
         })
         .catch(err => {
           Toast.show({
@@ -236,8 +245,8 @@ export const registerNasabah =
             text2: err.response?.data?.message ?? 'Terjadi error, coba lagi nanti.',
           });
           if (err?.response?.status === 401) {
-            removeStorage('token');
-            dispatch(setToken(null));
+            // removeStorage('token');
+            // dispatch(setToken(null));
             navigationRef.navigate('Login');
           }
         }).finally(() => dispatch(setRegisterLoading(false)));

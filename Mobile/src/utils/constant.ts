@@ -17,14 +17,17 @@ export const defaultHeaderAxios = {
 
 export const statusNikahValidation = (val: string) => {
   let textVal;
-  if (val === '0') {
+  if (val === '1') {
     textVal = 'Belum Menikah'
   }
   if (val === '1') {
     textVal = 'Menikah'
   } 
-  if (val === '2') {
-    textVal = 'Duda / Janda'
+  if (val === '3') {
+    textVal = 'Cerai Hidup'
+  }
+  if (val === '4') {
+    textVal = 'Cerai Mati'
   }
   return textVal;
 }

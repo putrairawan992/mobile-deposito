@@ -60,7 +60,7 @@ export default function Profile() {
         <TouchableOpacity
           onPress={() => navigationRef.navigate('KeamananAkun')}
           activeOpacity={0.7}
-          className="bg-primary-light rounded-full px-3 py-2 flex-row items-center">
+          className="px-3 py-2 flex-row items-center">
           <DefaultText
             title="Keamanan Akun"
             titleClassName="font-inter-bold flex-1"
@@ -71,7 +71,7 @@ export default function Profile() {
         <TouchableOpacity
           onPress={() => navigationRef.navigate('DetailPribadi')}
           activeOpacity={0.7}
-          className="bg-primary-light rounded-full px-3 py-2 flex-row items-center">
+          className="px-3 py-2 flex-row items-center">
           <DefaultText
             title="Detail Pribadi"
             titleClassName="font-inter-bold flex-1"
@@ -82,7 +82,7 @@ export default function Profile() {
         <TouchableOpacity
           onPress={() => navigationRef.navigate('AhliWaris')}
           activeOpacity={0.7}
-          className="bg-primary-light rounded-full px-3 py-2 flex-row items-center">
+          className="px-3 py-2 flex-row items-center">
           <DefaultText
             title="Info Ahli Waris"
             titleClassName="font-inter-bold flex-1"
@@ -93,7 +93,7 @@ export default function Profile() {
         <TouchableOpacity
           onPress={() => navigationRef.navigate('RekeningSaya')}
           activeOpacity={0.7}
-          className="bg-primary-light rounded-full px-3 py-2 flex-row items-center">
+          className="px-3 py-2 flex-row items-center">
           <DefaultText
             title="Rekening Saya"
             titleClassName="font-inter-bold flex-1"
@@ -111,7 +111,7 @@ export default function Profile() {
         <TouchableOpacity
           onPress={() => navigationRef.navigate('FAQ')}
           activeOpacity={0.7}
-          className="bg-primary-light rounded-full px-3 py-2 flex-row items-center">
+          className="px-3 py-2 flex-row items-center">
           <DefaultText title="FAQ" titleClassName="font-inter-bold flex-1" />
           <Icon name="chevron-right" size={24} />
         </TouchableOpacity>
@@ -119,7 +119,7 @@ export default function Profile() {
         <TouchableOpacity
           onPress={() => navigationRef.navigate('Fanpage')}
           activeOpacity={0.7}
-          className="bg-primary-light rounded-full px-3 py-2 flex-row items-center">
+          className="px-3 py-2 flex-row items-center">
           <DefaultText
             title="Ikuti fanpage kami"
             titleClassName="font-inter-bold flex-1"
@@ -130,7 +130,7 @@ export default function Profile() {
         <TouchableOpacity
           onPress={() => Linking.openURL('https://google.com')}
           activeOpacity={0.7}
-          className="bg-primary-light rounded-full 
+          className=" 
           px-3 py-2 flex-row 
           items-center">
           <DefaultText

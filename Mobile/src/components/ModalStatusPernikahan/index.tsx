@@ -22,20 +22,26 @@ export default function ModalStatusPernikahan({show, hide, onConfirm}: ModalStat
         <TouchableOpacity
           activeOpacity={0.7}
           className="mb-2"
-          onPress={() => onConfirm('0')}>
+          onPress={() => onConfirm('1')}>
           <DefaultText title="Belum Nikah" />
         </TouchableOpacity>
         <TouchableOpacity
           activeOpacity={0.7}
           className="mb-2"
-          onPress={() => onConfirm('1')}>
+          onPress={() => onConfirm('2')}>
           <DefaultText title="Menikah" />
         </TouchableOpacity>
         <TouchableOpacity
           activeOpacity={0.7}
           className="mb-2"
-          onPress={() => onConfirm('2')}>
-          <DefaultText title="Duda / Janda" />
+          onPress={() => onConfirm('3')}>
+          <DefaultText title="Cerai Hidup" />
+        </TouchableOpacity>
+        <TouchableOpacity
+          activeOpacity={0.7}
+          className="mb-2"
+          onPress={() => onConfirm('4')}>
+          <DefaultText title="Cerai Mati" />
         </TouchableOpacity>
       </View>
     </Modal>

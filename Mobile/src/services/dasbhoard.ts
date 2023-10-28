@@ -2,18 +2,28 @@ import axios from 'axios';
 import { RootDispatch } from '../store';
 import { API } from '../utils/constant';
 import Toast from 'react-native-toast-message';
-import { setShowBankDetail, setShowBankList, setShowBankListLoading, setShowDashboard, setShowDashboardLoading, setSplashDashboard } from '../store/dashboard';
+import { setShowBankDetail, setShowBankList, setShowBankListLoading, setShowDashboard, setShowDashboardLoading, setShowDashboardSkLoading, setShowSkDashboard, setShowSplashListLoading, setSplashDashboard } from '../store/dashboard';
 import { getStorage, removeStorage } from '../utils/storage';
 import { setToken } from '../store/user';
 import { navigationRef } from '../navigation/RootNavigation';
 
 
 export const getSplashDashboard = () => async (dispatch: RootDispatch) => {
+  dispatch(setShowSplashListLoading(true));
   axios
     .get(`${API}/splash`)
     .then(res => {
       dispatch(setSplashDashboard(res?.data));
-    });
+      dispatch(setShowSplashListLoading(false));
+    }).catch(err => {
+      dispatch(setShowSplashListLoading(false));
+      Toast.show({
+        type: 'error',
+        text1: 'Error',
+        text2:
+          err.response?.data?.message ?? 'Terjadi error, coba lagi nanti.',
+      })
+    });;
 };
 
 export const getShowDashboard = () => async (dispatch: RootDispatch) => {
@@ -42,6 +52,28 @@ export const getShowDashboard = () => async (dispatch: RootDispatch) => {
     });
 };
 
+export const getSkDashboard = () => async (dispatch: RootDispatch) => {
+  dispatch(setShowDashboardSkLoading(true));
+  axios
+    .get(`${API}/sk`, {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${await getStorage('token')}`,
+      },
+    })
+    .then(res => {
+      dispatch(setShowSkDashboard(res?.data));
+      dispatch(setShowDashboardSkLoading(false));
+    }).catch(err => {
+      Toast.show({
+        type: 'error',
+        text1: 'Error',
+        text2:
+          err.response?.data?.message ?? err.response?.data ?? 'Terjadi error, coba lagi nanti.',
+      })
+    })
+};
+
 export const getShowBankList = () => async (dispatch: RootDispatch) => {
   dispatch(setShowBankListLoading(true));
   axios
@@ -54,21 +86,14 @@ export const getShowBankList = () => async (dispatch: RootDispatch) => {
     .then(res => {
       dispatch(setShowBankList(res?.data));
       dispatch(setShowBankListLoading(false));
-    })
-    .catch(err => {
-      if (err?.response?.status === 401) {
-        removeStorage('token');
-        dispatch(setToken(null));
-        navigationRef.navigate('Login');
-      }
+    }).catch(err => {
       Toast.show({
         type: 'error',
         text1: 'Error',
         text2:
-          err.response?.data?.message ?? 'Terjadi error, coba lagi nanti.',
+          err.response?.data?.message ?? err.response?.data ?? 'Terjadi error, coba lagi nanti.',
       })
-      dispatch(setShowBankListLoading(false));
-    });
+    })
 };
 
 export const postShowBankList = (payload: any, setShowModalSuccess: any) => async (dispatch: RootDispatch) => {

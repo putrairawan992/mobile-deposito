@@ -1,5 +1,5 @@
-import { Image, View } from 'react-native';
-import React, { createRef, useEffect, useState } from 'react';
+import { ActivityIndicator, Image, View } from 'react-native';
+import React, { createRef, useCallback, useEffect, useState } from 'react';
 import DefaultView from '../../components/DefaultView';
 import { colors } from '../../utils/colors';
 import { images } from '../../utils/images';
@@ -12,15 +12,40 @@ import { navigationRef } from '../../navigation/RootNavigation';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootDispatch, RootState } from '../../store';
 import { getSplashDashboard } from '../../services/dasbhoard';
+import { getStorage } from '../../utils/storage';
+import { getDetailNasabah } from '../../services/user';
 
 
 export default function Splash() {
   const [initialPage, setInitialPage] = useState<number>(0);
   const ref = createRef<PagerView>();
   const dispatch = useDispatch<RootDispatch>();
-  const { showSplashDashboard } = useSelector(
+  const { showSplashDashboard, showSplashListLoading } = useSelector(
     (state: RootState) => state.dashboardReducer,
   );
+  const { detailNasabah, checkLoginLoading, detailNasabahDetailLoading, phone_email } = useSelector(
+    (state: RootState) => state.userReducer,
+  );
+
+  useEffect(() => {
+    dispatch(getDetailNasabah());
+  }, [dispatch]);
+
+
+  const funcFetchValid = async () => {
+    if (phone_email && detailNasabah?.idUserNasabah) {
+      return navigationRef.navigate(await getStorage('typeLogin'), {
+        emailOrPhone: phone_email,
+      });
+    }
+  }
+
+  useEffect(useCallback(() => {
+    if (!detailNasabahDetailLoading) {
+      funcFetchValid();
+    }
+  }, [detailNasabahDetailLoading]));
+
 
   useEffect(() => {
     dispatch(getSplashDashboard())
@@ -38,6 +63,7 @@ export default function Splash() {
     return () => clearInterval(intervalID);
   }, [initialPage, ref]);
 
+
   return (
     <DefaultView statusBarColor={colors.primaryLight}>
       <LinearGradient
@@ -49,22 +75,23 @@ export default function Splash() {
           source={images.splashLogo}
           resizeMode="contain"
         />
-        <PagerView
-          className="h-[200]"
-          ref={ref}
-          initialPage={initialPage}
-          onPageSelected={e => setInitialPage(e.nativeEvent.position)}>
-          {showSplashDashboard.map((list: any, index: any) => {
-            return <View key={index + 1}>
-              <Image
-                className="w-[200] h-[200] self-center"
-                source={{ uri: list.image }}
-                resizeMode="contain"
-              />
-            </View>
-          })}
-        </PagerView>
-
+        {showSplashListLoading ? <ActivityIndicator /> :
+          <PagerView
+            className="h-[200]"
+            ref={ref}
+            initialPage={initialPage}
+            onPageSelected={e => setInitialPage(e.nativeEvent.position)}>
+            {showSplashDashboard?.map((list: any, index: any) => {
+              return <View key={index + 1 || 1}>
+                <Image
+                  className="w-[200] h-[200] self-center"
+                  source={{ uri: list.image }}
+                  resizeMode="contain"
+                />
+              </View>
+            })}
+          </PagerView>
+        }
         <DefaultText
           title="Selamat datang di Deposito Syariah"
           titleClassName="text-center font-inter-semibold text-lg"
@@ -95,10 +122,12 @@ export default function Splash() {
         </View>
 
         <View className="items-center absolute bottom-7 self-center">
-          <Button
-            title="MASUK"
-            onPress={() => navigationRef.navigate('Login')}
-          />
+          {(!detailNasabahDetailLoading && checkLoginLoading) ? <ActivityIndicator /> :
+            <Button
+              title="MASUK"
+              onPress={() => navigationRef.navigate('Login')}
+            />
+          }
           <Gap height={15} />
           <DefaultText
             title="Terdaftar dan diawasi oleh"

@@ -30,70 +30,70 @@ export default function DetailPribadi() {
         <View className="px-5 py-3">
           <View className="flex-row items-center">
             <DefaultText title="No KTP" titleClassName="flex-1" />
-            <View className="border-[1px] border-primary rounded-md w-[150] px-2 py-2">
+            <View className="border-[1px] border-primary rounded-md w-[160] px-2 py-2">
               <DefaultText title={detailNasabah?.ktp} />
             </View>
           </View>
           <Gap height={5} />
           <View className="flex-row items-center">
             <DefaultText title="Nama" titleClassName="flex-1" />
-            <View className="border-[1px] border-primary rounded-md w-[150] px-2 py-2">
+            <View className="border-[1px] border-primary rounded-md w-[160] px-2 py-2">
               <DefaultText title={detailNasabah?.nama} />
             </View>
           </View>
           <Gap height={5} />
           <View className="flex-row items-center">
             <DefaultText title="Tempat Lahir" titleClassName="flex-1" />
-            <View className="border-[1px] border-primary rounded-md w-[150] px-2 py-2">
+            <View className="border-[1px] border-primary rounded-md w-[160] px-2 py-2">
               <DefaultText title={detailNasabah?.tmpt_lahir} />
             </View>
           </View>
           <Gap height={5} />
           <View className="flex-row items-center">
             <DefaultText title="Tanggal Lahir" titleClassName="flex-1" />
-            <View className="border-[1px] border-primary rounded-md w-[150] px-2 py-2">
+            <View className="border-[1px] border-primary rounded-md w-[160] px-2 py-2">
               <DefaultText title={detailNasabah?.tgl_lahir} />
             </View>
           </View>
           <Gap height={5} />
           <View className="flex-row items-center">
             <DefaultText title="Nama Ibu Kandung" titleClassName="flex-1" />
-            <View className="border-[1px] border-primary rounded-md w-[150] px-2 py-2">
+            <View className="border-[1px] border-primary rounded-md w-[160] px-2 py-2">
               <DefaultText title={detailNasabah?.ibu_kandung} />
             </View>
           </View>
           <Gap height={5} />
           <View className="flex-row items-center">
             <DefaultText title="Status Pernikahan" titleClassName="flex-1" />
-            <View className="border-[1px] border-primary rounded-md w-[150] px-2 py-2">
+            <View className="border-[1px] border-primary rounded-md w-[160] px-2 py-2">
               <DefaultText title={statusNikahValidation(detailNasabah?.status_pernikahan)} />
             </View>
           </View>
           <Gap height={5} />
           <View className="flex-row items-center">
             <DefaultText title="Profesi/Pekerjaan" titleClassName="flex-1" />
-            <View className="border-[1px] border-primary rounded-md w-[150] px-2 py-2">
+            <View className="border-[1px] border-primary rounded-md w-[160] px-2 py-2">
               <DefaultText title={detailNasabah?.jenis_pekerjaan} />
             </View>
           </View>
           <Gap height={5} />
           <View className="flex-row items-center">
             <DefaultText title="Nama Perusahaan" titleClassName="flex-1" />
-            <View className="border-[1px] border-primary rounded-md w-[150] px-2 py-2">
+            <View className="border-[1px] border-primary rounded-md w-[160] px-2 py-2">
               <DefaultText title={detailNasabah?.nama_perusahaan} />
             </View>
           </View>
           <Gap height={5} />
           <View className="flex-row items-center">
             <DefaultText title="Alamat Perusahaan" titleClassName="flex-1" />
-            <View className="border-[1px] border-primary rounded-md w-[150] px-2 py-2">
+            <View className="border-[1px] border-primary rounded-md w-[160] px-2 py-2">
               <DefaultText title={detailNasabah?.alamat_kerja} />
             </View>
           </View>
           <Gap height={5} />
           <View className="flex-row items-center">
             <DefaultText title="Penghasilan" titleClassName="flex-1" />
-            <View className="border-[1px] border-primary rounded-md w-[150] px-2 py-2">
+            <View className="border-[1px] border-primary rounded-md w-[160] px-2 py-2">
               <DefaultText title={penghasilanValidation(detailNasabah?.penghasilan)} />
             </View>
           </View>

@@ -48,7 +48,7 @@ const Item = ({ item }: any) => {
       start={{ x: 0, y: 0 }}
       end={{ x: 1, y: 0 }}>
       <DefaultText
-        title={item.id_nasabah}
+        title={item.namaMitra}
         titleClassName="text-white font-inter-semibold"
       />
       <Gap height={10} />

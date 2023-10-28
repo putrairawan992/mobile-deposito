@@ -1,5 +1,5 @@
-import { Image, View } from 'react-native';
-import React, { useCallback, useEffect } from 'react';
+import { ActivityIndicator, Image, View } from 'react-native';
+import React, { useCallback, useEffect, useState } from 'react';
 import DefaultView from '../../components/DefaultView';
 import { colors } from '../../utils/colors';
 import { images } from '../../utils/images';
@@ -13,7 +13,7 @@ import { RootDispatch, RootState } from '../../store';
 import { getDetailNasabah } from '../../services/user';
 
 export default function SplashLogin() {
-  const { detailNasabah } = useSelector((state: RootState) => state.userReducer);
+  const { detailNasabah, detailNasabahDetailLoading } = useSelector((state: RootState) => state.userReducer);
   const dispatch = useDispatch<RootDispatch>();
 
   useEffect(() => {
@@ -33,10 +33,10 @@ export default function SplashLogin() {
           />
         </View>
         <View className="items-center absolute bottom-7 self-center">
-          <Button
+          {detailNasabahDetailLoading ? <ActivityIndicator /> : <Button
             title="MASUK"
             onPress={() => navigationRef.navigate((detailNasabah?.idUserNasabah !== "" || detailNasabah?.idUserNasabah !== null) ? 'MyTabs' : 'SyaratKetentuan')}
-          />
+          />}
           <Gap height={15} />
           <DefaultText
             title="Terdaftar dan diawasi oleh"

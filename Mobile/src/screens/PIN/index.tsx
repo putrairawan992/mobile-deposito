@@ -17,7 +17,7 @@ import { useDispatch } from 'react-redux';
 import { RootDispatch } from '../../store';
 
 export default function PIN() {
-  const [otp, setOtp] = useState<string>('');
+  const [pin, setPin] = useState<string>('');
   const [timer, setTimer] = useState<number>(60);
 
   const { width } = useWindowDimensions();
@@ -36,11 +36,11 @@ export default function PIN() {
   }, [timer]);
 
   const onLanjut = () => {
-    if (otp.length < 6) {
+    if (pin.length < 6) {
       return showToast('Masukkan PIN');
     }
 
-    dispatch(registerPasswordPin({ pin: otp }, 'MyTabs'));
+    dispatch(registerPasswordPin({ pin: pin }, 'MyTabs'));
   };
 
   return (
@@ -61,42 +61,42 @@ export default function PIN() {
           <View className="flex-row justify-center">
             <View className="border-b-[2px] border-b-black w-5 h-8 justify-center items-center">
               <DefaultText
-                title={otp.charAt(0)}
+                title={pin.charAt(0)}
                 titleClassName="font-inter-bold text-lg"
               />
             </View>
             <Gap width={10} />
             <View className="border-b-[2px] border-b-black w-5 h-8 justify-center items-center">
               <DefaultText
-                title={otp.charAt(1)}
+                title={pin.charAt(1)}
                 titleClassName="font-inter-bold text-lg"
               />
             </View>
             <Gap width={10} />
             <View className="border-b-[2px] border-b-black w-5 h-8 justify-center items-center">
               <DefaultText
-                title={otp.charAt(2)}
+                title={pin.charAt(2)}
                 titleClassName="font-inter-bold text-lg"
               />
             </View>
             <Gap width={10} />
             <View className="border-b-[2px] border-b-black w-5 h-8 justify-center items-center">
               <DefaultText
-                title={otp.charAt(3)}
+                title={pin.charAt(3)}
                 titleClassName="font-inter-bold text-lg"
               />
             </View>
             <Gap width={10} />
             <View className="border-b-[2px] border-b-black w-5 h-8 justify-center items-center">
               <DefaultText
-                title={otp.charAt(4)}
+                title={pin.charAt(4)}
                 titleClassName="font-inter-bold text-lg"
               />
             </View>
             <Gap width={10} />
             <View className="border-b-[2px] border-b-black w-5 h-8 justify-center items-center">
               <DefaultText
-                title={otp.charAt(5)}
+                title={pin.charAt(5)}
                 titleClassName="font-inter-bold text-lg"
               />
             </View>
@@ -107,7 +107,7 @@ export default function PIN() {
         <TouchableOpacity
           className="mb-5"
           style={{ width: width / 3 }}
-          onPress={() => otp.length < 6 && setOtp(`${otp}1`)}>
+          onPress={() => pin.length < 6 && setPin(`${pin}1`)}>
           <DefaultText
             title="1"
             titleClassName="font-inter-bold text-2xl text-center"
@@ -116,7 +116,7 @@ export default function PIN() {
         <TouchableOpacity
           className="mb-5"
           style={{ width: width / 3 }}
-          onPress={() => otp.length < 6 && setOtp(`${otp}2`)}>
+          onPress={() => pin.length < 6 && setPin(`${pin}2`)}>
           <DefaultText
             title="2"
             titleClassName="font-inter-bold text-2xl text-center"
@@ -125,7 +125,7 @@ export default function PIN() {
         <TouchableOpacity
           className="mb-5"
           style={{ width: width / 3 }}
-          onPress={() => otp.length < 6 && setOtp(`${otp}3`)}>
+          onPress={() => pin.length < 6 && setPin(`${pin}3`)}>
           <DefaultText
             title="3"
             titleClassName="font-inter-bold text-2xl text-center"
@@ -134,7 +134,7 @@ export default function PIN() {
         <TouchableOpacity
           className="mb-5"
           style={{ width: width / 3 }}
-          onPress={() => otp.length < 6 && setOtp(`${otp}4`)}>
+          onPress={() => pin.length < 6 && setPin(`${pin}4`)}>
           <DefaultText
             title="4"
             titleClassName="font-inter-bold text-2xl text-center"
@@ -143,7 +143,7 @@ export default function PIN() {
         <TouchableOpacity
           className="mb-5"
           style={{ width: width / 3 }}
-          onPress={() => otp.length < 6 && setOtp(`${otp}5`)}>
+          onPress={() => pin.length < 6 && setPin(`${pin}5`)}>
           <DefaultText
             title="5"
             titleClassName="font-inter-bold text-2xl text-center"
@@ -152,7 +152,7 @@ export default function PIN() {
         <TouchableOpacity
           className="mb-5"
           style={{ width: width / 3 }}
-          onPress={() => otp.length < 6 && setOtp(`${otp}6`)}>
+          onPress={() => pin.length < 6 && setPin(`${pin}6`)}>
           <DefaultText
             title="6"
             titleClassName="font-inter-bold text-2xl text-center"
@@ -161,7 +161,7 @@ export default function PIN() {
         <TouchableOpacity
           className="mb-5"
           style={{ width: width / 3 }}
-          onPress={() => otp.length < 6 && setOtp(`${otp}7`)}>
+          onPress={() => pin.length < 6 && setPin(`${pin}7`)}>
           <DefaultText
             title="7"
             titleClassName="font-inter-bold text-2xl text-center"
@@ -170,7 +170,7 @@ export default function PIN() {
         <TouchableOpacity
           className="mb-5"
           style={{ width: width / 3 }}
-          onPress={() => otp.length < 6 && setOtp(`${otp}8`)}>
+          onPress={() => pin.length < 6 && setPin(`${pin}8`)}>
           <DefaultText
             title="8"
             titleClassName="font-inter-bold text-2xl text-center"
@@ -179,7 +179,7 @@ export default function PIN() {
         <TouchableOpacity
           className="mb-5"
           style={{ width: width / 3 }}
-          onPress={() => otp.length < 6 && setOtp(`${otp}9`)}>
+          onPress={() => pin.length < 6 && setPin(`${pin}9`)}>
           <DefaultText
             title="9"
             titleClassName="font-inter-bold text-2xl text-center"
@@ -188,7 +188,7 @@ export default function PIN() {
         <TouchableOpacity
           className="mb-5"
           style={{ width: width / 3 }}
-          onPress={() => otp.length < 6 && setOtp(`${otp}0`)}>
+          onPress={() => pin.length < 6 && setPin(`${pin}0`)}>
           <DefaultText
             title="0"
             titleClassName="font-inter-bold text-2xl text-center"
@@ -197,7 +197,7 @@ export default function PIN() {
         <TouchableOpacity
           className="mb-5 items-center"
           style={{ width: width / 3 }}
-          onPress={() => otp.length > 0 && setOtp(otp.slice(0, -1))}>
+          onPress={() => pin.length > 0 && setPin(pin.slice(0, -1))}>
           <Icon name="backspace-outline" size={30} />
         </TouchableOpacity>
       </View>

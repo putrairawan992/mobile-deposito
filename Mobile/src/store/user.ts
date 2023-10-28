@@ -24,6 +24,7 @@ interface User {
 interface InitialState {
   user: User | null;
   token: string | null;
+  phone_email: string | null;
   checkLogin: any;
   userProfile: any;
   detailNasabah: any;
@@ -31,6 +32,7 @@ interface InitialState {
   checkLoginLoading: boolean;
   forgotLoading: boolean;
   registerLoading: boolean;
+  detailNasabahDetailLoading: boolean;
 }
 
 const initialState: InitialState = {
@@ -38,11 +40,13 @@ const initialState: InitialState = {
   userProfile: null,
   checkLogin: null,
   detailNasabah: null,
+  phone_email: null,
   token: null,
   loginLoading: false,
   checkLoginLoading: false,
   forgotLoading: false,
   registerLoading: false,
+  detailNasabahDetailLoading: false,
 };
 
 export const userSlice = createSlice({
@@ -52,8 +56,14 @@ export const userSlice = createSlice({
     setCheckLogin: (state, action) => {
       state.checkLogin = action.payload;
     },
+    setPhoneEmail: (state, action) => {
+      state.phone_email = action.payload;
+    },
     setDetailNasabah: (state, action) => {
       state.detailNasabah = action.payload;
+    },
+    setDetailNasabahDetailLoading: (state, action) => {
+      state.detailNasabahDetailLoading = action.payload;
     },
     setCheckLoginLoading: (state, action) => {
       state.checkLoginLoading = action.payload;
@@ -61,7 +71,7 @@ export const userSlice = createSlice({
     setUser: (state, action) => {
       state.user = action.payload;
     },
-    setToken:  (state, action) => {
+    setToken: (state, action) => {
       state.token = action.payload;
     },
     setUserProfile: (state, action) => {
@@ -82,7 +92,9 @@ export const userSlice = createSlice({
 export default userSlice.reducer;
 
 export const {
+  setPhoneEmail,
   setDetailNasabah,
+  setDetailNasabahDetailLoading,
   setUser,
   setUserProfile,
   setToken,
