@@ -221,11 +221,11 @@ export const updateNasabah =
     };
 
 export const uploadBuktiPengajuan =
-  (payload: any, params: string) =>
+  (payload: any, params: string, validSubmit: any) =>
     async (dispatch: RootDispatch) => {
       axios
         .post(
-          `${API}/buktipengajuan/${params}`,
+          validSubmit ? `${API}/buktipengajuan/update/${params}` : `${API}/buktipengajuan/${params}`,
           payload, {
           headers: {
             "Content-Type": "multipart/form-data",

@@ -1,5 +1,5 @@
 import { Image, ScrollView, TouchableOpacity, View } from 'react-native';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import DefaultView from '../../components/DefaultView';
 import DefaultText from '../../components/DefaultText';
 import DefaultHeader from '../../components/DefaultHeader';
@@ -9,6 +9,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import { RootDispatch, RootState } from '../../store';
 import { getDetailNasabah } from '../../services/user';
 import { penghasilanValidation, statusNikahValidation } from '../../utils/constant';
+import ModalImageSelfie from '../../components/ModalImage';
+import ModalImageAhliWaris from '../../components/ModalImage';
+import ModalImage from '../../components/ModalImage';
 
 
 export default function DetailPribadi() {
@@ -16,6 +19,9 @@ export default function DetailPribadi() {
     (state: RootState) => state.userReducer,
   );
   const dispatch = useDispatch<RootDispatch>();
+  const [showImageKtp, setShowImageKtp] = useState<boolean>(false);
+  const [showImageSelfieKtp, setShowImageSelfieKtp] = useState<boolean>(false);
+  const [showImageKtpAhliWaris, setShowImageKtpAhliWaris] = useState<boolean>(false);
 
   useEffect(() => {
     dispatch(getDetailNasabah())
@@ -101,23 +107,23 @@ export default function DetailPribadi() {
           <Gap height={5} />
           <View className="flex-row items-center">
             <DefaultText title="Foto Ktp" titleClassName="flex-1" />
-            <View className="border-[1px] border-primary rounded-md w-[160] px-2 py-2">
+            <TouchableOpacity onPress={() => setShowImageKtp(true)}   className="border-[1px] border-primary rounded-md w-[160] px-2 py-2">
               {detailNasabah?.image_ktp ? <Image source={{ uri: `https://dev.depositosyariah.id/${detailNasabah?.image_ktp}` }} style={{ width: 150, height: 100 }} /> : <DefaultText title="-" titleClassName="text-black" />}
-            </View>
+            </TouchableOpacity>
           </View>
           <Gap height={5} />
           <View className="flex-row items-center">
             <DefaultText title="Foto Selfie" titleClassName="flex-1" />
-            <View className="border-[1px] border-primary rounded-md w-[160] px-2 py-2">
-            {detailNasabah?.image_selfie ? <Image source={{ uri: `https://dev.depositosyariah.id/${detailNasabah?.image_selfie}` }} style={{ width: 150, height: 100 }} />: <DefaultText title="-" titleClassName="text-black" />}
-            </View>
+            <TouchableOpacity onPress={() => setShowImageSelfieKtp(true)}  className="border-[1px] border-primary rounded-md w-[160] px-2 py-2">
+              {detailNasabah?.image_selfie ? <Image source={{ uri: `https://dev.depositosyariah.id/${detailNasabah?.image_selfie}` }} style={{ width: 150, height: 100 }} /> : <DefaultText title="-" titleClassName="text-black" />}
+            </TouchableOpacity>
           </View>
           <Gap height={5} />
           <View className="flex-row items-center">
             <DefaultText title="Foto Ktp Ahli Waris" titleClassName="flex-1" />
-            <View className="border-[1px] border-primary rounded-md w-[160] px-2 py-2">
-            {detailNasabah?.image_ktp_ahli_waris ?  <Image source={{ uri: `https://dev.depositosyariah.id/${detailNasabah?.image_ktp_ahli_waris}` }} style={{ width: 150, height: 100 }} />: <DefaultText title="-" titleClassName="text-black" />}
-            </View>
+            <TouchableOpacity onPress={() => setShowImageKtpAhliWaris(true)}  className="border-[1px] border-primary rounded-md w-[160] px-2 py-2">
+              {detailNasabah?.image_ktp_ahli_waris ? <Image source={{ uri: `https://dev.depositosyariah.id/${detailNasabah?.image_ktp_ahli_waris}` }} style={{ width: 150, height: 100 }} /> : <DefaultText title="-" titleClassName="text-black" />}
+            </TouchableOpacity>
           </View>
           <Gap height={5} />
         </View>
@@ -131,6 +137,24 @@ export default function DetailPribadi() {
           <DefaultText title="Edit" titleClassName="text-white" />
         </TouchableOpacity>
       </View>
+      <ModalImage
+        title='Preview Image KTP'
+        hide={() => setShowImageKtp(false)}
+        data={detailNasabah?.image_ktp ? `https://dev.depositosyariah.id/${detailNasabah?.image_ktp}` : null as any}
+        show={showImageKtp}
+        onConfirm={() => setShowImageKtp(false)} />
+      <ModalImageSelfie
+        title='Preview Selfie KTP'
+        hide={() => setShowImageSelfieKtp(false)}
+        data={detailNasabah?.image_selfie ? `https://dev.depositosyariah.id/${detailNasabah?.image_selfie}` : null as any}
+        show={showImageSelfieKtp}
+        onConfirm={() => setShowImageSelfieKtp(false)} />
+      <ModalImageAhliWaris
+        title='Preview Ktp Ahli Waris'
+        hide={() => setShowImageKtpAhliWaris(false)}
+        data={detailNasabah?.image_ktp_ahli_waris ? `https://dev.depositosyariah.id/${detailNasabah?.image_ktp_ahli_waris}` : null as any}
+        show={showImageKtpAhliWaris}
+        onConfirm={() => setShowImageKtpAhliWaris(false)} />
     </DefaultView>
   );
 }

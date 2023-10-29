@@ -19,6 +19,9 @@ import ModalStatusPernikahan from '../../components/ModalStatusPernikahan';
 import ModalPenghasilan from '../../components/ModalPenghasilan';
 import { Asset, launchImageLibrary } from 'react-native-image-picker';
 import Toast from 'react-native-toast-message';
+import ModalImageSelfie from '../../components/ModalImage';
+import ModalImageAhliWaris from '../../components/ModalImage';
+import ModalImage from '../../components/ModalImage';
 
 export default function DetailPribadiEdit({ route }: RootStackScreenProps<'DetailPribadiEdit'>) {
   const detailPribadi = route.params?.detailNasabah as any;
@@ -45,6 +48,9 @@ export default function DetailPribadiEdit({ route }: RootStackScreenProps<'Detai
   const [fotoKtpAhliWaris, setFotoKtpAhliWaris] = useState<Asset | string>() as any;
   const [showStatusPernikahan, setShowStatusPernikahan] =
     useState<boolean>(false);
+  const [showImageKtp, setShowImageKtp] = useState<boolean>(false);
+  const [showImageSelfieKtp, setShowImageSelfieKtp] = useState<boolean>(false);
+  const [showImageKtpAhliWaris, setShowImageKtpAhliWaris] = useState<boolean>(false);
   const dispatch = useDispatch<RootDispatch>();
 
   const onSave = () => {
@@ -236,7 +242,11 @@ export default function DetailPribadiEdit({ route }: RootStackScreenProps<'Detai
           <View className="flex-row items-center">
             <DefaultText title="Foto KTP " titleClassName="flex-1" />
             {ktp_image ?
-              <Image source={{ uri: ktp_image }} style={{ height: 100, width: 180 }} /> :
+              <TouchableOpacity onPress={() => setShowImageKtp(true)} >
+                <View>
+                  <Image source={{ uri: ktp_image }} style={{ height: 100, width: 180 }} />
+                </View>
+              </TouchableOpacity> :
               <TouchableOpacity
                 className='border-[1px] border-primary rounded-md w-[200] px-2 py-2 flex-row items-center'
                 onPress={() => onOpeGallery(0)}>
@@ -257,7 +267,12 @@ export default function DetailPribadiEdit({ route }: RootStackScreenProps<'Detai
           <Gap height={5} />
           <View className="flex-row items-center">
             <DefaultText title="Foto Selfie " titleClassName="flex-1" />
-            {image_selfie ? <Image source={{ uri: image_selfie }} style={{ height: 100, width: 180 }} /> :
+            {image_selfie ?
+              <TouchableOpacity onPress={() => setShowImageSelfieKtp(true)}>
+                <View>
+                  <Image source={{ uri: image_selfie }} style={{ height: 100, width: 180 }} />
+                </View>
+              </TouchableOpacity> :
               <TouchableOpacity
                 className='border-[1px] border-primary rounded-md w-[200] px-2 py-2 flex-row items-center'
                 onPress={() => onOpeGallery(1)}>
@@ -278,7 +293,12 @@ export default function DetailPribadiEdit({ route }: RootStackScreenProps<'Detai
           <Gap height={5} />
           <View className="flex-row items-center">
             <DefaultText title="Foto KTP " titleClassName="flex-1" />
-            {image_ktp_ahli_waris ? <Image source={{ uri: image_ktp_ahli_waris }} style={{ height: 100, width: 180 }} /> :
+            {image_ktp_ahli_waris ?
+              <TouchableOpacity onPress={() => setShowImageKtpAhliWaris(true)}>
+                <View>
+                  <Image source={{ uri: image_ktp_ahli_waris }} style={{ height: 100, width: 180 }} />
+                </View>
+              </TouchableOpacity> :
               <TouchableOpacity
                 className='border-[1px] border-primary rounded-md w-[200] px-2 py-2 flex-row items-center'
                 onPress={() => onOpeGallery(2)}>
@@ -338,6 +358,25 @@ export default function DetailPribadiEdit({ route }: RootStackScreenProps<'Detai
           </TouchableOpacity>
         </View>
       </ScrollView>
+
+      <ModalImage
+        title='Preview Image KTP'
+        hide={() => setShowImageKtp(false)}
+        data={ktp_image as any}
+        show={showImageKtp}
+        onConfirm={() => setShowImageKtp(false)} />
+      <ModalImageSelfie
+        title='Preview Selfie KTP'
+        hide={() => setShowImageSelfieKtp(false)}
+        data={image_selfie as any}
+        show={showImageSelfieKtp}
+        onConfirm={() => setShowImageSelfieKtp(false)} />
+      <ModalImageAhliWaris
+        title='Preview Ktp Ahli Waris'
+        hide={() => setShowImageKtpAhliWaris(false)}
+        data={image_ktp_ahli_waris as any}
+        show={showImageKtpAhliWaris}
+        onConfirm={() => setShowImageKtpAhliWaris(false)} />
 
       <ModalPenghasilan
         show={showPenghasilan}

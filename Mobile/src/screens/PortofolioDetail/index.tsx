@@ -28,14 +28,15 @@ export default function PortofolioDetail({ route }: RootStackScreenProps<'Portof
   const { showPortofolioDetail, showPortofolioLoadingDetail } = useSelector((state: RootState) => state.portofolioReducer);
   const [upload_bukti_tf, setUpload_Bukti_Tf] = useState<string | Asset>(showPortofolioDetail?.data?.buktiTF ? `https://dev.depositosyariah.id/${showPortofolioDetail?.data?.buktiTF?.image}` : '') as any;
   const dispatch = useDispatch<RootDispatch>();
-
+  const totalPengem = parseInt(showPortofolioDetail?.data?.amount) + parseInt(showPortofolioDetail?.data?.bagi_hasil);
+  
   useEffect(() => {
     dispatch(getShowPortofolioDetail(no_transaksi))
   }, [no_transaksi]);
 
-  useEffect(()=>{
+  useEffect(() => {
     setUpload_Bukti_Tf(showPortofolioDetail?.data?.buktiTF?.image ? `https://dev.depositosyariah.id/${showPortofolioDetail?.data?.buktiTF?.image}` : null)
-  },[showPortofolioDetail])
+  }, [showPortofolioDetail])
 
   const onOpeGallery = async (index: number) => {
     const result = await launchImageLibrary({ mediaType: 'photo' });
@@ -56,6 +57,7 @@ export default function PortofolioDetail({ route }: RootStackScreenProps<'Portof
 
   };
   const onSave = () => {
+    let validSubmit = showPortofolioDetail?.data?.buktiTF
     let formdata = new FormData();
     formdata.append('image', {
       size: buktiTF?.fileSize,
@@ -63,12 +65,9 @@ export default function PortofolioDetail({ route }: RootStackScreenProps<'Portof
       name: buktiTF?.fileName,
       type: buktiTF?.type,
     } ?? '');
-    dispatch(uploadBuktiPengajuan(formdata, showPortofolioDetail?.data?.no_transaksi as any));
+    dispatch(uploadBuktiPengajuan(formdata, showPortofolioDetail?.data?.no_transaksi as any, validSubmit));
   };
 
-  console.log("showPortofolioDetail", showPortofolioDetail?.data);
-
-  const totalPengem = parseInt(showPortofolioDetail?.data?.amount) + parseInt(showPortofolioDetail?.data?.bagi_hasil)
   return (
     <DefaultView>
       <DefaultHeader title="Detail Portofolio" />
@@ -148,10 +147,10 @@ export default function PortofolioDetail({ route }: RootStackScreenProps<'Portof
           <View className="w-full h-[1px] bg-neutral-300 my-3" />
           <Gap height={5} />
           <View className="flex-row items-center">
-            <DefaultText title="Bukti Transfer" titleClassName="flex-1" />
-            {upload_bukti_tf ?
+            {showPortofolioDetail?.data?.statuses[3]?.status && <DefaultText title="Bukti Transfer" titleClassName="flex-1" />}
+            {showPortofolioDetail?.data?.statuses[3]?.status && upload_bukti_tf ?
               <Image source={{ uri: upload_bukti_tf }} style={{ height: 100, width: 130 }} /> :
-              <TouchableOpacity
+              showPortofolioDetail?.data?.statuses[3]?.status && <TouchableOpacity
                 className='border-[1px] border-primary rounded-md w-[200] px-2 py-2 flex-row items-center'
                 onPress={() => onOpeGallery(0)}>
                 <DefaultText
@@ -163,11 +162,11 @@ export default function PortofolioDetail({ route }: RootStackScreenProps<'Portof
                 <Icon name="upload" style={{ marginLeft: 50 }} size={20} />
               </TouchableOpacity>}
             <Gap width={20} />
-            <Icon name="eye" onPress={() => setShowImageUpload(true)} size={22} />
+            {showPortofolioDetail?.data?.statuses[3]?.status && upload_bukti_tf && <Icon name="eye" onPress={() => setShowImageUpload(true)} size={22} />}
             <Gap width={20} />
-            {upload_bukti_tf &&
-              <Icon name="trash-can" 
-              size={22}
+            {showPortofolioDetail?.data?.statuses[3]?.status && upload_bukti_tf &&
+              <Icon name="trash-can"
+                size={22}
                 onPress={() => {
                   setUpload_Bukti_Tf(undefined);
                   setBuktiTF(undefined);
@@ -176,12 +175,13 @@ export default function PortofolioDetail({ route }: RootStackScreenProps<'Portof
 
           </View>
           <Gap height={10} />
-          {buktiTF?.uri && <TouchableOpacity
-            onPress={() => onSave()}
-            activeOpacity={0.7}
-            className="self-center flex bg-primary px-3 py-2 rounded-md">
-            <DefaultText title="Submit Bukti Transfer" titleClassName="text-white" />
-          </TouchableOpacity>}
+          {showPortofolioDetail?.data?.statuses[3]?.status && buktiTF?.uri &&
+            <TouchableOpacity
+              onPress={() => onSave()}
+              activeOpacity={0.7}
+              className="self-center flex bg-primary px-3 py-2 rounded-md">
+              <DefaultText title="Submit Bukti Transfer" titleClassName="text-white" />
+            </TouchableOpacity>}
           <Gap height={10} />
           <View className="w-full h-[1px] bg-neutral-300 mb-3 mt-1" />
           {showPortofolioDetail?.data?.statuses?.map((list: any) => {
