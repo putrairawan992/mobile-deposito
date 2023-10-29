@@ -29,7 +29,7 @@ export default function PortofolioDetail({ route }: RootStackScreenProps<'Portof
   const [upload_bukti_tf, setUpload_Bukti_Tf] = useState<string | Asset>(showPortofolioDetail?.data?.buktiTF ? `https://dev.depositosyariah.id/${showPortofolioDetail?.data?.buktiTF?.image}` : '') as any;
   const dispatch = useDispatch<RootDispatch>();
   const totalPengem = parseInt(showPortofolioDetail?.data?.amount) + parseInt(showPortofolioDetail?.data?.bagi_hasil);
-  
+
   useEffect(() => {
     dispatch(getShowPortofolioDetail(no_transaksi))
   }, [no_transaksi]);
@@ -70,7 +70,7 @@ export default function PortofolioDetail({ route }: RootStackScreenProps<'Portof
 
   return (
     <DefaultView>
-      <DefaultHeader title="Detail Portofolio" />
+      <DefaultHeader backButton={() => navigationRef.navigate('Portofolio')} title="Detail Portofolio" />
       <ScrollView showsVerticalScrollIndicator={false}>
         {showPortofolioLoadingDetail ? <ActivityIndicator /> : <View className="px-8">
           <Gap height={15} />
@@ -210,7 +210,7 @@ export default function PortofolioDetail({ route }: RootStackScreenProps<'Portof
             </TouchableOpacity>
             <Gap width={10} />
             <TouchableOpacity
-              onPress={() => { }}
+              onPress={() => { navigationRef.navigate('Portofolio') }}
               activeOpacity={0.7}
               className="self-center bg-primary px-3 py-2 rounded-md">
               <DefaultText title="Tutup" titleClassName="text-white" />
