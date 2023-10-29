@@ -28,7 +28,10 @@ export default function ProdukDetail({
   useEffect(() => {
     dispatch(getShowProductNasabahDetail(id));
   }, [dispatch]);
-  
+
+  console.log("showProductDetail", showProductDetail);
+
+
   return (
     <DefaultView>
       <DefaultHeader title="Detail Deposito" />
@@ -106,16 +109,16 @@ export default function ProdukDetail({
                   title="Proyeksi Bagi Hasil"
                   titleClassName="flex-1"
                 />
-                <DefaultText title={`${showProductDetail?.bagi_hasil} pertahun`} />
+                <DefaultText title={`${showProductDetail?.bagi_hasil}% / Tahun`} />
               </View>
-              <Gap height={10} />
+              {/* <Gap height={10} />
               <View className="flex-row">
                 <DefaultText
                   title="Transaksi Deposito"
                   titleClassName="flex-1"
                 />
                 <DefaultText title="Belum ada dari api ? Transaksi" />
-              </View>
+              </View> */}
               <Gap height={10} />
               <View className="flex-row">
                 <DefaultText title="Minimum Deposito" titleClassName="flex-1" />
@@ -124,7 +127,7 @@ export default function ProdukDetail({
               <Gap height={10} />
               <View className="flex-row">
                 <DefaultText title="Dana Terkumpul" titleClassName="flex-1" />
-                <DefaultText title={`${formatRupiah(String(showProductDetail?.terkumpul), "Rp ")} | ${showProductDetail?.terkumpulpersen}`} />
+                <DefaultText title={`${formatRupiah(String(showProductDetail?.terkumpul), "Rp ")} (${showProductDetail?.terkumpulpersen}%)`} />
               </View>
             </View>
           )}

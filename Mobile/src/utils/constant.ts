@@ -32,6 +32,8 @@ export const statusNikahValidation = (val: string) => {
   return textVal;
 }
 
+export  const MAX_FILE_SIZE = 500 * 1024;
+
  export const penghasilanValidation = (val: string) => {
   let textVal;
   if (val === '1') {

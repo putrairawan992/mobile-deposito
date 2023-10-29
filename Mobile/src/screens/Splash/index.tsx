@@ -12,9 +12,9 @@ import { navigationRef } from '../../navigation/RootNavigation';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootDispatch, RootState } from '../../store';
 import { getSplashDashboard } from '../../services/dasbhoard';
-import { getItem, getStorage } from '../../utils/storage';
-import { useFocusEffect } from '@react-navigation/native';
-import { logout } from '../../services/user';
+import { getItem } from '../../utils/storage';
+import { checkLogin } from '../../services/user';
+
 
 
 export default function Splash() {
@@ -24,27 +24,18 @@ export default function Splash() {
   const { showSplashDashboard, showSplashListLoading } = useSelector(
     (state: RootState) => state.dashboardReducer,
   );
-  const { detailNasabah, checkLoginLoading, detailNasabahDetailLoading, phone_email } = useSelector(
+  const { checkLoginLoading } = useSelector(
     (state: RootState) => state.userReducer,
   );
 
-  const funcFetchValid = async () => {
-    if (phone_email && detailNasabah?.idUserNasabah) {
-      navigationRef.navigate(await getStorage('typeLogin'), {
-        emailOrPhone: phone_email,
-      });
+  const redirectFunction = async () => {
+    if (await getItem("phone-email") && await getItem("token-expired") === undefined) {
+      dispatch(checkLogin(await getItem("phone-email")))
     }
   }
 
-  useFocusEffect(
-    useCallback(() => {
-      if (!detailNasabahDetailLoading) {
-        funcFetchValid();
-      }
-    }, [detailNasabah]));
-
-
   useEffect(() => {
+    redirectFunction()
     dispatch(getSplashDashboard())
   }, [dispatch])
 
@@ -119,7 +110,7 @@ export default function Splash() {
         </View>
 
         <View className="items-center absolute bottom-7 self-center">
-          {(!detailNasabahDetailLoading && checkLoginLoading) ? <ActivityIndicator /> :
+          {checkLoginLoading ? <ActivityIndicator /> :
             <Button
               title="MASUK"
               onPress={() => navigationRef.navigate('Login')}

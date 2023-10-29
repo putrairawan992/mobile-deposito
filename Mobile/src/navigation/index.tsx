@@ -77,11 +77,11 @@ function StackNavigator() {
     useCallback(() => {
       const useToken = async () => {
         if (await getItem("token-expired") &&  detailNasabah?.idUserNasabah) {
-          setIsShowContent(true)
-          setIsLoading(false);
-        } else {
           setIsLoading(false);
           setIsShowContent(false);
+        } else {
+          setIsShowContent(true)
+          setIsLoading(false);
         }
       }
       setTimeout(()=>{

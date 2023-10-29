@@ -12,7 +12,7 @@ import { RootDispatch, RootState } from '../../store';
 import { useDispatch, useSelector } from 'react-redux';
 import { getDetailNasabah } from '../../services/user';
 import { getSkDashboard } from '../../services/dasbhoard';
-import { addStorage } from '../../utils/storage';
+import { setItem } from '../../utils/storage';
 import RenderHTML from 'react-native-render-html';
 import { useWindowDimensions } from 'react-native';
 
@@ -29,7 +29,6 @@ export default function SyaratKetentuan() {
     dispatch(getDetailNasabah());
     dispatch(getSkDashboard())
   }, [dispatch]);
-console.log(detailNasabah?.idUserNasabah);
 
   useEffect(() => {
     setDtNasabah(detailNasabah);
@@ -39,7 +38,7 @@ console.log(detailNasabah?.idUserNasabah);
     if (!agree) {
       return showToast('Centang syarat dan ketentuan.');
     }
-    addStorage('skIsTrue', 'oke');
+    setItem('skIsTrue', 'oke',1000);
     navigationRef.navigate((dtNasabah?.idUserNasabah == "" || dtNasabah?.idUserNasabah == null) ? 'Register' : 'MyTabs');
   };
 

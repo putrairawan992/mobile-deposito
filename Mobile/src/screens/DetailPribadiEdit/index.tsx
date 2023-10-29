@@ -14,10 +14,11 @@ import { RootStackScreenProps } from '../../navigation/interface';
 import { RootDispatch } from '../../store';
 import { useDispatch } from 'react-redux';
 import { getDetailNasabah, updateNasabah } from '../../services/user';
-import { penghasilanValidation, statusNikahValidation } from '../../utils/constant';
+import { MAX_FILE_SIZE, penghasilanValidation, statusNikahValidation } from '../../utils/constant';
 import ModalStatusPernikahan from '../../components/ModalStatusPernikahan';
 import ModalPenghasilan from '../../components/ModalPenghasilan';
 import { Asset, launchImageLibrary } from 'react-native-image-picker';
+import Toast from 'react-native-toast-message';
 
 export default function DetailPribadiEdit({ route }: RootStackScreenProps<'DetailPribadiEdit'>) {
   const detailPribadi = route.params?.detailNasabah as any;
@@ -36,9 +37,9 @@ export default function DetailPribadiEdit({ route }: RootStackScreenProps<'Detai
   const [showModalSuccess, setShowModalSuccess] = useState<boolean>(false);
   const [showDate, setShowDate] = useState<boolean>(false);
   const [showPenghasilan, setShowPenghasilan] = useState<boolean>(false);
-  const [ktp_image, setKtp_image] = useState<string | Asset>('https://dev.depositosyariah.id/' + detailPribadi?.image_ktp) as any;
-  const [image_selfie, setImage_selfie] = useState<string | Asset>('https://dev.depositosyariah.id/' + detailPribadi?.image_selfie) as any;
-  const [image_ktp_ahli_waris, setImage_ktp_ahli_waris] = useState<string | Asset>('https://dev.depositosyariah.id/' + detailPribadi?.image_ktp_ahli_waris) as any;
+  const [ktp_image, setKtp_image] = useState<string | Asset>(detailPribadi?.image_ktp ? `https://dev.depositosyariah.id/${detailPribadi?.image_ktp}` : '') as any;
+  const [image_selfie, setImage_selfie] = useState<string | Asset>(detailPribadi?.image_selfie ? `https://dev.depositosyariah.id/${detailPribadi?.image_selfie}` : '') as any;
+  const [image_ktp_ahli_waris, setImage_ktp_ahli_waris] = useState<string | Asset>(detailPribadi?.image_ktp_ahli_waris ? `https://dev.depositosyariah.id/${detailPribadi?.image_ktp_ahli_waris}` : '') as any;
   const [fotoKtp, setFotoKtp] = useState<Asset | string>() as any;
   const [fotoNasabah, setFotoNasabah] = useState<Asset | string>() as any;
   const [fotoKtpAhliWaris, setFotoKtpAhliWaris] = useState<Asset | string>() as any;
@@ -88,20 +89,27 @@ export default function DetailPribadiEdit({ route }: RootStackScreenProps<'Detai
 
   const onOpeGallery = async (index: number) => {
     const result = await launchImageLibrary({ mediaType: 'photo' });
-    console.log("result", result);
-
     if (result.assets) {
-      if (index === 0) {
-        setFotoKtp(result.assets[0]);
-        setKtp_image(result?.assets[0]?.uri);
-      } else if (index === 1) {
-        setFotoNasabah(result.assets[0]);
-        setImage_selfie(result?.assets[0]?.uri);
-      } else if (index === 2) {
-        setImage_ktp_ahli_waris(result?.assets[0]?.uri);
-        setFotoKtpAhliWaris(result.assets[0]);
+      if (result?.assets[0]?.fileSize as any > MAX_FILE_SIZE) {
+        return Toast.show({
+          type: 'error',
+          text1: 'Error',
+          text2: 'Max Upload 500kb',
+        });
+      } else {
+        if (index === 0) {
+          setFotoKtp(result.assets[0]);
+          setKtp_image(result?.assets[0]?.uri);
+        } else if (index === 1) {
+          setFotoNasabah(result.assets[0]);
+          setImage_selfie(result?.assets[0]?.uri);
+        } else if (index === 2) {
+          setImage_ktp_ahli_waris(result?.assets[0]?.uri);
+          setFotoKtpAhliWaris(result.assets[0]);
+        }
       }
     }
+
   };
 
   return (
@@ -142,71 +150,6 @@ export default function DetailPribadiEdit({ route }: RootStackScreenProps<'Detai
               />
             </View>
           </View>
-          <Gap height={5} />
-          <View className="flex-row items-center">
-            <DefaultText title="Foto KTP " titleClassName="flex-1" />
-            {ktp_image ?
-              <Image source={{ uri: ktp_image }} style={{ height: 100, width: 180 }} /> :
-              <TouchableOpacity
-                className='border-[1px] border-primary rounded-md w-[200] px-2 py-2 flex-row items-center'
-                onPress={() => onOpeGallery(0)}>
-                <DefaultText
-                  title={'Upload Image'}
-                  titleClassName="m-0 p-0 font-inter-regular "
-                  titleProps={{ numberOfLines: 1 }}
-                />
-
-                <Icon name="upload" style={{ marginLeft: 50 }} size={20} />
-              </TouchableOpacity>}
-
-            {ktp_image && <Icon name="trash-can" onPress={() => {
-              setFotoKtp(undefined);
-              setKtp_image(undefined);
-            }} size={20} />}
-          </View>
-          <Gap height={5} />
-          <View className="flex-row items-center">
-            <DefaultText title="Foto Selfie " titleClassName="flex-1" />
-            {image_selfie ? <Image source={{ uri: image_selfie }} style={{ height: 100, width: 180 }} /> :
-              <TouchableOpacity
-                className='border-[1px] border-primary rounded-md w-[200] px-2 py-2 flex-row items-center'
-                onPress={() => onOpeGallery(1)}>
-                <DefaultText
-                  title={'Upload Image'}
-                  titleClassName="m-0 p-0 font-inter-regular "
-                  titleProps={{ numberOfLines: 1 }}
-                />
-
-                <Icon name="upload" style={{ marginLeft: 50 }} size={20} />
-              </TouchableOpacity>}
-
-            {image_selfie && <Icon name="trash-can" onPress={() => {
-              setFotoKtp(undefined);
-              setImage_selfie(undefined);
-            }} size={20} />}
-          </View>
-          <Gap height={5} />
-          <View className="flex-row items-center">
-            <DefaultText title="Foto KTP " titleClassName="flex-1" />
-            {image_ktp_ahli_waris ? <Image source={{ uri: image_ktp_ahli_waris }} style={{ height: 100, width: 180 }} /> :
-              <TouchableOpacity
-                className='border-[1px] border-primary rounded-md w-[200] px-2 py-2 flex-row items-center'
-                onPress={() => onOpeGallery(2)}>
-                <DefaultText
-                  title={'Upload Image'}
-                  titleClassName="m-0 p-0 font-inter-regular "
-                  titleProps={{ numberOfLines: 1 }}
-                />
-
-                <Icon name="upload" style={{ marginLeft: 50 }} size={20} />
-              </TouchableOpacity>}
-
-            {image_ktp_ahli_waris && <Icon name="trash-can" onPress={() => {
-              setFotoKtp(undefined);
-              setImage_ktp_ahli_waris(undefined);
-            }} size={20} />}
-          </View>
-
           <Gap height={5} />
           <TouchableOpacity
             activeOpacity={0.7}
@@ -289,6 +232,71 @@ export default function DetailPribadiEdit({ route }: RootStackScreenProps<'Detai
               />
             </View>
           </View>
+          <Gap height={5} />
+          <View className="flex-row items-center">
+            <DefaultText title="Foto KTP " titleClassName="flex-1" />
+            {ktp_image ?
+              <Image source={{ uri: ktp_image }} style={{ height: 100, width: 180 }} /> :
+              <TouchableOpacity
+                className='border-[1px] border-primary rounded-md w-[200] px-2 py-2 flex-row items-center'
+                onPress={() => onOpeGallery(0)}>
+                <DefaultText
+                  title={'Upload Image'}
+                  titleClassName="m-0 p-0 font-inter-regular "
+                  titleProps={{ numberOfLines: 1 }}
+                />
+
+                <Icon name="upload" style={{ marginLeft: 50 }} size={20} />
+              </TouchableOpacity>}
+
+            {ktp_image && <Icon name="trash-can" onPress={() => {
+              setFotoKtp(undefined);
+              setKtp_image(undefined);
+            }} size={20} />}
+          </View>
+          <Gap height={5} />
+          <View className="flex-row items-center">
+            <DefaultText title="Foto Selfie " titleClassName="flex-1" />
+            {image_selfie ? <Image source={{ uri: image_selfie }} style={{ height: 100, width: 180 }} /> :
+              <TouchableOpacity
+                className='border-[1px] border-primary rounded-md w-[200] px-2 py-2 flex-row items-center'
+                onPress={() => onOpeGallery(1)}>
+                <DefaultText
+                  title={'Upload Image'}
+                  titleClassName="m-0 p-0 font-inter-regular "
+                  titleProps={{ numberOfLines: 1 }}
+                />
+
+                <Icon name="upload" style={{ marginLeft: 50 }} size={20} />
+              </TouchableOpacity>}
+
+            {image_selfie && <Icon name="trash-can" onPress={() => {
+              setFotoKtp(undefined);
+              setImage_selfie(undefined);
+            }} size={20} />}
+          </View>
+          <Gap height={5} />
+          <View className="flex-row items-center">
+            <DefaultText title="Foto KTP " titleClassName="flex-1" />
+            {image_ktp_ahli_waris ? <Image source={{ uri: image_ktp_ahli_waris }} style={{ height: 100, width: 180 }} /> :
+              <TouchableOpacity
+                className='border-[1px] border-primary rounded-md w-[200] px-2 py-2 flex-row items-center'
+                onPress={() => onOpeGallery(2)}>
+                <DefaultText
+                  title={'Upload Image'}
+                  titleClassName="m-0 p-0 font-inter-regular "
+                  titleProps={{ numberOfLines: 1 }}
+                />
+
+                <Icon name="upload" style={{ marginLeft: 50 }} size={20} />
+              </TouchableOpacity>}
+
+            {image_ktp_ahli_waris && <Icon name="trash-can" onPress={() => {
+              setFotoKtp(undefined);
+              setImage_ktp_ahli_waris(undefined);
+            }} size={20} />}
+          </View>
+
           <Gap height={15} />
           <View className="bg-primary-light rounded-2xl px-5 py-3 flex-row items-center">
             <View className="flex-1">

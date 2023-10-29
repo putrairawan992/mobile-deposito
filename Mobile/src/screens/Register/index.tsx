@@ -23,10 +23,11 @@ import { getDetailNasabah, registerNasabah } from '../../services/user';
 import ModalPenghasilan from '../../components/ModalPenghasilan';
 import ModalStatusPernikahan from '../../components/ModalStatusPernikahan';
 import { addStorage } from '../../utils/storage';
-import { penghasilanValidation, statusNikahValidation } from '../../utils/constant';
+import { MAX_FILE_SIZE, penghasilanValidation, statusNikahValidation } from '../../utils/constant';
 import ModalImageSelfie from '../../components/ModalImage';
 import ModalImageAhliWaris from '../../components/ModalImage';
 import ModalImage from '../../components/ModalImage';
+import Toast from 'react-native-toast-message';
 
 export default function Register() {
   const { registerLoading, detailNasabah } = useSelector(
@@ -71,10 +72,14 @@ export default function Register() {
     dispatch(getDetailNasabah())
   }, [dispatch])
 
+  function convertToLowerCase(inputString: string): string {
+    return inputString?.toLowerCase();
+  }
+
 
   const actionSubmitRegister = () => {
     let formdata = new FormData();
-    formdata.append('email', email);
+    formdata.append('email', convertToLowerCase(email));
     formdata.append('nama', nama);
     formdata.append('ktp', ktp);
     formdata.append('tmpt_lahir', tempatLahir);
@@ -94,6 +99,8 @@ export default function Register() {
     formdata.append('nama_bank', bank);
     formdata.append('norek', rekening);
     formdata.append('atas_nama', namaRekening);
+    console.log(fotoKtp);
+
     formdata.append('image_ktp', {
       size: fotoKtp?.fileSize,
       uri: fotoKtp?.uri,
@@ -107,23 +114,31 @@ export default function Register() {
       type: fotoNasabah?.type,
     } ?? '');
     formdata.append('image_ktp_ahli_waris', {
-      size: fotoNasabah?.fileSize,
+      size: fotoKtpAhliWaris?.fileSize,
       uri: fotoKtpAhliWaris?.uri,
       name: fotoKtpAhliWaris?.fileName,
       type: fotoKtpAhliWaris?.type,
     } ?? '');
-    dispatch(registerNasabah(formdata));
+    dispatch(registerNasabah(formdata, email));
   };
 
   const onOpeGallery = async (index: number) => {
     const result = await launchImageLibrary({ mediaType: 'photo' });
     if (result.assets) {
-      if (index === 0) {
-        setFotoKtp(result.assets[0]);
-      } else if (index === 1) {
-        setFotoNasabah(result.assets[0]);
-      } else if (index === 2) {
-        setFotoKtpAhliWaris(result.assets[0]);
+      if (result?.assets[0]?.fileSize as any > MAX_FILE_SIZE) {
+        return Toast.show({
+          type: 'error',
+          text1: 'Error',
+          text2: 'Max Upload 500kb',
+        });
+      } else {
+        if (index === 0) {
+          setFotoKtp(result.assets[0]);
+        } else if (index === 1) {
+          setFotoNasabah(result.assets[0]);
+        } else if (index === 2) {
+          setFotoKtpAhliWaris(result.assets[0]);
+        }
       }
     }
   };
@@ -189,16 +204,16 @@ export default function Register() {
           titleClassName="text-white"
           onPress={() => {
             if (
-              ktp.trim().length === 0 ||
-              tempatLahir.trim().length === 0 ||
+              ktp?.trim()?.length === 0 ||
+              tempatLahir?.trim()?.length === 0 ||
               !tanggalLahir ||
-              ibu.trim().length === 0 ||
-              statusNikah.trim().length === 0
+              ibu?.trim()?.length === 0 ||
+              statusNikah?.trim()?.length === 0
             ) {
               return showToast('Data belum lengkap');
             }
 
-            if (ktp.trim().length !== 16) {
+            if (ktp?.trim()?.length !== 16) {
               return showToast('No KTP tidak valid, 16 characters');
             }
 
@@ -279,10 +294,10 @@ export default function Register() {
           titleClassName="text-white"
           onPress={() => {
             if (
-              perusahaan.trim().length === 0 ||
-              profesi.trim().length === 0 ||
-              alamat.trim().length === 0 ||
-              penghasilan.trim().length === 0
+              perusahaan?.trim()?.length === 0 ||
+              profesi?.trim()?.length === 0 ||
+              alamat?.trim()?.length === 0 ||
+              penghasilan?.trim()?.length === 0
             ) {
               return showToast('Data belum lengkap');
             }
@@ -358,9 +373,9 @@ export default function Register() {
           titleClassName="text-white"
           onPress={() => {
             if (
-              ahliWaris.trim().length === 0 ||
-              ahliWarisKtp.trim().length === 0 ||
-              ahliWarisPhone.trim().length === 0
+              ahliWaris?.trim()?.length === 0 ||
+              ahliWarisKtp?.trim()?.length === 0 ||
+              ahliWarisPhone?.trim()?.length === 0
             ) {
               return showToast('Data belum lengkap');
             }
@@ -423,9 +438,9 @@ export default function Register() {
           titleClassName="text-white"
           onPress={() => {
             if (
-              bank.trim().length === 0 ||
-              rekening.trim().length === 0 ||
-              namaRekening.trim().length === 0
+              bank?.trim()?.length === 0 ||
+              rekening?.trim()?.length === 0 ||
+              namaRekening?.trim()?.length === 0
             ) {
               return showToast('Data belum lengkap');
             }

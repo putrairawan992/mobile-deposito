@@ -81,7 +81,7 @@ export default function AjukanDeposito({ route }: RootStackScreenProps<"AjukanDe
         <View className="px-5">
           <Gap height={15} />
           <DefaultText
-            title="BPR Kencana Abadi"
+            title={showProductDetail?.nama}
             titleClassName="text-base font-inter-semibold"
           />
           <Gap height={15} />
@@ -92,17 +92,17 @@ export default function AjukanDeposito({ route }: RootStackScreenProps<"AjukanDe
           <Gap height={10} />
           <View className="flex-row">
             <DefaultText title="Tenor" titleClassName="flex-1" />
-            <DefaultText title="3 Bulan" />
+            <DefaultText title={`${showProductDetail?.tenor} Bulan`} />
           </View>
           <Gap height={10} />
           <View className="flex-row">
             <DefaultText title="Nisbah" titleClassName="flex-1" />
-            <DefaultText title="40 : 60" />
+            <DefaultText title={`${showProductDetail?.nisbah}`} />
           </View>
           <Gap height={10} />
           <View className="flex-row">
             <DefaultText title="Proyeksi Bagi Hasil" titleClassName="flex-1" />
-            <DefaultText title="5% pertahun" />
+            <DefaultText title={`${showProductDetail?.bagi_hasil}% / Tahun`}/>
           </View>
         </View>
 

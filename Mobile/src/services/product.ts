@@ -6,6 +6,7 @@ import Toast from 'react-native-toast-message';
 import { getStorage, removeStorage } from '../utils/storage';
 import { setToken } from '../store/user';
 import { navigationRef } from '../navigation/RootNavigation';
+import { logout } from './user';
 
 export const getShowPromo = () => async (dispatch: RootDispatch) => {
   dispatch(showPromoLoading(true));
@@ -21,8 +22,8 @@ export const getShowPromo = () => async (dispatch: RootDispatch) => {
       dispatch(showPromoLoading(false));
     })
     .catch(err => {
-      console.log("err",err);
-      
+      console.log("err", err);
+
       if (err?.response?.status === 401) {
         removeStorage('token');
         dispatch(setToken(null));
@@ -90,9 +91,7 @@ export const getShowProductNasabahDetail = (id: any) => async (dispatch: RootDis
           err.response?.data?.message ?? 'Terjadi error, coba lagi nanti.',
       })
       if (err?.response?.status === 401) {
-        removeStorage('token');
-        dispatch(setToken(null));
-        navigationRef.navigate('Login');
+        dispatch(logout())
       }
       dispatch(showProductDetailLoading(false));
     });

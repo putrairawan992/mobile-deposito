@@ -24,7 +24,7 @@ import { getShowPromo } from '../../services/product';
 import { RootDispatch, RootState } from '../../store';
 import { getShowDashboard } from '../../services/dasbhoard';
 import { formatRupiah } from '../../utils/currency';
-import { getDetailNasabah, getUserProfile, logout } from '../../services/user';
+import { checkLogin, getDetailNasabah, getUserProfile, logout } from '../../services/user';
 import { getItem, getStorage } from '../../utils/storage';
 import { useFocusEffect } from '@react-navigation/native';
 import ModalAlert from '../../components/ModalAlert';
@@ -39,7 +39,7 @@ export default function Beranda() {
   const { showDashboard } = useSelector(
     (state: RootState) => state.dashboardReducer,
   );
-  const { detailNasabah, detailNasabahDetailLoading, phone_email, userProfile, token } = useSelector(
+  const { detailNasabah, detailNasabahDetailLoading, userProfile, token } = useSelector(
     (state: RootState) => state.userReducer,
   );
   const [loading, setLoading] = useState<boolean>(true);
@@ -58,9 +58,7 @@ export default function Beranda() {
     if (token && !userProfile?.data?.statuse?.profile && detailNasabah?.idUserNasabah) {
       setUpdateProfile(true);
     }
-  }, [detailNasabah])
-
-  console.log("detailNasabah?.idUserNasabah", userProfile?.data?.statuse?.profile);
+  }, [detailNasabah]);
 
   useFocusEffect(useCallback(() => {
     if (!detailNasabahDetailLoading) {
@@ -74,18 +72,14 @@ export default function Beranda() {
               navigationRef.navigate("Register");
             }
           }
-          if (phone_email && await getItem("token-expired") === undefined && detailNasabah.idUserNasabah && userProfile?.data?.statuse?.profile) {
-            navigationRef.navigate("Splash");
-          } else {
-            if (await getItem("token-expired") === undefined && !detailNasabah.idUserNasabah) {
-              dispatch(logout());
-            }
+          if (await getStorage("phone-email") && await getItem("token-expired") === undefined) {
+            dispatch(checkLogin(await getStorage("phone-email")))
           }
         }
       }
       setTimeout(() => {
         useNasabah();
-      }, 3333)
+      }, 2222)
       setDtNasabah(detailNasabah);
     }
   }, [detailNasabah, detailNasabahDetailLoading])
