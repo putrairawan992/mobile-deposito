@@ -356,7 +356,7 @@ export const forgotPasswordPin =
           Toast.show({
             type: 'success',
             text1: 'Success',
-            text2: 'Reset Password/Pin',
+            text2: 'Reset Password',
           });
           dispatch(setForgotLoading(false));
           navigationRef.navigate('OTP', { emailOrPhone });
