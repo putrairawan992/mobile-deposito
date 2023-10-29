@@ -7,9 +7,10 @@ import { getStorage, removeStorage } from '../utils/storage';
 import { setToken } from '../store/user';
 import { navigationRef } from '../navigation/RootNavigation';
 
-export const getShowPortofolio = (params: string) => async (dispatch: RootDispatch) => {
+export const getShowPortofolio = (params?: string) => async (dispatch: RootDispatch) => {
   dispatch(setshowPortofolioLoading(true));
-  axios
+  let data;
+  await axios
     .get(params ? `${API}/pengajuan${params}` : `${API}/pengajuan`, {
       headers: {
         'Content-Type': 'application/json',
@@ -19,6 +20,7 @@ export const getShowPortofolio = (params: string) => async (dispatch: RootDispat
     .then(res => {
       dispatch(setshowPortofolio(res?.data));
       dispatch(setshowPortofolioLoading(false));
+      data = res?.data
     })
     .catch(err => {
       Toast.show({
@@ -34,6 +36,7 @@ export const getShowPortofolio = (params: string) => async (dispatch: RootDispat
         navigationRef.navigate('Login');
       }
     });
+    return data;
 };
 
 export const getShowPortofolioDetail = (params: any) => async (dispatch: RootDispatch) => {

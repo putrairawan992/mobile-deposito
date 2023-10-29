@@ -109,6 +109,9 @@ export default function Produk() {
     dispatch(getShowProductNasabah());
   }, [dispatch]);
 
+  console.log("showProduct",showProduct);
+  
+
   return (
     <DefaultView>
       <DefaultHeader title="Produk Deposito" />

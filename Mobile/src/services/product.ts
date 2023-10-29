@@ -7,6 +7,7 @@ import { getStorage, removeStorage } from '../utils/storage';
 import { setToken } from '../store/user';
 import { navigationRef } from '../navigation/RootNavigation';
 import { logout } from './user';
+import { getShowPortofolio } from './portofolio';
 
 export const getShowPromo = () => async (dispatch: RootDispatch) => {
   dispatch(showPromoLoading(true));
@@ -117,7 +118,11 @@ export const postAjukanDeposito =
             text2: res?.data?.message,
           });
           setLoadings(false);
-          setShowmodal(true);
+          dispatch(getShowPortofolio()).then((result: any) => {
+            if (result.data?.length > 0) {
+              navigationRef.navigate('PortofolioDetail', { no_transaksi: result?.data[0]?.no_transaksi })
+            }
+          })
           data = res.data;
         })
         .catch(err => {
