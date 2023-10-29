@@ -26,6 +26,8 @@ interface InitialState {
   registerLoading: boolean;
   userProfileLoading:boolean;
   detailNasabahDetailLoading: boolean;
+  uploadBuktiTransferLoading: boolean;
+  registerPasswordPinLoading: boolean;
 }
 
 const initialState: InitialState = {
@@ -35,11 +37,13 @@ const initialState: InitialState = {
   detailNasabah: null,
   phone_email: null,
   token: null,
+  registerPasswordPinLoading: false,
   loginLoading: false,
   checkLoginLoading: false,
   userProfileLoading:false,
   forgotLoading: false,
   registerLoading: false,
+  uploadBuktiTransferLoading:false,
   detailNasabahDetailLoading: false,
 };
 
@@ -83,12 +87,16 @@ export const userSlice = createSlice({
     setForgotLoading: (state, action) => {
       state.forgotLoading = action.payload;
     },
+    setRegisterPasswordPinLoading: (state, action) => {
+      state.registerPasswordPinLoading = action.payload;
+    },
   },
 });
 
 export default userSlice.reducer;
 
 export const {
+  setRegisterPasswordPinLoading,
   setUserProfileLoading,
   setPhoneEmail,
   setDetailNasabah,

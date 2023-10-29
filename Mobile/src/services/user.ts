@@ -10,6 +10,7 @@ import {
   setLoginLoading,
   setPhoneEmail,
   setRegisterLoading,
+  setRegisterPasswordPinLoading,
   setToken,
   setUser,
   setUserProfile,
@@ -18,13 +19,10 @@ import Toast from 'react-native-toast-message';
 import { addStorage, getStorage, removeStorage, setItem } from '../utils/storage';
 import { navigationRef } from '../navigation/RootNavigation';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { getShowPortofolioDetail } from './portofolio';
 
 export const checkLogin =
   (emailOrPhone: string) =>
     async (dispatch: RootDispatch) => {
-      console.log("emailOrPhone",emailOrPhone);
-      
       dispatch(setCheckLoginLoading(true));
       axios
         .post(`${API}/ceklogin`, { username: emailOrPhone },
@@ -41,16 +39,10 @@ export const checkLogin =
           navigationRef.navigate(res?.data?.data === 'password' ? 'Password' : 'OTP', {
             emailOrPhone,
           });
-          Toast.show({
-            type: 'success',
-            text1: '',
-            text2:
-              `Berhasil Kirim ${res?.data?.data === 'password' ? 'Password' : 'OTP'}`,
-          });
         })
         .catch(err => {
           console.log(err.response?.data?.message);
-          
+
           Toast.show({
             type: 'error',
             text1: 'Error',
@@ -217,13 +209,6 @@ export const updateNasabah =
           navigationRef.navigate('Profile')
         })
         .catch(err => {
-          console.log("err.response.data", err.response.data);
-
-          if (err?.response?.status === 401) {
-            removeStorage('token');
-            dispatch(setToken(null));
-            navigationRef.navigate('Login');
-          }
           if (err?.response?.status !== 401) {
             Toast.show({
               type: 'error',
@@ -236,45 +221,43 @@ export const updateNasabah =
     };
 
 export const uploadBuktiPengajuan =
-    (payload: any, params:string) =>
-      async (dispatch: RootDispatch) => {
-        axios
-          .post(
-            `${API}/buktipengajuan/${params}`,
-            payload, {
-            headers: {
-              "Content-Type": "multipart/form-data",
-              "Accept": "application/json",
-              "type": "formData",
-              Authorization: `Bearer ${await getStorage('token')}`
-            },
-            transformRequest: (data) => {
-              console.log("transformRequest", data);
-              return data; // thats enough
-            },
+  (payload: any, params: string) =>
+    async (dispatch: RootDispatch) => {
+      axios
+        .post(
+          `${API}/buktipengajuan/${params}`,
+          payload, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            "Accept": "application/json",
+            "type": "formData",
+            Authorization: `Bearer ${await getStorage('token')}`
           },
-          )
-          .then(() => {
-            Toast.show({
-              type: 'success',
-              text1: 'Success',
-              text2: 'Upload Bukti Berhasil',
-            });
-            navigationRef.navigate('Portofolio');
-          })
-          .catch(err => {
-            console.log("err",err.response);
-            
-            if (err?.response?.status !== 401) {
-              Toast.show({
-                type: 'error',
-                text1: 'Error' + err?.response?.data?.errors?.pin[0],
-                text2:
-                  JSON.stringify(err.response?.data) ?? 'Terjadi error, coba lagi nanti.',
-              });
-            }
+          transformRequest: (data) => {
+            console.log("transformRequest", data);
+            return data; // thats enough
+          },
+        },
+        )
+        .then(() => {
+          Toast.show({
+            type: 'success',
+            text1: 'Success',
+            text2: 'Upload Bukti Berhasil',
           });
-      };    
+          navigationRef.navigate('Portofolio');
+        })
+        .catch(err => {
+          if (err?.response?.status !== 401) {
+            Toast.show({
+              type: 'error',
+              text1: 'Error' + err?.response?.data?.message,
+              text2:
+                JSON.stringify(err.response?.data) ?? 'Terjadi error, coba lagi nanti.',
+            });
+          }
+        });
+    };
 
 export const registerNasabah =
   (payload: any, email?: string) =>
@@ -297,7 +280,6 @@ export const registerNasabah =
         },
         )
         .then((res) => {
-          console.log("response", res);
           Toast.show({
             type: 'success',
             text1: 'Success',
@@ -314,17 +296,13 @@ export const registerNasabah =
             text1: email,
             text2: JSON.stringify(err.response?.data) ?? 'Terjadi error, coba lagi nanti.',
           });
-          if (err?.response?.status === 401) {
-            // removeStorage('token');
-            // dispatch(setToken(null));
-            dispatch(logout());
-          }
         }).finally(() => dispatch(setRegisterLoading(false)));
     };
 
 export const registerPasswordPin =
   (payload: any, route = 'PIN') =>
     async (dispatch: RootDispatch) => {
+      dispatch(setRegisterPasswordPinLoading(true));
       axios
         .put(
           `${API}/upuser`,
@@ -342,24 +320,21 @@ export const registerPasswordPin =
             text1: 'Sukses',
             text2: res?.data ?? `Berhasil Membuat ${route === 'PIN' ? 'PIN' : 'Password'}`,
           });
+          dispatch(setRegisterPasswordPinLoading(false));
           if (route === 'MyTabs') {
             dispatch(getDetailNasabah());
           }
           navigationRef.navigate(route as any);
         })
         .catch(err => {
-          if (err?.response?.status === 401) {
-            removeStorage('token');
-            dispatch(setToken(null));
-            navigationRef.navigate('Login');
-          }
+          dispatch(setRegisterPasswordPinLoading(false));
           Toast.show({
             type: 'error',
             text1: 'Error',
             text2:
               err.response?.data ?? err.response?.data?.message ?? 'Terjadi error, coba lagi nanti.',
           });
-        });
+        })
     };
 
 export const forgotPasswordPin =
@@ -393,10 +368,5 @@ export const forgotPasswordPin =
             text2:
               err.response?.data?.message ?? 'Terjadi error, coba lagi nanti.',
           });
-          if (err?.response?.status === 401) {
-            removeStorage('token');
-            dispatch(setToken(null));
-            navigationRef.navigate('Login');
-          }
         }).finally(() => dispatch(setForgotLoading(false)));
     };     

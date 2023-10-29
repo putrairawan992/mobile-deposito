@@ -1,4 +1,5 @@
 import {
+  ActivityIndicator,
   ScrollView,
   TouchableOpacity,
   View,
@@ -13,13 +14,15 @@ import { navigationRef } from '../../navigation/RootNavigation';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { showToast } from '../../utils/toast';
 import { registerPasswordPin } from '../../services/user';
-import { useDispatch } from 'react-redux';
-import { RootDispatch } from '../../store';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootDispatch, RootState } from '../../store';
 
 export default function PIN() {
   const [pin, setPin] = useState<string>('');
   const [timer, setTimer] = useState<number>(60);
-
+  const { registerPasswordPinLoading } = useSelector(
+    (state: RootState) => state.userReducer,
+  );
   const { width } = useWindowDimensions();
   const dispatch = useDispatch<RootDispatch>();
 
@@ -201,12 +204,12 @@ export default function PIN() {
           <Icon name="backspace-outline" size={30} />
         </TouchableOpacity>
       </View>
-      <Button
+      {registerPasswordPinLoading ? <ActivityIndicator size={"large"} /> : <Button
         title="LANJUT"
         className="bg-primary mx-3 mb-7 self-center"
         titleClassName="text-white"
         onPress={onLanjut}
-      />
+      />}
     </DefaultView>
   );
 }

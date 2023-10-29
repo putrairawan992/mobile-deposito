@@ -4,24 +4,24 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, {useCallback, useEffect, useState} from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import DefaultView from '../../components/DefaultView';
 import DefaultText from '../../components/DefaultText';
 import Button from '../../components/Button';
 import Gap from '../../components/Gap';
 import Input from '../../components/Input';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import {showToast} from '../../utils/toast';
-import {RootDispatch, RootState} from '../../store';
-import {useDispatch, useSelector} from 'react-redux';
-import {forgotPasswordPin, login} from '../../services/user';
-import {RootStackScreenProps} from '../../navigation/interface';
+import { showToast } from '../../utils/toast';
+import { RootDispatch, RootState } from '../../store';
+import { useDispatch, useSelector } from 'react-redux';
+import { forgotPasswordPin, login } from '../../services/user';
+import { RootStackScreenProps } from '../../navigation/interface';
 
-export default function Password({route}: RootStackScreenProps<'Password'>) {
+export default function Password({ route }: RootStackScreenProps<'Password'>) {
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [password, setPassword] = useState<string>('');
   const emailOrPhone = route.params.emailOrPhone;
-  const {forgotLoading} = useSelector((state: RootState) => state.userReducer);
+  const { forgotLoading } = useSelector((state: RootState) => state.userReducer);
   const dispatch = useDispatch<RootDispatch>();
 
 
@@ -63,7 +63,7 @@ export default function Password({route}: RootStackScreenProps<'Password'>) {
             activeOpacity={0.7}
             onPress={() =>
               dispatch(
-                forgotPasswordPin({username: emailOrPhone}, emailOrPhone),
+                forgotPasswordPin({ username: emailOrPhone }, emailOrPhone),
               )
             }
             className="border-b-[1px] border-b-blue-400 self-start">

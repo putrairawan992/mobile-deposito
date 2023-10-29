@@ -34,7 +34,7 @@ export default function PortofolioDetail({ route }: RootStackScreenProps<'Portof
   }, [no_transaksi]);
 
   useEffect(()=>{
-    setUpload_Bukti_Tf(`https://dev.depositosyariah.id/${showPortofolioDetail?.data?.buktiTF?.image}`)
+    setUpload_Bukti_Tf(showPortofolioDetail?.data?.buktiTF?.image ? `https://dev.depositosyariah.id/${showPortofolioDetail?.data?.buktiTF?.image}` : null)
   },[showPortofolioDetail])
 
   const onOpeGallery = async (index: number) => {

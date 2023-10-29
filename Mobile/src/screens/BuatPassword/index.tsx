@@ -1,17 +1,16 @@
-import {ScrollView, TouchableOpacity, View} from 'react-native';
-import React, {useState} from 'react';
+import { ActivityIndicator, ScrollView, TouchableOpacity, View } from 'react-native';
+import React, { useState } from 'react';
 import DefaultView from '../../components/DefaultView';
 import DefaultText from '../../components/DefaultText';
 import Button from '../../components/Button';
 import Gap from '../../components/Gap';
 import Input from '../../components/Input';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import {navigationRef} from '../../navigation/RootNavigation';
-import {showToast} from '../../utils/toast';
-import {RootDispatch} from '../../store';
-import {useDispatch} from 'react-redux';
-import {registerPasswordPin} from '../../services/user';
-import {RootStackScreenProps} from '../../navigation/interface';
+import { showToast } from '../../utils/toast';
+import { RootDispatch, RootState } from '../../store';
+import { useDispatch, useSelector } from 'react-redux';
+import { registerPasswordPin } from '../../services/user';
+import { RootStackScreenProps } from '../../navigation/interface';
 
 export default function BuatPassword({
   route,
@@ -22,7 +21,10 @@ export default function BuatPassword({
   const [password, setPassword] = useState<string>('');
   const [confirmPassword, setConfirmPassword] = useState<string>('');
   const dispatch = useDispatch<RootDispatch>();
-
+  const { registerPasswordPinLoading } = useSelector(
+    (state: RootState) => state.userReducer,
+  );
+  
   const onLanjut = () => {
     if (password.trim().length === 0 || confirmPassword.trim().length === 0) {
       return showToast('Masukkan password');
@@ -84,12 +86,12 @@ export default function BuatPassword({
           />
         </View>
       </ScrollView>
-      <Button
+      {registerPasswordPinLoading ? <ActivityIndicator size={"large"} /> : <Button
         title="LANJUT"
         className="bg-primary mx-10 my-5"
         titleClassName="text-white"
         onPress={onLanjut}
-      />
+      />}
     </DefaultView>
   );
 }
