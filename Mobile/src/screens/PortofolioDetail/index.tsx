@@ -11,7 +11,7 @@ import { navigationRef } from '../../navigation/RootNavigation';
 import { RootStackScreenProps } from '../../navigation/interface';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootDispatch, RootState } from '../../store';
-import { getShowPortofolioDetail } from '../../services/portofolio';
+import { getPembatalanPortofolioDetail, getPenarikanPortofolioDetail, getShowPortofolioDetail } from '../../services/portofolio';
 import { formatRupiah } from '../../utils/currency';
 import { MAX_FILE_SIZE } from '../../utils/constant';
 import { Asset, launchImageLibrary } from 'react-native-image-picker';
@@ -28,7 +28,19 @@ export default function PortofolioDetail({ route }: RootStackScreenProps<'Portof
   const { showPortofolioDetail, showPortofolioLoadingDetail } = useSelector((state: RootState) => state.portofolioReducer);
   const [upload_bukti_tf, setUpload_Bukti_Tf] = useState<string | Asset>(showPortofolioDetail?.data?.buktiTF ? `https://dev.depositosyariah.id/${showPortofolioDetail?.data?.buktiTF?.image}` : '') as any;
   const dispatch = useDispatch<RootDispatch>();
+  const dummyStatus = [
+    { "message": "Pengajuan Deposito", "status": true },
+    { "message": "Tanda Tangan Dokumen", "status": false },
+    { "message": "Pengajuan Disetujui BPR", "status": false },
+    { "message": "Pembayaran Berhasil", "status": false },
+    { "message": "Deposito Aktif", "status": false },
+    {
+      "message": "Pelunasan", "status": false
+    }]
+  const [timeShow, setTimeShow] = useState<any>(dummyStatus);
+  const [messageText, setMessageText] = useState<string | undefined>("Tahapan berikutnya adalah Tanda Tangan Dokumen, silahkan cek email Anda untuk tanda tangan dokumen");
   const totalPengem = parseInt(showPortofolioDetail?.data?.amount) + parseInt(showPortofolioDetail?.data?.bagi_hasil);
+  const [flagSubmit, setFlagSubmit] = useState<string>('');
 
   useEffect(() => {
     dispatch(getShowPortofolioDetail(no_transaksi))
@@ -37,6 +49,78 @@ export default function PortofolioDetail({ route }: RootStackScreenProps<'Portof
   useEffect(() => {
     setUpload_Bukti_Tf(showPortofolioDetail?.data?.buktiTF?.image ? `https://dev.depositosyariah.id/${showPortofolioDetail?.data?.buktiTF?.image}` : null)
   }, [showPortofolioDetail])
+
+  useEffect(() => {
+    console.log("showPortofolioDetail?.data?.status", showPortofolioDetail?.data?.status);
+
+    switch (parseInt(showPortofolioDetail?.data?.status)) {
+      case 2:
+        setMessageText("Tahapan berikutnya adalah persetujuan pengajuan deposito dari pihak Bank, mohon ditunggu");
+        setTimeShow([
+          { "message": "Pengajuan Deposito", "status": true },
+          { "message": "Tanda Tangan Dokumen", "status": true },
+          { "message": "Pengajuan Disetujui BPR", "status": false },
+          { "message": "Pembayaran Berhasil", "status": false },
+          { "message": "Deposito Aktif", "status": false },
+          {
+            "message": "Pelunasan", "status": false
+          }])
+        break;
+      case 3:
+        setMessageText("Tahapan berikutnya adalah pembayaran deposito, mohon untuk diupload bukti pembayarannya")
+        setTimeShow([
+
+          { "message": "Pengajuan Deposito", "status": true },
+          { "message": "Tanda Tangan Dokumen", "status": true },
+          { "message": "Pengajuan Disetujui BPR", "status": true },
+          { "message": "Pembayaran Berhasil", "status": false },
+          { "message": "Deposito Aktif", "status": false },
+          {
+            "message": "Pelunasan", "status": false
+          }])
+        break;
+      case 4:
+        setMessageText(
+          "Deposito anda sudah aktif dan bagi hasil akan ditransfer oleh pihak Bank di akhir periode masa aktif deposito")
+        setTimeShow([
+
+          { "message": "Pengajuan Deposito", "status": true },
+          { "message": "Tanda Tangan Dokumen", "status": true },
+          { "message": "Pengajuan Disetujui BPR", "status": true },
+          { "message": "Pembayaran Berhasil", "status": true },
+          { "message": "Deposito Aktif", "status": false },
+          {
+            "message": "Pelunasan", "status": false
+          }])
+        break;
+      case 5:
+        setMessageText(undefined);
+        setTimeShow([
+
+          { "message": "Pengajuan Deposito", "status": true },
+          { "message": "Tanda Tangan Dokumen", "status": true },
+          { "message": "Pengajuan Disetujui BPR", "status": true },
+          { "message": "Pembayaran Berhasil", "status": true },
+          { "message": "Deposito Aktif", "status": true },
+          {
+            "message": "Pelunasan", "status": false
+          }])
+        break;
+      case 9:
+        setMessageText(undefined);
+        setTimeShow([
+
+          { "message": "Pengajuan Deposito", "status": true },
+          { "message": "Tanda Tangan Dokumen", "status": true },
+          { "message": "Pengajuan Disetujui BPR", "status": true },
+          { "message": "Pembayaran Berhasil", "status": true },
+          { "message": "Deposito Aktif", "status": true },
+          {
+            "message": "Pelunasan", "status": true
+          }])
+        break;
+    }
+  }, [showPortofolioDetail?.data?.status])
 
   const onOpeGallery = async (index: number) => {
     const result = await launchImageLibrary({ mediaType: 'photo' });
@@ -67,12 +151,14 @@ export default function PortofolioDetail({ route }: RootStackScreenProps<'Portof
     } ?? '');
     dispatch(uploadBuktiPengajuan(formdata, showPortofolioDetail?.data?.no_transaksi as any, validSubmit));
   };
+  console.log(showPortofolioDetail?.data?.status, "showPortofolioDetail?.data?.statuses[3]?.status ");
 
   return (
     <DefaultView>
       <DefaultHeader backButton={() => navigationRef.navigate('Portofolio')} title="Detail Portofolio" />
       <ScrollView showsVerticalScrollIndicator={false}>
-        {showPortofolioLoadingDetail ? <ActivityIndicator /> : <View className="px-8">
+        {showPortofolioLoadingDetail ? <ActivityIndicator
+          size={'large'} /> : <View className="px-8">
           <Gap height={15} />
           <DefaultText
             title="Detail Portofolio"
@@ -83,6 +169,11 @@ export default function PortofolioDetail({ route }: RootStackScreenProps<'Portof
             title={showPortofolioDetail?.data?.namaMitra}
             titleClassName="text-base font-inter-semibold"
           />
+          <View className="w-full h-[1px] bg-neutral-300 my-3" />
+          <View className="flex-row">
+            <DefaultText title="No Transaksi" titleClassName="flex-1" />
+            <DefaultText title={no_transaksi} titleClassName="text-base font-inter-semibold" />
+          </View>
           <View className="w-full h-[1px] bg-neutral-300 my-3" />
           <View className="flex-row">
             <DefaultText
@@ -184,7 +275,18 @@ export default function PortofolioDetail({ route }: RootStackScreenProps<'Portof
             </TouchableOpacity>}
           <Gap height={10} />
           <View className="w-full h-[1px] bg-neutral-300 mb-3 mt-1" />
-          {showPortofolioDetail?.data?.statuses?.map((list: any) => {
+          <View className="flex-row">
+            <DefaultText title="Proses" titleClassName="font-inter-bold" />
+          </View>
+          <Gap height={10} />
+          {messageText && <View
+            className="bg-primary-light rounded-2xl px-5 py-3 flex-row items-center">
+            <View className="flex-1">
+              <DefaultText title={messageText} />
+            </View>
+          </View>}
+          <Gap height={10} />
+          {timeShow?.map((list: any) => {
             return <View className="flex-row items-center">
               <Icon name="check-circle" size={26} color={list.status ? colors.primary : '#dbd4c8'} />
               <DefaultText
@@ -198,21 +300,31 @@ export default function PortofolioDetail({ route }: RootStackScreenProps<'Portof
             <TouchableOpacity
               onPress={() => { }}
               activeOpacity={0.7}
-              className="self-center bg-primary px-3 py-2 rounded-md">
+              className="self-center bg-primary px-3 py-2 mr-3 rounded-md">
               <DefaultText title="Tanya produk" titleClassName="text-white" />
             </TouchableOpacity>
-            <Gap width={10} />
-            <TouchableOpacity
-              onPress={() => setShowModalBatal(true)}
+
+            {showPortofolioDetail?.data?.status == 5 &&
+              <TouchableOpacity
+                onPress={() => { 
+                  setShowModalBatal(true); 
+                  setFlagSubmit("penarikan") }}
+                activeOpacity={0.7}
+                className="self-center bg-primary px-3 py-2 mr-3  rounded-md">
+                <DefaultText title="Penarikan" titleClassName="text-white" />
+              </TouchableOpacity>}
+
+            {(showPortofolioDetail?.data?.status == 1 || showPortofolioDetail?.data?.status == 0)  && <TouchableOpacity
+               onPress={() => { setShowModalBatal(true); setFlagSubmit("pembatalan") }}
               activeOpacity={0.7}
-              className="self-center bg-primary px-3 py-2 rounded-md">
+              className="self-center bg-primary px-3 py-2 mr-3  rounded-md">
               <DefaultText title="Pembatalan" titleClassName="text-white" />
-            </TouchableOpacity>
-            <Gap width={10} />
+            </TouchableOpacity>}
+
             <TouchableOpacity
               onPress={() => { navigationRef.navigate('Portofolio') }}
               activeOpacity={0.7}
-              className="self-center bg-primary px-3 py-2 rounded-md">
+              className="self-center bg-primary px-3 py-2 mr-3  rounded-md">
               <DefaultText title="Tutup" titleClassName="text-white" />
             </TouchableOpacity>
           </View>
@@ -229,11 +341,12 @@ export default function PortofolioDetail({ route }: RootStackScreenProps<'Portof
         show={showModalBatal}
         hide={() => setShowModalBatal(false)}
         title={
-          'Anda akan membatalkan transaksi ini ?\nPengajuan anda akan kami validasi terlebih dahulu dalam waktu maksimal 2x24jam'
+          'Anda akan melakukan transaksi ini ?\nPengajuan anda akan kami validasi terlebih dahulu dalam waktu maksimal 2x24jam'
         }
         onConfirm={() => {
-          setShowModalBatal(false);
-          setTimeout(() => navigationRef.goBack(), 1000);
+         flagSubmit === "penarikan" ? 
+         dispatch(getPenarikanPortofolioDetail(no_transaksi, setShowModalBatal)) : 
+         dispatch(getPembatalanPortofolioDetail(no_transaksi, setShowModalBatal))
         }}
         type="warning"
       />

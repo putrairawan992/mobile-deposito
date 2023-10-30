@@ -12,6 +12,7 @@ import {
   setRegisterLoading,
   setRegisterPasswordPinLoading,
   setToken,
+  setUpdateRegisterLoading,
   setUser,
   setUserProfile,
 } from '../store/user';
@@ -129,6 +130,9 @@ export const getDetailNasabah = () => async (dispatch: RootDispatch) => {
       data = res?.data?.data[0]
     })
     .catch(err => {
+      if (err?.response?.status === 401) {
+        dispatch(logout())
+      }
       if (err?.response?.status !== 401) {
         Toast.show({
           type: 'error',
@@ -182,6 +186,7 @@ export const logout = () => async (dispatch: any) => {
 export const updateNasabah =
   (payload: any, setShowModalSuccess: any) =>
     async (dispatch: RootDispatch) => {
+      dispatch(setUpdateRegisterLoading(false));
       axios
         .post(
           `${API}/nasabah`,
@@ -199,6 +204,7 @@ export const updateNasabah =
         },
         )
         .then(() => {
+          dispatch(setUpdateRegisterLoading(false));
           Toast.show({
             type: 'success',
             text1: 'Success',
@@ -209,14 +215,13 @@ export const updateNasabah =
           navigationRef.navigate('Profile')
         })
         .catch(err => {
-          if (err?.response?.status !== 401) {
-            Toast.show({
-              type: 'error',
-              text1: 'Error' + err?.response?.data?.errors?.pin[0],
-              text2:
-                JSON.stringify(err.response?.data) ?? 'Terjadi error, coba lagi nanti.',
-            });
-          }
+          dispatch(setUpdateRegisterLoading(false));
+          Toast.show({
+            type: 'error',
+            text1: 'Error' + err?.response?.data?.errors?.pin[0],
+            text2:
+              JSON.stringify(err.response?.data) ?? 'Terjadi error, coba lagi nanti.',
+          });
         });
     };
 
@@ -323,6 +328,7 @@ export const registerPasswordPin =
           dispatch(setRegisterPasswordPinLoading(false));
           if (route === 'MyTabs') {
             dispatch(getDetailNasabah());
+            dispatch(getUserProfile());
           }
           navigationRef.navigate(route as any);
         })

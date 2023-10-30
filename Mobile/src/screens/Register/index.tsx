@@ -85,7 +85,7 @@ export default function Register() {
     formdata.append('tmpt_lahir', tempatLahir);
     formdata.append('tgl_lahir', detailNasabah?.tgl_lahir ?? moment(tanggalLahir).format('YYYY-MM-DD'));
     formdata.append('ibu_kandung', ibu);
-    formdata.append('id_privy', privyId);
+    // formdata.append('id_privy', privyId);
     formdata.append('status_pernikahan', statusNikah);
     formdata.append('jenis_pekerjaan', profesi);
     formdata.append('alamat', alamat);
@@ -191,36 +191,38 @@ export default function Register() {
             />
           </View>
         </ScrollView>
-        <Button
-          title="BACK"
-          titleClassName="text-black"
-          onPress={() => {
-            setPage(0);
-          }}
-        />
-        <Button
-          title="LANJUT"
-          className="bg-primary mx-10 my-5"
-          titleClassName="text-white"
-          onPress={() => {
-            if (
-              ktp?.trim()?.length === 0 ||
-              tempatLahir?.trim()?.length === 0 ||
-              !tanggalLahir ||
-              ibu?.trim()?.length === 0 ||
-              statusNikah?.trim()?.length === 0
-            ) {
-              return showToast('Data belum lengkap');
-            }
+        <View className='flex-row items-center mb-5'>
+          <Button
+            title="BACK"
+            className="bg-slate-600 ml-1 mr-0.5 my-5"
+            titleClassName="text-white"
+            onPress={() => {
+              setPage(0);
+            }}
+          />
+          <Button
+            title="LANJUT"
+            className="bg-primary ml-0.5 my-5"
+            titleClassName="text-white"
+            onPress={() => {
+              if (
+                ktp?.trim()?.length === 0 ||
+                tempatLahir?.trim()?.length === 0 ||
+                !tanggalLahir ||
+                ibu?.trim()?.length === 0 ||
+                statusNikah?.trim()?.length === 0
+              ) {
+                return showToast('Data belum lengkap');
+              }
 
-            if (ktp?.trim()?.length !== 16) {
-              return showToast('No KTP tidak valid, 16 characters');
-            }
+              if (ktp?.trim()?.length !== 16) {
+                return showToast('No KTP tidak valid, 16 characters');
+              }
 
-            setPage(2);
-          }}
-        />
-
+              setPage(2);
+            }}
+          />
+        </View>
         <ModalStatusPernikahan
           show={showStatusPernikahan}
           hide={() => setShowStatusPernikahan(false)}
@@ -281,29 +283,32 @@ export default function Register() {
             />
           </View>
         </ScrollView>
-        <Button
-          title="BACK"
-          titleClassName="text-black"
-          onPress={() => {
-            setPage(1);
-          }}
-        />
-        <Button
-          title="LANJUT"
-          className="bg-primary mx-10 my-5"
-          titleClassName="text-white"
-          onPress={() => {
-            if (
-              perusahaan?.trim()?.length === 0 ||
-              profesi?.trim()?.length === 0 ||
-              alamat?.trim()?.length === 0 ||
-              penghasilan?.trim()?.length === 0
-            ) {
-              return showToast('Data belum lengkap');
-            }
-            setPage(3);
-          }}
-        />
+        <View className='flex-row items-center mb-5'>
+          <Button
+            title="BACK"
+            className="bg-slate-600 ml-1 mr-0.5 my-5"
+            titleClassName="text-white"
+            onPress={() => {
+              setPage(1);
+            }}
+          />
+          <Button
+            title="LANJUT"
+            className="bg-primary ml-0.5  my-5"
+            titleClassName="text-white"
+            onPress={() => {
+              if (
+                perusahaan?.trim()?.length === 0 ||
+                profesi?.trim()?.length === 0 ||
+                alamat?.trim()?.length === 0 ||
+                penghasilan?.trim()?.length === 0
+              ) {
+                return showToast('Data belum lengkap');
+              }
+              setPage(3);
+            }}
+          />
+        </View>
 
         <ModalPenghasilan
           show={showPenghasilan}
@@ -360,33 +365,36 @@ export default function Register() {
             />
           </View>
         </ScrollView>
-        <Button
-          title="BACK"
-          titleClassName="text-black"
-          onPress={() => {
-            setPage(2);
-          }}
-        />
-        <Button
-          title="LANJUT"
-          className="bg-primary mx-10 my-5"
-          titleClassName="text-white"
-          onPress={() => {
-            if (
-              ahliWaris?.trim()?.length === 0 ||
-              ahliWarisKtp?.trim()?.length === 0 ||
-              ahliWarisPhone?.trim()?.length === 0
-            ) {
-              return showToast('Data belum lengkap');
-            }
+        <View className='flex-row items-center mb-5'>
+          <Button
+            title="BACK"
+            className="bg-slate-600 ml-1 mr-0.5 my-5"
+            titleClassName="text-white"
+            onPress={() => {
+              setPage(2);
+            }}
+          />
+          <Button
+            title="LANJUT"
+            className="bg-primary ml-0.5  my-5"
+            titleClassName="text-white"
+            onPress={() => {
+              if (
+                ahliWaris?.trim()?.length === 0 ||
+                ahliWarisKtp?.trim()?.length === 0 ||
+                ahliWarisPhone?.trim()?.length === 0
+              ) {
+                return showToast('Data belum lengkap');
+              }
 
-            // if (ahliWarisKtp.trim().length !== 16) {
-            //   return showToast('No KTP tidak valid');
-            // }
+              // if (ahliWarisKtp.trim().length !== 16) {
+              //   return showToast('No KTP tidak valid');
+              // }
 
-            setPage(4);
-          }}
-        />
+              setPage(4);
+            }}
+          />
+        </View>
       </DefaultView>
     );
   }
@@ -425,29 +433,31 @@ export default function Register() {
             />
           </View>
         </ScrollView>
-        <Button
-          title="BACK"
-          titleClassName="text-black"
-          onPress={() => {
-            setPage(3);
-          }}
-        />
-        <Button
-          title="LANJUT"
-          className="bg-primary mx-10 my-5"
-          titleClassName="text-white"
-          onPress={() => {
-            if (
-              bank?.trim()?.length === 0 ||
-              rekening?.trim()?.length === 0 ||
-              namaRekening?.trim()?.length === 0
-            ) {
-              return showToast('Data belum lengkap');
-            }
-            setPage(5);
-          }}
-        />
-
+        <View className='flex-row items-center mb-5'>
+          <Button
+            title="BACK"
+            className="bg-slate-600 ml-1 mr-0.5 my-5"
+            titleClassName="text-white"
+            onPress={() => {
+              setPage(3);
+            }}
+          />
+          <Button
+            title="LANJUT"
+            className="bg-primary ml-0.5  my-5"
+            titleClassName="text-white"
+            onPress={() => {
+              if (
+                bank?.trim()?.length === 0 ||
+                rekening?.trim()?.length === 0 ||
+                namaRekening?.trim()?.length === 0
+              ) {
+                return showToast('Data belum lengkap');
+              }
+              setPage(5);
+            }}
+          />
+        </View>
         <ModalBank
           show={showBank}
           hide={() => setShowBank(false)}
@@ -532,20 +542,13 @@ export default function Register() {
               <Icon name="trash-can" onPress={() => setFotoKtpAhliWaris(undefined)} size={22} />
             </TouchableOpacity>
             <Gap height={10} />
-            <Input
+            {/* <Input
               title="Punya Privy ID"
               value={privyId}
               onChangeText={value => setPrivyId(value)}
-            />
+            /> */}
           </View>
         </ScrollView>
-        <Button
-          title="BACK"
-          titleClassName="text-black"
-          onPress={() => {
-            setPage(4);
-          }}
-        />
         <ModalImage
           title='Preview Image KTP'
           hide={() => setShowImageKtp(false)}
@@ -567,12 +570,22 @@ export default function Register() {
         {registerLoading ? (
           <ActivityIndicator />
         ) : (
+          <View className='flex-row items-center mb-5'>
           <Button
-            title="Submit"
-            className="bg-primary mx-10 my-5"
-            titleClassName="text-white"
-            onPress={() => actionSubmitRegister()}
-          />
+            title="BACK"
+            className="bg-slate-600 ml-1 mr-0.5 my-5"
+              titleClassName="text-white"
+              onPress={() => {
+                setPage(4);
+              }}
+            />
+            <Button
+              title="Submit"
+              className="bg-primary ml-0.5  my-5"
+              titleClassName="text-white"
+              onPress={() => actionSubmitRegister()}
+            />
+          </View>
         )}
       </DefaultView>
     );

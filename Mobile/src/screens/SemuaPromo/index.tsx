@@ -7,7 +7,6 @@ import Gap from '../../components/Gap';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootDispatch, RootState } from '../../store';
 import { getShowPromo } from '../../services/product';
-import moment from 'moment';
 
 export default function SemuaPromo() {
   const { showPromo } = useSelector(
@@ -27,6 +26,8 @@ export default function SemuaPromo() {
         keyExtractor={(_, key) => key.toString()}
         showsVerticalScrollIndicator={false}
         renderItem={({ item }) => {
+          console.log("showsVerticalScrollIndicator",item);
+          
           return (
             <TouchableOpacity
               activeOpacity={0.7}
@@ -41,7 +42,7 @@ export default function SemuaPromo() {
                 <DefaultText title={item?.deskripsi} />
                 <Gap height={5} />
                 <DefaultText
-                  title={`deposito by ${item?.id_mitra}`}
+                  title={`deposito by ${item?.namaMitra}`}
                   titleClassName="text-xs"
                 />
                 <DefaultText title={item?.end_date} titleClassName="text-xs" />

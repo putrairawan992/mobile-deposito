@@ -35,19 +35,23 @@ export default function ModalAlert({
         )}
         <DefaultText title={title} titleClassName="text-center" />
         <Gap height={15} />
+
+        <View className='flex-row justify-center items-center mb-5'>
         <TouchableOpacity
           onPress={hide}
           activeOpacity={0.7}
-          className="self-center px-5 py-2 rounded-md">
-          <DefaultText title="Close" titleClassName="text-black" />
+          className="self-center px-5 bg-slate-600 py-2 rounded-md">
+          <DefaultText title="Close" titleClassName="text-white" />
         </TouchableOpacity>
-        <Gap height={15} />
+        <Gap width={15} />
         <TouchableOpacity
           onPress={onConfirm}
           activeOpacity={0.7}
           className="self-center bg-primary px-5 py-2 rounded-md">
           <DefaultText title="OK" titleClassName="text-white" />
         </TouchableOpacity>
+ 
+        </View>
       </View>
     </Modal>
   );

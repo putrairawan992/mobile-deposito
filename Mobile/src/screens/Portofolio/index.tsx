@@ -21,19 +21,35 @@ import { formatRupiah } from '../../utils/currency';
 import { capitalizeFirstLetter } from '../../utils/constant';
 
 const Item = ({ item }: any) => {
+  const bgVal = () => {
+    let bgColor = 'orange'
+    if (item.status === "6" || item.status === "0") {
+      bgColor = 'red'
+    }
+    if (item.status === "4") {
+      bgColor = 'bg-yellow-600'
+    }
+    if (item.status === "5") {
+      bgColor = '#6dd5ed'
+    }
+    if (item.status === "9") {
+      bgColor = '#78ffd6'
+    }
+    return bgColor;
+  }
   const statusVal = () => {
-    let status = 'On Process';
-    if (item.status === 0) {
+    let status = 'Process';
+    if (item.status === "6" || item.status === "0") {
       status = 'Batal'
     }
-    if (item.status === 4) {
+    if (item.status === "4") {
       status = 'Pembayaran Berhasil'
     }
-    if (item.status === 5) {
-      status = 'Selesai'
+    if (item.status === "5") {
+      status = 'Aktif'
     }
-    if (item.status === 6) {
-      status = 'Di Tolak'
+    if (item.status === "9") {
+      status = 'Lunas'
     }
     return status;
   }
@@ -65,6 +81,9 @@ const Item = ({ item }: any) => {
           <Gap height={5} />
           <DefaultText title="Tenor" titleClassName="text-xs text-white" />
           <DefaultText title={`${item.tenor} Bulan`} titleClassName="text-xs text-white" />
+          <Gap height={5} />
+          <DefaultText title="Estimasi Bagi Hasil" titleClassName="text-xs text-white" />
+          <DefaultText title={formatRupiah(item?.bagi_hasil, "Rp")} titleClassName="text-xs text-white" />
         </View>
         <Gap width={5} />
         <View className="flex-1">
@@ -72,14 +91,17 @@ const Item = ({ item }: any) => {
             title="Proyeksi Bagi Hasil"
             titleClassName="text-xs text-white"
           />
-          <DefaultText title={`${percentage.toFixed(2)}% / Tahun`} titleClassName="text-xs text-white" />
+          <DefaultText title={`${item.bagi_hasil_perc}% / Tahun`} titleClassName="text-xs text-white" />
           <Gap height={5} />
           <DefaultText title="Nisbah" titleClassName="text-xs text-white" />
           <DefaultText title="40 : 60" titleClassName="text-xs text-white" />
+          <Gap height={5} />
+          <DefaultText title="Tanggal Jatuh Tempo" titleClassName="text-xs text-white" />
+          <DefaultText title={item.jatuh_tempo} titleClassName="text-xs text-white" />
         </View>
         <Gap width={5} />
-        <View className="">
-          <View className="bg-yellow-600 px-1 py-1 rounded-sm self-center">
+        <View>
+          <View style={{ backgroundColor: bgVal() }} className={`px-3 py-2 rounded-md self-center`}>
             <DefaultText
               title={capitalizeFirstLetter(statusVal())}
               titleClassName="text-xs text-white"
@@ -97,7 +119,7 @@ const Item = ({ item }: any) => {
           </TouchableOpacity>
         </View>
       </View>
-    </LinearGradient>
+    </LinearGradient >
   );
 };
 
@@ -113,6 +135,7 @@ export default function Portofolio() {
   const [params, setParams] = useState<any>(undefined);
   const { showPortofolio, showPortofolioLoading } = useSelector((state: RootState) => state.portofolioReducer);
   const dispatch = useDispatch<RootDispatch>();
+  console.log("showPortofolio?.data", showPortofolio?.data);
 
   useEffect(() => {
     switch (activeTab) {
@@ -123,11 +146,13 @@ export default function Portofolio() {
         setParams('/status/1');
         break;
       case 'Aktif':
-      case 'Lunas':
         setParams('/status/5');
         break;
+      case 'Lunas':
+        setParams('/status/9');
+        break;
       case 'Batal':
-        setParams('/status/6');
+        setParams('/status/0');
         break;
     }
     dispatch(getShowPortofolio(params));

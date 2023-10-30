@@ -1,4 +1,4 @@
-import { Image, ScrollView, TextInput, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, Image, ScrollView, TextInput, TouchableOpacity, View } from 'react-native';
 import React, { useState } from 'react';
 import DefaultView from '../../components/DefaultView';
 import DefaultText from '../../components/DefaultText';
@@ -11,8 +11,8 @@ import moment from 'moment';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import { showToast } from '../../utils/toast';
 import { RootStackScreenProps } from '../../navigation/interface';
-import { RootDispatch } from '../../store';
-import { useDispatch } from 'react-redux';
+import { RootDispatch, RootState } from '../../store';
+import { useDispatch, useSelector } from 'react-redux';
 import { getDetailNasabah, updateNasabah } from '../../services/user';
 import { MAX_FILE_SIZE, penghasilanValidation, statusNikahValidation } from '../../utils/constant';
 import ModalStatusPernikahan from '../../components/ModalStatusPernikahan';
@@ -52,6 +52,9 @@ export default function DetailPribadiEdit({ route }: RootStackScreenProps<'Detai
   const [showImageSelfieKtp, setShowImageSelfieKtp] = useState<boolean>(false);
   const [showImageKtpAhliWaris, setShowImageKtpAhliWaris] = useState<boolean>(false);
   const dispatch = useDispatch<RootDispatch>();
+  const { updateRegisterLoading } = useSelector(
+    (state: RootState) => state.userReducer,
+  );
 
   const onSave = () => {
     if (ktp.trim().length !== 16) {
@@ -350,12 +353,13 @@ export default function DetailPribadiEdit({ route }: RootStackScreenProps<'Detai
             <DefaultText title="Setelah Edit, kamu akan merubah data diakun Deposito syariah, apakah kamu yakin ingin mengedit detail pribadi ini?" />
           </View>
           <Gap height={20} />
+          {updateRegisterLoading ? <ActivityIndicator /> : 
           <TouchableOpacity
             onPress={onSave}
             activeOpacity={0.7}
             className="bg-primary px-10 py-3 rounded-md self-center">
-            <DefaultText title="SIMPAN" titleClassName="text-white" />
-          </TouchableOpacity>
+            <DefaultText title="Simpan" titleClassName="text-white" />
+          </TouchableOpacity>}
         </View>
       </ScrollView>
 

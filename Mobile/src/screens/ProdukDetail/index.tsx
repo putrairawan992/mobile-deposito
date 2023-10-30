@@ -127,7 +127,7 @@ export default function ProdukDetail({
               <Gap height={10} />
               <View className="flex-row">
                 <DefaultText title="Dana Terkumpul" titleClassName="flex-1" />
-                <DefaultText title={`${formatRupiah(String(showProductDetail?.terkumpul), "Rp ")} (${showProductDetail?.terkumpulpersen}%)`} />
+                <DefaultText title={`${formatRupiah(String(showProductDetail?.total_amount), "Rp ")} (${showProductDetail?.total_perc}%)`} />
               </View>
             </View>
           )}
@@ -143,7 +143,7 @@ export default function ProdukDetail({
               <Gap height={15} />
               <View className="flex-row">
                 <DefaultText title="Kode OJK" titleClassName="flex-1" />
-                <DefaultText title={`${showProductDetail?.kode_ojk}`} />
+                <DefaultText title={`${showProductDetail?.kode_ojk || '-'}`} />
               </View>
               <Gap height={10} />
               <View className="flex-row">
@@ -151,7 +151,7 @@ export default function ProdukDetail({
                   title="No. Surat keputusan"
                   titleClassName="flex-1"
                 />
-                <DefaultText title={`${showProductDetail?.no_sk}`} />
+                <DefaultText title={`${showProductDetail?.no_sk  || '-'}`} />
               </View>
               <Gap height={10} />
               <View className="flex-row">
@@ -174,7 +174,7 @@ export default function ProdukDetail({
                   title="Total Transaksi Deposito"
                   titleClassName="flex-1"
                 />
-                <DefaultText title="307 Transaksi" />
+                <DefaultText title={showProductDetail?.total_transaksi} />
               </View>
             </View>
           )}

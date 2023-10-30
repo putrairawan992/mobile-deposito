@@ -16,9 +16,10 @@ import { estimasiAjukanDeposito, postAjukanDeposito } from '../../services/produ
 import { RootDispatch, RootState } from '../../store';
 import { debounce } from '../../utils/debounce';
 import { getShowBankList } from '../../services/dasbhoard';
+import ModalSkPengajuan from '../../components/ModalSyaratKetentuan';
 
 export default function AjukanDeposito({ route }: RootStackScreenProps<"AjukanDeposito">) {
-
+  const [skKonfirm, setSkKonfirm] = useState<boolean>(false);
   const showProductDetail = route.params?.showProductDetail as any;
   const [perpanjang, setPerpanjang] = useState<boolean>(false);
   const [agree, setAgree] = useState<boolean>(false);
@@ -102,7 +103,7 @@ export default function AjukanDeposito({ route }: RootStackScreenProps<"AjukanDe
           <Gap height={10} />
           <View className="flex-row">
             <DefaultText title="Proyeksi Bagi Hasil" titleClassName="flex-1" />
-            <DefaultText title={`${showProductDetail?.bagi_hasil}% / Tahun`}/>
+            <DefaultText title={`${showProductDetail?.bagi_hasil}% / Tahun`} />
           </View>
         </View>
 
@@ -212,12 +213,17 @@ export default function AjukanDeposito({ route }: RootStackScreenProps<"AjukanDe
               {agree && <Icon name="check" size={14} color={colors.black} />}
             </TouchableOpacity>
             <Gap width={10} />
-            <DefaultText
-              title="Anda menyetujui"
-              titleClassName="flex-1 text-xs"
-              subtitle="Syarat & Ketentuan."
-              subtitleClassName="text-primary"
-            />
+            <TouchableOpacity
+              onPress={() => setSkKonfirm(true)}
+              activeOpacity={0.7}
+              className="self-center">
+              <DefaultText
+                title="Anda menyetujui"
+                titleClassName="flex-1 text-xs"
+                subtitle="Syarat & Ketentuan."
+                subtitleClassName="text-primary"
+              />
+            </TouchableOpacity>
           </View>
           <Gap height={10} />
           <TouchableOpacity
@@ -228,6 +234,12 @@ export default function AjukanDeposito({ route }: RootStackScreenProps<"AjukanDe
           </TouchableOpacity>
         </View>
       </ScrollView>
+
+      <ModalSkPengajuan
+        show={skKonfirm}
+        hide={() => setSkKonfirm(false)}
+        onConfirm={() => setSkKonfirm(false)}
+      />
 
       <ModalAlert
         show={showModal}

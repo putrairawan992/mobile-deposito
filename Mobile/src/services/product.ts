@@ -41,10 +41,10 @@ export const getShowPromo = () => async (dispatch: RootDispatch) => {
 
 };
 
-export const getShowProductNasabah = () => async (dispatch: RootDispatch) => {
+export const getShowProductNasabah = (params?:any) => async (dispatch: RootDispatch) => {
   dispatch(setShowProductLoading(true));
   axios
-    .get(`${API}/showproduk`, {
+    .get(`${API}/produk_search?${params}`, {
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${await getStorage('token')}`,

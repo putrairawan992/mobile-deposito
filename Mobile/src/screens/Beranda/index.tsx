@@ -54,11 +54,11 @@ export default function Beranda() {
     dispatch(getDetailNasabah());
   }, [dispatch]);
 
-  useEffect(() => {
-    if (token && !userProfile?.data?.statuse?.profile && detailNasabah?.idUserNasabah) {
-      setUpdateProfile(true);
-    }
-  }, [detailNasabah]);
+  // useEffect(() => {
+  //   if (token && !userProfile?.data?.statuse?.profile && detailNasabah?.idUserNasabah) {
+  //     setUpdateProfile(true);
+  //   }
+  // }, [detailNasabah,userProfile]);
 
   useFocusEffect(useCallback(() => {
     if (!detailNasabahDetailLoading) {

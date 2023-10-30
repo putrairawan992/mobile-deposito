@@ -7,7 +7,7 @@ import { navigationRef } from '../../navigation/RootNavigation';
 
 interface DefaultHeaderProps {
   title?: string;
-  backButton: any;
+  backButton?: any;
   containerClassName?: string;
   iconColor?: string;
   titleClassName?: string;
