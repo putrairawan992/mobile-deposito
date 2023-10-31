@@ -75,7 +75,7 @@ const Item = ({ item }: any) => {
             titleClassName="text-xs text-white"
           />
           <DefaultText
-            title={formatRupiah(item?.amount, "Rp")}
+            title={formatRupiah(String(item?.amount), "Rp")}
             titleClassName="text-xs text-white"
           />
           <Gap height={5} />
@@ -83,7 +83,7 @@ const Item = ({ item }: any) => {
           <DefaultText title={`${item.tenor} Bulan`} titleClassName="text-xs text-white" />
           <Gap height={5} />
           <DefaultText title="Estimasi Bagi Hasil" titleClassName="text-xs text-white" />
-          <DefaultText title={formatRupiah(item?.bagi_hasil, "Rp")} titleClassName="text-xs text-white" />
+          <DefaultText title={formatRupiah(String(item?.bagi_hasil), "Rp")} titleClassName="text-xs text-white" />
         </View>
         <Gap width={5} />
         <View className="flex-1">
@@ -94,7 +94,7 @@ const Item = ({ item }: any) => {
           <DefaultText title={`${item.bagi_hasil_perc}% / Tahun`} titleClassName="text-xs text-white" />
           <Gap height={5} />
           <DefaultText title="Nisbah" titleClassName="text-xs text-white" />
-          <DefaultText title="40 : 60" titleClassName="text-xs text-white" />
+          <DefaultText title={item.nisbah} titleClassName="text-xs text-white" />
           <Gap height={5} />
           <DefaultText title="Tanggal Jatuh Tempo" titleClassName="text-xs text-white" />
           <DefaultText title={item.jatuh_tempo} titleClassName="text-xs text-white" />

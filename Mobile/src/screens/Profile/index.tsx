@@ -128,7 +128,7 @@ export default function Profile() {
         </TouchableOpacity>
         <Gap height={10} />
         <TouchableOpacity
-          onPress={() => Linking.openURL('https://google.com')}
+          onPress={() => Linking.openURL('https://play.google.com/store/apps')}
           activeOpacity={0.7}
           className=" 
           px-3 py-2 flex-row 

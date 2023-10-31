@@ -1,6 +1,6 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useLayoutEffect, useState } from 'react';
 
 import { RootStackParamList } from './interface';
 import Login from '../screens/Login';
@@ -41,9 +41,10 @@ import BuatPassword from '../screens/BuatPassword';
 import Password from '../screens/Password';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootDispatch, RootState } from '../store';
-import { getUserProfile } from '../services/user';
+import { getDetailNasabah } from '../services/user';
 import { getItem } from '../utils/storage';
 import { ActivityIndicator } from 'react-native';
+import { navigationRef } from './RootNavigation';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 const Tab = createBottomTabNavigator();
@@ -69,26 +70,24 @@ function StackNavigator() {
   const [isShowContent, setIsShowContent] = useState<boolean>(false);
 
   useEffect(() => {
-    dispatch(getUserProfile());
+    dispatch(getDetailNasabah());
   }, [dispatch]);
 
 
-  useEffect(
+  useLayoutEffect(
     useCallback(() => {
       const useToken = async () => {
         if (await getItem("token-expired") &&  detailNasabah?.idUserNasabah) {
+          navigationRef.navigate("MyTabs");
           setIsLoading(false);
-          setIsShowContent(false);
         } else {
-          setIsShowContent(true)
+          setIsShowContent(false);
           setIsLoading(false);
         }
       }
-      setTimeout(()=>{
         if (!detailNasabahDetailLoading) {
           useToken();
         }
-      }, 3333 )
     }, [detailNasabah, detailNasabahDetailLoading, isShowContent]),
   );
 

@@ -35,7 +35,7 @@ const Item = (data: any) => {
           <View className="flex-1">
             <DefaultText title="Target" titleClassName="text-xs text-white" />
             <DefaultText
-              title={formatRupiah(data?.data?.item?.target, 'Rp ')}
+              title={formatRupiah(String(data?.data?.item?.target), 'Rp ')}
               titleClassName="text-xs text-white"
             />
             <Gap height={5} />
@@ -62,7 +62,7 @@ const Item = (data: any) => {
               titleClassName="text-xs text-white"
             />
             <DefaultText
-              title={formatRupiah(data?.data?.item?.minimal, 'Rp ')}
+              title={formatRupiah(String(data?.data?.item?.minimal), 'Rp ')}
               titleClassName="text-xs text-white"
             />
             <Gap height={5} />
@@ -80,7 +80,7 @@ const Item = (data: any) => {
               titleClassName="text-xs text-white"
             />
             <DefaultText
-              title={formatRupiah(data?.data?.item?.total_amount, 'Rp ')}
+              title={formatRupiah(String(data?.data?.item?.total_amount), 'Rp ')}
               titleClassName="text-xs text-white"
             />
           </View>

@@ -68,7 +68,7 @@ export const login =
         .then(res => {
           dispatch(setUser(res?.data));
           addStorage('token', res?.data?.token);
-          setItem("token-expired", res?.data?.token, 60);
+          setItem("token-expired", res?.data?.token, 666);
           addStorage('phone-email', emailOrPhone);
           dispatch(setToken(res?.data?.token));
           dispatch(getUserProfile())
