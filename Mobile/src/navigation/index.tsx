@@ -44,7 +44,7 @@ import { RootDispatch, RootState } from '../store';
 import { getDetailNasabah } from '../services/user';
 import { getItem } from '../utils/storage';
 import { ActivityIndicator } from 'react-native';
-import { navigationRef } from './RootNavigation';
+import ListChatProduct from '../screens/Chat/ListChatProduct';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 const Tab = createBottomTabNavigator();
@@ -69,7 +69,7 @@ function StackNavigator() {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isShowContent, setIsShowContent] = useState<boolean>(false);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     dispatch(getDetailNasabah());
   }, [dispatch]);
 
@@ -78,8 +78,8 @@ function StackNavigator() {
     useCallback(() => {
       const useToken = async () => {
         if (await getItem("token-expired") &&  detailNasabah?.idUserNasabah) {
-          navigationRef.navigate("MyTabs");
           setIsLoading(false);
+          setIsShowContent(true);
         } else {
           setIsShowContent(false);
           setIsLoading(false);
@@ -121,7 +121,7 @@ function StackNavigator() {
         <Stack.Screen component={PIN} name="PIN" />
         <Stack.Screen component={PortofolioDetail} name="PortofolioDetail" />
         <Stack.Screen component={ProdukDetail} name="ProdukDetail" />
-
+        <Stack.Screen component={ListChatProduct} name="ListChatProduct" />
         <Stack.Screen component={RekeningSaya} name="RekeningSaya" />
         <Stack.Screen component={KeamananAkun} name="KeamananAkun" />
         <Stack.Screen component={RekeningSayaDetail} name="RekeningSayaDetail" />

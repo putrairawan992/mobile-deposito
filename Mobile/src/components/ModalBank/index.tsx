@@ -66,8 +66,6 @@ export default function ModalBank({ show, hide, onConfirm }: ModalBankProps) {
                 onPress={() => onConfirm(data?.nama)}>
                   <View className="w-full h-[1px] bg-neutral-300 mb-3 mt-1" />
                   <View className='flex-row'>
-                  {data?.logo && 
-                  <Image source={{ uri: data?.logo }} style={{ height: 22, width: 100 }}  resizeMode="contain" />}
                   <Text>{data?.nama}</Text>
                   </View>
               </TouchableOpacity>

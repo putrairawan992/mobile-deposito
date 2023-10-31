@@ -1,5 +1,5 @@
 import { ActivityIndicator, Image, View } from 'react-native';
-import React, { createRef, useCallback, useEffect, useState } from 'react';
+import React, { createRef, useCallback, useEffect, useLayoutEffect, useState } from 'react';
 import DefaultView from '../../components/DefaultView';
 import { colors } from '../../utils/colors';
 import { images } from '../../utils/images';
@@ -14,6 +14,7 @@ import { RootDispatch, RootState } from '../../store';
 import { getSplashDashboard } from '../../services/dasbhoard';
 import { getItem } from '../../utils/storage';
 import { checkLogin } from '../../services/user';
+import { useFocusEffect } from '@react-navigation/native';
 
 
 
@@ -24,8 +25,22 @@ export default function Splash() {
   const { showSplashDashboard, showSplashListLoading } = useSelector(
     (state: RootState) => state.dashboardReducer,
   );
-  const { checkLoginLoading } = useSelector(
+  const { detailNasabah, detailNasabahDetailLoading, checkLoginLoading } = useSelector(
     (state: RootState) => state.userReducer,
+  );
+
+  useFocusEffect(
+    useCallback(() => {
+      const useToken = async () => {
+        if (await getItem("token-expired") && detailNasabah?.idUserNasabah) {
+          navigationRef.navigate("MyTabs");
+          return;
+        }
+      }
+      if (!detailNasabahDetailLoading) {
+        useToken();
+      }
+    }, [detailNasabah, detailNasabahDetailLoading]),
   );
 
   const redirectFunction = async () => {

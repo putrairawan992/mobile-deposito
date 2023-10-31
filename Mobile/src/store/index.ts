@@ -1,6 +1,7 @@
 import {configureStore} from '@reduxjs/toolkit';
 
 import userReducer from './user';
+import chatReducer from './chat';
 import bankDataReducer from './bank';
 import productReducer from './product';
 import dashboardReducer from "./dashboard";
@@ -8,6 +9,7 @@ import portofolioReducer from "./portofolio";
 
 const store = configureStore({
   reducer: {
+    chatReducer,
     bankDataReducer,
     portofolioReducer,
     userReducer,

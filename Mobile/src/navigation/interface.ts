@@ -18,9 +18,10 @@ export type RootStackParamList = {
   };
   Beranda?: { fromUrl?: undefined };
   Chat: undefined;
-  ChatRegistrasi: undefined;
+  ChatRegistrasi: {id?: undefined};
   ChatTransaksi: undefined;
   DetailPribadi: undefined;
+  ListChatProduct: undefined;
   DetailPribadiEdit?: {
     detailNasabah?: undefined;
   }
