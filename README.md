@@ -6,7 +6,7 @@
 - `pod install` -- install ios dependancies.
 
 ## Dont forget before running install / setup emulator dependecy running in emulator 
-[refrence]([https://reactnative.dev/docs/environment-setup])
+[refrence](https://reactnative.dev/docs/environment-setup)
 
 
 - `yarn ios` -- (`react-native run-ios`) Build the iOS App (requires a MacOS computer).
