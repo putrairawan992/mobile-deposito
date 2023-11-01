@@ -1,5 +1,5 @@
 import { FlatList, TextInput, TouchableOpacity, View } from 'react-native';
-import React, { useEffect, useLayoutEffect, useState } from 'react';
+import React, { useCallback, useEffect, useLayoutEffect, useState } from 'react';
 import DefaultView from '../../components/DefaultView';
 import DefaultText from '../../components/DefaultText';
 import DefaultHeader from '../../components/DefaultHeader';
@@ -12,8 +12,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import { RootDispatch, RootState } from '../../store';
 import { getUserProfile } from '../../services/user';
 import { RootStackScreenProps } from '../../navigation/interface';
-import { getChatListDetailKeluhan } from '../../services/chat';
+import { getChatListDetailKeluhan, postChatListDetailKeluhan } from '../../services/chat';
 import socket from '../../utils/socket';
+import { useFocusEffect } from '@react-navigation/native';
 
 const Item = ({ title, isRight }: { title: string; isRight?: boolean }) => {
   return (
@@ -54,45 +55,68 @@ export default function ChatRegistrasi({ route }: RootStackScreenProps<'ChatRegi
   const { userProfile } = useSelector(
     (state: RootState) => state.userReducer
   );
-  const { showChatKeluan, showChatKeluanLoading } = useSelector(
+  const { showChatKeluan, showChatKeluanLoading, showPostChatKeluan } = useSelector(
     (state: RootState) => state.chatReducer
   );
   const [userNameChat, setUsernameChat] = useState<string | undefined>(showChatKeluan?.data?.namaCS);
   const [statusUser, setStatusUser] = useState<string | undefined>('Offline');
   const [customerShowName, setCustomerShowName] = useState<string | undefined>();
-  const [messageInput, setMessageInput] = useState<string | undefined>();
+  const [messageInput, setMessageInput] = useState<string | undefined | any>();
 
   useEffect(() => {
     dispatch(getUserProfile());
     dispatch(getChatListDetailKeluhan(idParams));
   }, [dispatch, idParams])
 
-  useLayoutEffect(() => {
-    konek2SocketIO(showChatKeluan?.data);
-  }, [showChatKeluan, userProfile,socket]);
+  useFocusEffect(useCallback(() => {
+    if (showChatKeluan?.data) {
+      const komplenData = {
+        id_jenis_komplen: showChatKeluan?.data?.id_jenis_komplen,
+        status: showChatKeluan?.data?.status,
+        anonymous: ''
+      };
+      dispatch(postChatListDetailKeluhan(komplenData));
+    }
+    // onChat();
+  }, [showChatKeluan]));
 
-  function konek2SocketIO(data: any) {
+  useEffect(() => {
+    if (showPostChatKeluan?.data[0]?.id) {
+      socket.emit('joinRoom', showPostChatKeluan?.data[0]?.id);
+    }
+  }, [showPostChatKeluan])
 
-    socket.on('chatHistory', (message:any) => {
-      console.log("tes: ", message)
-      chatHistory(message)
+  console.log("showPostChatKeluan", showPostChatKeluan?.data[0]?.id);
+
+  const onChat = async () => {
+    const data = {
+      customer: userProfile.data?.userProfile?.nama,
+      room: userProfile.data?.userProfile?.id_user,
+      message: messageInput,
+    };
+
+    socket.emit('chat', data);
+    socket.on('chat', message => {
+      console.log('message', message);
     });
+    socket.on('chatHistory', (message) => {
+      chatHistory(message)
+  });
+    setMessageInput([...messageInput, data]);
+    console.log('data', data);
+    // setMessageInput('');
+  };
 
-    socket.on('chat', (message:any) => {
-     onChat(message);
-    })
-  }
 
-  function chatHistory(message:any) {
-    console.log("chatHistory===>",message);
-    
-  }
-
-  function onChat(message:any) {
-console.log("message===>:", message);
+  function chatHistory(message: any) {
+    console.log("chatHistory===>", message);
 
   }
 
+  //pertama user nasabah dia itu harus connect dlu ke socket 
+
+
+  console.log(messageInput, "messageInput");
 
   return (
     <DefaultView
@@ -118,7 +142,7 @@ console.log("message===>:", message);
           multiline={true}
         />
         <Gap width={10} />
-        <TouchableOpacity activeOpacity={0.7}>
+        <TouchableOpacity onPress={() => onChat()} activeOpacity={0.7}>
           <Icon name="send" size={24} color={colors.black} />
         </TouchableOpacity>
       </View>

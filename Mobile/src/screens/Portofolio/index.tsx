@@ -135,7 +135,6 @@ export default function Portofolio() {
   const [params, setParams] = useState<any>(undefined);
   const { showPortofolio, showPortofolioLoading } = useSelector((state: RootState) => state.portofolioReducer);
   const dispatch = useDispatch<RootDispatch>();
-  console.log("showPortofolio?.data", showPortofolio?.data);
 
   useEffect(() => {
     switch (activeTab) {

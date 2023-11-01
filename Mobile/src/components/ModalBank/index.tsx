@@ -41,9 +41,6 @@ export default function ModalBank({ show, hide, onConfirm }: ModalBankProps) {
     }, [dispatch, bankSearchName]),
   );
 
-  console.log("showBankListData", showBankListData?.data);
-
-
   return (
     <Modal isVisible={show} onBackButtonPress={hide} onBackdropPress={hide}>
       <View className="bg-white p-2 py-4 rounded-lg border-[2px] h-[350px] border-primary">

@@ -42,8 +42,6 @@ export const checkLogin =
           });
         })
         .catch(err => {
-          console.log(err.response?.data?.message);
-
           Toast.show({
             type: 'error',
             text1: 'Error',

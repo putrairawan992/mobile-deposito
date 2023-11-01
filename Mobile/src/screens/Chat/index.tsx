@@ -9,7 +9,9 @@ import { navigationRef } from '../../navigation/RootNavigation';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootDispatch, RootState } from '../../store';
 import { getChatListKeluhan } from '../../services/chat';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+
+import { getUserProfile } from '../../services/user';
+import socket from '../../utils/socket';
 
 export default function Chat() {
   const dispatch = useDispatch<RootDispatch>();
@@ -17,10 +19,22 @@ export default function Chat() {
   const { showKeluhanList, showKeluhanListLoading } = useSelector(
     (state: RootState) => state.chatReducer
   );
+  const { userProfile } = useSelector(
+    (state: RootState) => state.userReducer
+  );
 
   useEffect(() => {
+    dispatch(getUserProfile());
     dispatch(getChatListKeluhan());
   }, [dispatch]);
+
+
+  useEffect(() => {
+    if (userProfile.data?.userProfile?.id_user) {
+      socket.emit('setUsername', userProfile.data?.userProfile?.id_user);
+    }
+  }, [userProfile])
+
 
   return (
     <DefaultView
@@ -50,7 +64,7 @@ export default function Chat() {
               </View>
             }) : <DefaultText title="Belum ada pertanyaan." titleClassName='font-inter-bold text-center mt-10' />}
         </ScrollView>
-        <TouchableOpacity onPress={()=>navigationRef.navigate('ListChatProduct')} className='p-2 px-3 bg-white rounded-md border border-blue-700 text-blue-700 flex items-center'>
+        <TouchableOpacity onPress={() => navigationRef.navigate('ListChatProduct')} className='p-2 px-3 bg-white rounded-md border border-blue-700 text-blue-700 flex items-center'>
           <DefaultText title="Kirim Pesan Baru" />
         </TouchableOpacity>
       </View>

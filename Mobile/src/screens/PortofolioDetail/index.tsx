@@ -24,6 +24,7 @@ export default function PortofolioDetail({ route }: RootStackScreenProps<'Portof
   const [perpanjang, setPerpanjang] = useState<boolean>(true);
   const [showModalBatal, setShowModalBatal] = useState<boolean>(false);
   const [showImageUpload, setShowImageUpload] = useState<boolean>(false);
+  const [isShowImageProsesPenarikan, setShowImageProsesPenarikan] = useState<boolean>(false);
   const [buktiTF, setBuktiTF] = useState<Asset | string>() as any;
   const { showPortofolioDetail, showPortofolioLoadingDetail } = useSelector((state: RootState) => state.portofolioReducer);
   const [upload_bukti_tf, setUpload_Bukti_Tf] = useState<string | Asset>(showPortofolioDetail?.data?.buktiTF ? `https://dev.depositosyariah.id/${showPortofolioDetail?.data?.buktiTF?.image}` : '') as any;
@@ -140,6 +141,7 @@ export default function PortofolioDetail({ route }: RootStackScreenProps<'Portof
     }
 
   };
+
   const onSave = () => {
     let validSubmit = showPortofolioDetail?.data?.buktiTF
     let formdata = new FormData();
@@ -151,7 +153,11 @@ export default function PortofolioDetail({ route }: RootStackScreenProps<'Portof
     } ?? '');
     dispatch(uploadBuktiPengajuan(formdata, showPortofolioDetail?.data?.no_transaksi as any, validSubmit));
   };
-  console.log(showPortofolioDetail?.data?.status, "showPortofolioDetail?.data?.statuses[3]?.status ");
+
+  const actionProsesPenarikan = () => {
+    setShowImageProsesPenarikan(!isShowImageProsesPenarikan)
+  }
+  console.log(showPortofolioDetail?.data, "showPortofolioDetail?.data?.statuses[3]?.status ");
 
   return (
     <DefaultView>
@@ -174,6 +180,13 @@ export default function PortofolioDetail({ route }: RootStackScreenProps<'Portof
             <DefaultText title="No Transaksi" titleClassName="flex-1" />
             <DefaultText title={no_transaksi} titleClassName="text-base font-inter-semibold" />
           </View>
+          {showPortofolioDetail?.data?.penarikan?.status &&
+            <TouchableOpacity
+              onPress={() => actionProsesPenarikan()}
+              activeOpacity={0.7}
+              className="self-center flex px-3 py-2 bg-blue-600 text-white rounded-md py-1 px-4 text-xs">
+              <DefaultText title="Proses Penarikan" titleClassName="text-white" />
+            </TouchableOpacity>}
           <View className="w-full h-[1px] bg-neutral-300 my-3" />
           <View className="flex-row">
             <DefaultText
@@ -181,22 +194,6 @@ export default function PortofolioDetail({ route }: RootStackScreenProps<'Portof
               titleClassName="flex-1"
             />
             <DefaultText title={`Bagi Hasil\n${showPortofolioDetail?.data?.bagi_hasil_setara}%`} />
-          </View>
-          <Gap height={10} />
-          <View className="flex-row">
-            <TouchableOpacity
-              onPress={() => setPerpanjang(!perpanjang)}
-              activeOpacity={0.7}
-              className="w-[16] h-[16] border-[1px] border-black justify-center items-center rounded-sm">
-              {perpanjang && (
-                <Icon name="check" size={14} color={colors.black} />
-              )}
-            </TouchableOpacity>
-            <Gap width={10} />
-            <DefaultText
-              title="Apakah Anda ingin perpanjang transaksi otomatis."
-              titleClassName="flex-1 text-xs"
-            />
           </View>
           <View className="w-full h-[1px] bg-neutral-300 my-3" />
           <View className="flex-row">
@@ -216,9 +213,39 @@ export default function PortofolioDetail({ route }: RootStackScreenProps<'Portof
             />
             <DefaultText title={`${formatRupiah(String(totalPengem), 'Rp')}`} />
           </View>
-          <Gap height={20} />
-          {showPortofolioDetail?.data?.norekMitra?.map((list: any) => {
-            return <View style={{ marginTop: 22 }}>
+          <Gap height={10} />
+          <View className="w-full h-[1px] bg-neutral-300 my-3" />
+          <View className="flex-row">
+            <DefaultText title="Nama Pemilik Rekening" titleClassName="flex-1" />
+            <DefaultText title={showPortofolioDetail?.data?.norek?.atas_nama} />
+          </View>
+          <Gap height={10} />
+          <View className="flex-row">
+            <DefaultText title="No Rekening" titleClassName="flex-1" />
+            <DefaultText title={showPortofolioDetail?.data?.norek?.norek} />
+          </View>
+          <Gap height={10} />
+          <View className="flex-row">
+            <DefaultText title="Nama Bank" titleClassName="flex-1" />
+            <DefaultText title={showPortofolioDetail?.data?.norek?.nama} />
+          </View>
+          <Gap height={10} />
+          <View className="w-full h-[1px] bg-neutral-300 my-3" />
+          <View className="flex-row">
+            <DefaultText
+              title="Perpanjang Otomatis Deposito"
+              titleClassName="flex-1"
+            />
+            <DefaultText
+              title={showPortofolioDetail?.data?.periode[0]?.aro == 1 ? "Ya" : "Tidak"}
+            />
+          </View>
+          <View className="w-full h-[1px] bg-neutral-300 my-3" />
+          {isShowImageProsesPenarikan ? null : showPortofolioDetail?.data?.norekMitra?.map((list: any) => {
+            return <View>
+              <Gap height={20} />
+              <DefaultText title='Rekening Pembayaran Deposito' titleClassName='font-inter-bold' />
+              <Gap height={10} />
               <View className="flex-row">
                 <DefaultText title="Nama Bank" titleClassName="flex-1" />
                 <DefaultText title={list?.nama} />
@@ -235,36 +262,38 @@ export default function PortofolioDetail({ route }: RootStackScreenProps<'Portof
               </View>
             </View>
           })}
-          <View className="w-full h-[1px] bg-neutral-300 my-3" />
-          <Gap height={5} />
-          <View className="flex-row items-center">
-            {showPortofolioDetail?.data?.statuses[3]?.status && <DefaultText title="Bukti Transfer" titleClassName="flex-1" />}
-            {showPortofolioDetail?.data?.statuses[3]?.status && upload_bukti_tf ?
-              <Image source={{ uri: upload_bukti_tf }} style={{ height: 100, width: 130 }} /> :
-              showPortofolioDetail?.data?.statuses[3]?.status && <TouchableOpacity
-                className='border-[1px] border-primary rounded-md w-[200] px-2 py-2 flex-row items-center'
-                onPress={() => onOpeGallery(0)}>
-                <DefaultText
-                  title={'Upload Image'}
-                  titleClassName="m-0 p-0 font-inter-regular "
-                  titleProps={{ numberOfLines: 1 }}
-                />
+          {!showPortofolioDetail?.data?.penarikan?.status &&
+            <View className="flex-row items-center">
+              {showPortofolioDetail?.data?.statuses[3]?.status &&
+                <DefaultText title="Bukti Transfer" titleClassName="flex-1" />}
+              {showPortofolioDetail?.data?.statuses[3]?.status && upload_bukti_tf ?
+                <Image source={{ uri: upload_bukti_tf }} style={{ height: 100, width: 130 }} /> :
+                showPortofolioDetail?.data?.statuses[3]?.status && 
+                <TouchableOpacity
+                  className='border-[1px] border-primary rounded-md w-[200] px-2 py-2 flex-row items-center'
+                  onPress={() => onOpeGallery(0)}>
+                  <DefaultText
+                    title={'Upload Image'}
+                    titleClassName="m-0 p-0 font-inter-regular "
+                    titleProps={{ numberOfLines: 1 }}
+                  />
+                  <Icon name="upload" style={{ marginLeft: 50 }} size={20} />
+                </TouchableOpacity>}
+              <Gap width={20} />
+              {showPortofolioDetail?.data?.statuses[3]?.status && upload_bukti_tf &&
+                <Icon name="eye" onPress={() => setShowImageUpload(true)} size={22} />
+              }
+              <Gap width={20} />
+              {showPortofolioDetail?.data?.statuses[3]?.status && upload_bukti_tf &&
+                <Icon name="trash-can"
+                  size={22}
+                  onPress={() => {
+                    setUpload_Bukti_Tf(undefined);
+                    setBuktiTF(undefined);
+                  }} />
+              }
 
-                <Icon name="upload" style={{ marginLeft: 50 }} size={20} />
-              </TouchableOpacity>}
-            <Gap width={20} />
-            {showPortofolioDetail?.data?.statuses[3]?.status && upload_bukti_tf && <Icon name="eye" onPress={() => setShowImageUpload(true)} size={22} />}
-            <Gap width={20} />
-            {showPortofolioDetail?.data?.statuses[3]?.status && upload_bukti_tf &&
-              <Icon name="trash-can"
-                size={22}
-                onPress={() => {
-                  setUpload_Bukti_Tf(undefined);
-                  setBuktiTF(undefined);
-                }} />
-            }
-
-          </View>
+            </View>}
           <Gap height={10} />
           {showPortofolioDetail?.data?.statuses[3]?.status && buktiTF?.uri &&
             <TouchableOpacity
@@ -274,27 +303,55 @@ export default function PortofolioDetail({ route }: RootStackScreenProps<'Portof
               <DefaultText title="Submit Bukti Transfer" titleClassName="text-white" />
             </TouchableOpacity>}
           <Gap height={10} />
-          <View className="w-full h-[1px] bg-neutral-300 mb-3 mt-1" />
-          <View className="flex-row">
-            <DefaultText title="Proses" titleClassName="font-inter-bold" />
-          </View>
-          <Gap height={10} />
-          {messageText && <View
-            className="bg-primary-light rounded-2xl px-5 py-3 flex-row items-center">
-            <View className="flex-1">
-              <DefaultText title={messageText} />
-            </View>
-          </View>}
-          <Gap height={10} />
-          {timeShow?.map((list: any) => {
-            return <View className="flex-row items-center">
-              <Icon name="check-circle" size={26} color={list.status ? colors.primary : '#dbd4c8'} />
-              <DefaultText
-                title={list.message}
-                titleClassName="flex-1 ml-1"
-              />
-            </View>
-          })}
+          {isShowImageProsesPenarikan ?
+            <View>
+              <DefaultText title="Detail Transaksi Pengembalian" titleClassName="font-inter-bold" />
+              <Gap height={20} />
+              <View className="flex-row">
+                <DefaultText title={`Periode ${showPortofolioDetail?.data?.periode[0]?.start_date} - ${showPortofolioDetail?.data?.periode[0]?.end_date}`} titleClassName="flex-1" />
+                <DefaultText title={showPortofolioDetail?.data?.periode[0]?.statusNa} />
+              </View>
+              <Gap height={10} />
+              <View className="flex-row">
+                <DefaultText title="Pengembalian (Berhasil)" titleClassName="flex-1" />
+                <DefaultText title={formatRupiah(String(showPortofolioDetail?.data?.periode[0]?.no_trx[0]?.amount), 'Rp ')} />
+              </View>
+              <Gap height={10} />
+              <View className="flex-row">
+                <DefaultText title="Bagi Hasil (Berhasil)" titleClassName="flex-1" />
+                <DefaultText title={formatRupiah(String(showPortofolioDetail?.data?.periode[0]?.no_trx[1]?.amount), 'Rp ')} />
+              </View>
+              <Gap height={30} />
+              <View className="w-full h-[1px] bg-neutral-300 mb-3 mt-1" />
+              <View className="flex-row items-center">
+                <DefaultText title="Lihat Bukti Transfer" titleClassName="flex-1" />
+                <Image source={{ uri: upload_bukti_tf }} style={{ height: 100, width: 130 }} />
+                <Gap width={20} />
+                <Icon name="eye" onPress={() => setShowImageUpload(true)} size={22} />
+              </View>
+            </View> : <View>
+              <View className="w-full h-[1px] bg-neutral-300 mb-3 mt-1" />
+              <View className="flex-row">
+                <DefaultText title="Proses" titleClassName="font-inter-bold" />
+              </View>
+              <Gap height={10} />
+              {messageText && <View
+                className="bg-primary-light rounded-2xl px-5 py-3 flex-row items-center">
+                <View className="flex-1">
+                  <DefaultText title={messageText} />
+                </View>
+              </View>}
+              <Gap height={10} />
+              {timeShow?.map((list: any) => {
+                return <View className="flex-row items-center">
+                  <Icon name="check-circle" size={26} color={list.status ? colors.primary : '#dbd4c8'} />
+                  <DefaultText
+                    title={list.message}
+                    titleClassName="flex-1 ml-1"
+                  />
+                </View>
+              })}
+            </View>}
           <Gap height={30} />
           <View className="flex-row justify-center">
             <TouchableOpacity
@@ -304,18 +361,19 @@ export default function PortofolioDetail({ route }: RootStackScreenProps<'Portof
               <DefaultText title="Tanya produk" titleClassName="text-white" />
             </TouchableOpacity>
 
-            {showPortofolioDetail?.data?.status == 5 &&
+            {showPortofolioDetail?.data?.status == 5 && !showPortofolioDetail?.data?.penarikan?.status &&
               <TouchableOpacity
-                onPress={() => { 
-                  setShowModalBatal(true); 
-                  setFlagSubmit("penarikan") }}
+                onPress={() => {
+                  setShowModalBatal(true);
+                  setFlagSubmit("penarikan")
+                }}
                 activeOpacity={0.7}
                 className="self-center bg-primary px-3 py-2 mr-3  rounded-md">
                 <DefaultText title="Penarikan" titleClassName="text-white" />
               </TouchableOpacity>}
 
-            {(showPortofolioDetail?.data?.status == 1 || showPortofolioDetail?.data?.status == 0)  && <TouchableOpacity
-               onPress={() => { setShowModalBatal(true); setFlagSubmit("pembatalan") }}
+            {(showPortofolioDetail?.data?.status == 1 || showPortofolioDetail?.data?.status == 0) && <TouchableOpacity
+              onPress={() => { setShowModalBatal(true); setFlagSubmit("pembatalan") }}
               activeOpacity={0.7}
               className="self-center bg-primary px-3 py-2 mr-3  rounded-md">
               <DefaultText title="Pembatalan" titleClassName="text-white" />
@@ -332,7 +390,7 @@ export default function PortofolioDetail({ route }: RootStackScreenProps<'Portof
         </View>}
       </ScrollView>
       <ModalImage
-        title='Preview Image Upload'
+        title={showPortofolioDetail?.data?.penarikan?.status ? 'Preview Image Bukti Transfer ' : 'Preview Image Upload'}
         hide={() => setShowImageUpload(false)}
         data={upload_bukti_tf as string}
         show={showImageUpload}
@@ -344,9 +402,9 @@ export default function PortofolioDetail({ route }: RootStackScreenProps<'Portof
           'Anda akan melakukan transaksi ini ?\nPengajuan anda akan kami validasi terlebih dahulu dalam waktu maksimal 2x24jam'
         }
         onConfirm={() => {
-         flagSubmit === "penarikan" ? 
-         dispatch(getPenarikanPortofolioDetail(no_transaksi, setShowModalBatal)) : 
-         dispatch(getPembatalanPortofolioDetail(no_transaksi, setShowModalBatal))
+          flagSubmit === "penarikan" ?
+            dispatch(getPenarikanPortofolioDetail(no_transaksi, setShowModalBatal)) :
+            dispatch(getPembatalanPortofolioDetail(no_transaksi, setShowModalBatal))
         }}
         type="warning"
       />

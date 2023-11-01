@@ -4,7 +4,7 @@ import { API } from '../utils/constant';
 import Toast from 'react-native-toast-message';
 import { getStorage } from '../utils/storage';
 import { logout } from './user';
-import { setShowJenisKeluhanChat, setShowJenisKeluhanChatLoading, setShowKeluhanChat, setShowKeluhanChatDetail, setShowKeluhanChatDetailLoading, setShowKeluhanChatLoading } from '../store/chat';
+import { setShowJenisKeluhanChat, setShowJenisKeluhanChatLoading, setShowKeluhanChat, setShowKeluhanChatDetail, setShowKeluhanChatDetailLoading, setShowKeluhanChatLoading, setShowPostKeluhanChatDetail, setShowPostKeluhanChatDetailLoading } from '../store/chat';
 
 
 export const getChatListKeluhan = (params?: any) => async (dispatch: RootDispatch) => {
@@ -57,6 +57,32 @@ export const getChatListDetailKeluhan = (params?: any) => async (dispatch: RootD
                     err.response?.data?.message ?? err.response?.data ?? 'Terjadi error, coba lagi nanti.',
             })
         })
+};
+
+export const postChatListDetailKeluhan = (params?: any) => async (dispatch: RootDispatch) => {
+   dispatch(setShowPostKeluhanChatDetailLoading(true));
+    axios
+        .post(`${API}/keluhan/`, params, {
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${await getStorage('token')}`,
+            },
+        })
+        .then(res => {
+            dispatch(setShowPostKeluhanChatDetail(res?.data));
+        }).catch(err => {
+            if (err?.response?.status === 401) {
+                dispatch(logout())
+            }
+            Toast.show({
+                type: 'error',
+                text1: 'Error',
+                text2:
+                    err.response?.data?.message ?? err.response?.data ?? 'Terjadi error, coba lagi nanti.',
+            })
+        }).finally(() => {
+            dispatch(setShowPostKeluhanChatDetailLoading(false));
+        });
 };
 
 export const getChatJenisListKeluhan = () => async (dispatch: RootDispatch) => {

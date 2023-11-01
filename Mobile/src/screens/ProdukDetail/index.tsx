@@ -29,9 +29,6 @@ export default function ProdukDetail({
     dispatch(getShowProductNasabahDetail(id));
   }, [dispatch]);
 
-  console.log("showProductDetail", showProductDetail);
-
-
   return (
     <DefaultView>
       <DefaultHeader title="Detail Deposito" />

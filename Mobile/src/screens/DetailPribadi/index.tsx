@@ -26,10 +26,7 @@ export default function DetailPribadi() {
   useEffect(() => {
     dispatch(getDetailNasabah())
   }, [dispatch])
-
-  console.log(detailNasabah);
-
-
+  
   return (
     <DefaultView>
       <DefaultHeader title="Detail Pribadi" />

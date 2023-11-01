@@ -7,7 +7,9 @@ interface InitialState {
     showJenisKeluhan: any,
     showJenisKeluhanLoading: boolean,
     showChatKeluan: any,
-    showChatKeluanLoading: boolean
+    showChatKeluanLoading: boolean,
+    showPostChatKeluan: any,
+    showPostChatKeluanLoading: boolean
 }
 
 const initialState: InitialState = {
@@ -17,6 +19,8 @@ const initialState: InitialState = {
     showJenisKeluhanLoading: false,
     showChatKeluan: null,
     showChatKeluanLoading: false,
+    showPostChatKeluan: null,
+    showPostChatKeluanLoading: false
 };
 
 export const chatSlice = createSlice({
@@ -40,6 +44,12 @@ export const chatSlice = createSlice({
         },
         setShowKeluhanChatDetail: (state, action) => {
             state.showChatKeluan = action.payload;
+        },
+        setShowPostKeluhanChatDetailLoading: (state, action) => {
+            state.showPostChatKeluanLoading = action.payload;
+        },
+        setShowPostKeluhanChatDetail: (state, action) => {
+            state.showPostChatKeluan = action.payload;
         }
     },
 });
@@ -47,5 +57,5 @@ export const chatSlice = createSlice({
 export default chatSlice.reducer;
 
 export const {
-    setShowKeluhanChatDetail, setShowKeluhanChatDetailLoading, setShowKeluhanChat, setShowKeluhanChatLoading, 
+    setShowPostKeluhanChatDetail, setShowPostKeluhanChatDetailLoading,setShowKeluhanChatDetail, setShowKeluhanChatDetailLoading, setShowKeluhanChat, setShowKeluhanChatLoading, 
     setShowJenisKeluhanChat, setShowJenisKeluhanChatLoading } = chatSlice.actions;

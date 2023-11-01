@@ -99,8 +99,6 @@ export default function Register() {
     formdata.append('nama_bank', bank);
     formdata.append('norek', rekening);
     formdata.append('atas_nama', namaRekening);
-    console.log(fotoKtp);
-
     formdata.append('image_ktp', {
       size: fotoKtp?.fileSize,
       uri: fotoKtp?.uri,

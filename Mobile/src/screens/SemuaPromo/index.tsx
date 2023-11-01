@@ -26,8 +26,6 @@ export default function SemuaPromo() {
         keyExtractor={(_, key) => key.toString()}
         showsVerticalScrollIndicator={false}
         renderItem={({ item }) => {
-          console.log("showsVerticalScrollIndicator",item);
-          
           return (
             <TouchableOpacity
               activeOpacity={0.7}
