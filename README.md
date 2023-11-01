@@ -5,7 +5,10 @@
 - `yarn install` -- install android dependancies.
 - `pod install` -- install ios dependancies.
 
-## Dont forget before running install / setup emulator dependecy running in emulator
+## Dont forget before running install / setup emulator dependecy running in emulator 
+[refrence]([https://www.google.com](https://reactnative.dev/docs/environment-setup))
+
+
 - `yarn ios` -- (`react-native run-ios`) Build the iOS App (requires a MacOS computer).
 - `yarn android` -- (`react-native run-android`) Build the Android App.
 
