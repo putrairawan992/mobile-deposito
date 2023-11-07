@@ -16,7 +16,7 @@ export default function Fanpage() {
           <TouchableOpacity
             onPress={() => Linking.openURL('https://instagram.com')}
             activeOpacity={0.7}
-            className="flex-row items-center bg-green-200 p-3 rounded-md border-[1px] border-green-600">
+            className="flex-row items-center bg-green-200 p-3 rounded-full border-[1px] border-green-600">
             <View className="bg-primary rounded-full p-1">
               <Icon name="instagram" size={35} color={colors.white} />
             </View>
@@ -27,7 +27,7 @@ export default function Fanpage() {
           <TouchableOpacity
             onPress={() => Linking.openURL('https://facebook.com')}
             activeOpacity={0.7}
-            className="flex-row items-center bg-green-200 p-3 rounded-md border-[1px] border-green-600">
+            className="flex-row items-center bg-green-200 p-3 rounded-full border-[1px] border-green-600">
             <View className="bg-primary rounded-full p-1">
               <Icon name="facebook" size={35} color={colors.white} />
             </View>
@@ -38,7 +38,7 @@ export default function Fanpage() {
           <TouchableOpacity
             onPress={() => Linking.openURL('https://twitter.com')}
             activeOpacity={0.7}
-            className="flex-row items-center bg-green-200 p-3 rounded-md border-[1px] border-green-600">
+            className="flex-row items-center bg-green-200 p-3 rounded-full border-[1px] border-green-600">
             <View className="bg-primary rounded-full p-1">
               <Icon name="twitter" size={35} color={colors.white} />
             </View>
@@ -49,7 +49,7 @@ export default function Fanpage() {
           <TouchableOpacity
             onPress={() => Linking.openURL('https://youtube.com')}
             activeOpacity={0.7}
-            className="flex-row items-center bg-green-200 p-3 rounded-md border-[1px] border-green-600">
+            className="flex-row items-center bg-green-200 p-3 rounded-full border-[1px] border-green-600">
             <View className="bg-primary rounded-full p-1">
               <Icon name="youtube" size={35} color={colors.white} />
             </View>

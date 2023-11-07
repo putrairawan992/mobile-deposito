@@ -8,14 +8,14 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { colors } from '../../utils/colors';
 import ModalAlert from '../../components/ModalAlert';
 import { navigationRef } from '../../navigation/RootNavigation';
-import { formatRupiah } from '../../utils/function';
+import { formatNominal, formatRupiah } from '../../utils/function';
 import { showToast } from '../../utils/toast';
 import { RootStackScreenProps } from '../../navigation/interface';
 import { useDispatch, useSelector } from 'react-redux';
 import { estimasiAjukanDeposito, postAjukanDeposito } from '../../services/product';
 import { RootDispatch, RootState } from '../../store';
 import { debounce } from '../../utils/debounce';
-import { getShowBankList } from '../../services/dasbhoard';
+import { getShowBankList, getShowBankListProduk } from '../../services/dasbhoard';
 import ModalSkPengajuan from '../../components/ModalSyaratKetentuan';
 
 export default function AjukanDeposito({ route }: RootStackScreenProps<"AjukanDeposito">) {
@@ -27,15 +27,20 @@ export default function AjukanDeposito({ route }: RootStackScreenProps<"AjukanDe
   const [nominal, setNominal] = useState<string>('');
   const [data, setData] = useState<any>(null);
   const [loadings, setLoadings] = useState<boolean>(false);
-  const { showBankList } = useSelector(
+  const { showBankListProduct } = useSelector(
     (state: RootState) => state.dashboardReducer,
   );
   const dispatch = useDispatch<RootDispatch>();
-  const bankDefault = showBankList?.find((li: any) => li?.default === "1");
+  const [dataBank, setDataBank] = useState<any>();
 
   useEffect(() => {
-    dispatch(getShowBankList())
-  }, [])
+    dispatch(getShowBankListProduk());
+  }, [dispatch])
+
+  useEffect(() => {
+    const bankDefault = showBankListProduct?.find((li: any) => li?.default === "1");
+    setDataBank(bankDefault);
+  }, [showBankListProduct])
 
   const onLanjut = () => {
     if (nominal.trim().length === 0) {
@@ -45,7 +50,7 @@ export default function AjukanDeposito({ route }: RootStackScreenProps<"AjukanDe
       return showToast('Centang persetujuan syarat dan ketentuan');
     }
     const payload = {
-      id_norek: showBankList[0]?.id,
+      id_norek: dataBank?.id,
       aro: agree ? 1 : 0,
       amount: nominal?.replace(/\./g, ""),
       bagi_hasil: data?.estimasi_akhir?.toString(),
@@ -58,14 +63,13 @@ export default function AjukanDeposito({ route }: RootStackScreenProps<"AjukanDe
   const payload = {
     amount: nominal?.replace(/\./g, ""),
     bagi_hasil: showProductDetail?.bagi_hasil,
-    tenor: showProductDetail?.tenor
+    tenor: showProductDetail?.tenor,
+    pajak: showProductDetail?.pajak
   }
 
-  const handleDebouncedSearch = debounce(() => {
-    if (nominal.trim().length > 5) {
-      dispatch(estimasiAjukanDeposito(payload, setData, setLoadings));
-    }
-  }, 3000);
+  const handleDebouncedSearch = () => {
+    dispatch(estimasiAjukanDeposito(payload, setData, setLoadings));
+  };
 
   function tambahkanNominal(nominal: any, hasil: any): any {
     return parseInt(nominal) + hasil;
@@ -113,17 +117,23 @@ export default function AjukanDeposito({ route }: RootStackScreenProps<"AjukanDe
           <DefaultText title="Masukkan Nominal Deposito Anda" />
           <Gap height={10} />
           <View className="border-[1px] border-primary rounded-md px-2 py-2">
-            {loadings ? <ActivityIndicator /> : <TextInput
+            <TextInput
               className="m-0 p-0 font-inter-regular"
               placeholder="Masukkan nominal"
               value={nominal}
               onChangeText={value => {
                 setNominal(formatRupiah(value));
-                handleDebouncedSearch();
               }}
               keyboardType="number-pad"
-            />}
+            />
           </View>
+          {loadings ? <ActivityIndicator size={"large"} /> :
+           parseInt(nominal) > 0 &&  <TouchableOpacity
+              onPress={() => handleDebouncedSearch()}
+              activeOpacity={0.7}
+              className="self-center px-5 mt-1 bg-primary py-2 rounded-full">
+              <DefaultText title="Simulasikan Deposito" titleClassName="text-white" />
+            </TouchableOpacity>}
           <Gap height={20} />
 
           <DefaultText
@@ -138,7 +148,7 @@ export default function AjukanDeposito({ route }: RootStackScreenProps<"AjukanDe
           <Gap height={10} />
           <View className="flex-row">
             <DefaultText title="Bagi Hasil" titleClassName="flex-1" />
-            <DefaultText title={formatRupiah(String(data?.estimasi_akhir)) || 0} />
+            <DefaultText title={formatNominal(data?.estimasi_akhir || 0)} />
           </View>
           <Gap height={10} />
           <View className="flex-row">
@@ -166,7 +176,7 @@ export default function AjukanDeposito({ route }: RootStackScreenProps<"AjukanDe
           <Gap height={10} />
           <View className="flex-row">
             <DefaultText title="Nama Bank" titleClassName="flex-1" />
-            <DefaultText title={bankDefault?.nama} />
+            <DefaultText title={dataBank?.nama} />
           </View>
           <Gap height={10} />
           <View className="flex-row">
@@ -174,17 +184,17 @@ export default function AjukanDeposito({ route }: RootStackScreenProps<"AjukanDe
               title="Nama Pemilik Rekening"
               titleClassName="flex-1"
             />
-            <DefaultText title={bankDefault?.atas_nama} />
+            <DefaultText title={dataBank?.atas_nama} />
           </View>
           <Gap height={10} />
           <View className="flex-row">
             <DefaultText title="Nomor Rekening" titleClassName="flex-1" />
-            <DefaultText title={bankDefault?.norek} />
+            <DefaultText title={dataBank?.norek} />
           </View>
           <Gap height={10} />
           <TouchableOpacity
             activeOpacity={0.7}
-            onPress={() => navigationRef.navigate('RekeningSaya')}
+            onPress={() => navigationRef.navigate('RekeningSaya', { isUserBank: true })}
             className="self-end bg-primary px-1 py-2 rounded-md">
             <DefaultText title="Ganti Akun Bank" titleClassName="text-white" />
           </TouchableOpacity>
@@ -229,7 +239,7 @@ export default function AjukanDeposito({ route }: RootStackScreenProps<"AjukanDe
           <TouchableOpacity
             onPress={onLanjut}
             activeOpacity={0.7}
-            className="self-center bg-primary px-5 py-2 rounded-md">
+            className="self-center bg-primary px-5 py-2 rounded-full">
             <DefaultText title="Submit" titleClassName="text-white" />
           </TouchableOpacity>
         </View>

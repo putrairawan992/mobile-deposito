@@ -6,6 +6,8 @@ interface InitialState {
     showPortofolioLoading: boolean
     showPortofolioDetail: any
     showPortofolioLoadingDetail: boolean
+    showButktiHasilPortofolioDetail: any
+    showBuktiHasilPortofolioLoadingDetail: boolean
 }
 
 const initialState: InitialState = {
@@ -13,6 +15,8 @@ const initialState: InitialState = {
     showPortofolioLoading: false,
     showPortofolioDetail: null,
     showPortofolioLoadingDetail: false,
+    showButktiHasilPortofolioDetail: null,
+    showBuktiHasilPortofolioLoadingDetail: false
 };
 
 export const portofolioSlice = createSlice({
@@ -31,6 +35,12 @@ export const portofolioSlice = createSlice({
         setshowPortofolioLoadingDetail: (state, action) => {
             state.showPortofolioLoadingDetail = action.payload;
         },
+        setShowBuktiHasilPortofolioDetail: (state, action) => {
+            state.showButktiHasilPortofolioDetail = action.payload;
+        },
+        setShowBuktiHasilPortofolioLoadingDetail: (state, action) => {
+            state.showBuktiHasilPortofolioLoadingDetail = action.payload;
+        },
 
     },
 });
@@ -38,4 +48,5 @@ export const portofolioSlice = createSlice({
 export default portofolioSlice.reducer;
 
 export const {
+    setShowBuktiHasilPortofolioDetail,setShowBuktiHasilPortofolioLoadingDetail,
     setshowPortofolio, setshowPortofolioLoading,setshowPortofolioDetail, setshowPortofolioLoadingDetail } = portofolioSlice.actions;

@@ -25,6 +25,7 @@ export default function ModalPemilikBank({show, hide, onConfirm}: ModalBankProps
           onPress={() => onConfirm('1')}>
           <DefaultText title="Nasabah" />
         </TouchableOpacity>
+        <View className="w-full h-[1px] bg-neutral-300 mb-3 mt-1" />
         <TouchableOpacity
           activeOpacity={0.7}
           className="mb-2"

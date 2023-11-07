@@ -26,7 +26,7 @@ export default function ModalImage({ show, hide, onConfirm, data, title }: Modal
         <TouchableOpacity
           onPress={onConfirm}
           activeOpacity={0.7}
-          className="self-center bg-primary px-5 py-2 rounded-md">
+          className="self-center bg-primary px-5 py-2 rounded-full">
           <DefaultText title="OK" titleClassName="text-white" />
         </TouchableOpacity>
       </View>

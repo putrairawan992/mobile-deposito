@@ -1,4 +1,4 @@
-import { FlatList, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, FlatList, StyleSheet, TouchableOpacity, View } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import DefaultView from '../../components/DefaultView';
 import DefaultText from '../../components/DefaultText';
@@ -8,18 +8,15 @@ import { navigationRef } from '../../navigation/RootNavigation';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootDispatch, RootState } from '../../store';
-import { defaultBankShowList, getShowBankList } from '../../services/dasbhoard';
+import { defaultBankShowList, getShowBankList, getShowBankListProduk } from '../../services/dasbhoard';
+import { RootStackScreenProps } from '../../navigation/interface';
 
 const Item = ({
-  isActive,
   onPress,
   item,
-  index
 }: {
-  isActive?: boolean;
-  onPress: (data: any, index: any) => void;
+  onPress: (data: any) => void;
   item: any;
-  index: any;
 }) => {
   return (
     <View className="px-5 flex-row items-center mb-3">
@@ -37,8 +34,8 @@ const Item = ({
         <Icon name="chevron-right" size={30} />
       </View>
       <Gap width={10} />
-      <TouchableOpacity activeOpacity={0.7} onPress={() => onPress(item.id, index)}>
-        {isActive ? (
+      <TouchableOpacity activeOpacity={0.7} onPress={() => onPress(item.id)}>
+        {item.default === "1" ? (
           <View className="w-[20] h-[20] border-[1px] border-primary rounded-full bg-primary" />
         ) : (
           <View className="w-[20] h-[20] border-[1px] border-primary rounded-full" />
@@ -48,42 +45,42 @@ const Item = ({
   );
 };
 
-export default function RekeningSaya() {
-  const [active, setActive] = useState<number>(0);
-  const { showBankList } = useSelector(
+export default function RekeningSaya({ route }: RootStackScreenProps<'RekeningSaya'>) {
+  const { showBankList, showBankListProduct, showBankListLoading, showBankListLoadingProduct } = useSelector(
     (state: RootState) => state.dashboardReducer,
   );
+  const paramsIsBank = route.params?.isUserBank;
   const dispatch = useDispatch<RootDispatch>();
 
   useEffect(() => {
-    dispatch(getShowBankList())
+    dispatch(getShowBankList());
+    dispatch(getShowBankListProduk())
   }, [dispatch]);
 
-  const actionDefaultBankShowList = (id: any, index: any) => {
-    setActive(index)
+  const actionDefaultBankShowList = (id: any) => {
     dispatch(defaultBankShowList(id));
     dispatch(getShowBankList())
+    dispatch(getShowBankListProduk())
   }
 
   return (
     <DefaultView>
       <DefaultHeader title="Rekening Saya" />
-      <FlatList
-        data={showBankList}
+      {showBankListLoading || showBankListLoadingProduct ? <ActivityIndicator size={"large"} /> : <FlatList
+        data={paramsIsBank ? showBankListProduct : showBankList}
         keyExtractor={(_, key) => key.toString()}
         showsVerticalScrollIndicator={false}
         renderItem={({ index, item }) => (
-
-          <Item item={item} index={index} isActive={index === active} onPress={actionDefaultBankShowList} />
+          <Item item={item} onPress={actionDefaultBankShowList} />
         )}
         contentContainerStyle={styles.container}
-      />
+      />}
 
       <View className="pb-10 pt-3">
         <TouchableOpacity
           onPress={() => navigationRef.navigate('RekeningSayaTambah')}
           activeOpacity={0.7}
-          className="bg-primary px-10 py-3 rounded-md self-center">
+          className="bg-primary px-10 py-3 rounded-full self-center">
           <DefaultText title="Tambah Akun Bank" titleClassName="text-white" />
         </TouchableOpacity>
       </View>

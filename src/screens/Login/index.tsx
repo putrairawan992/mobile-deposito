@@ -56,7 +56,7 @@ export default function Login() {
           <ActivityIndicator />
         ) : (
           <Button
-            title="LANJUT"
+            title="Lanjut"
             className="bg-primary"
             titleClassName="text-white"
             onPress={onLogin}

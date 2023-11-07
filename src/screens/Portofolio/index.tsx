@@ -33,7 +33,7 @@ const Item = ({ item }: any) => {
       bgColor = '#6dd5ed'
     }
     if (item.status === "9") {
-      bgColor = '#78ffd6'
+      bgColor = '#2193b0'
     }
     return bgColor;
   }
@@ -111,7 +111,7 @@ const Item = ({ item }: any) => {
           <TouchableOpacity
             onPress={() => navigationRef.navigate('PortofolioDetail', { no_transaksi: item.no_transaksi })}
             activeOpacity={0.7}
-            className="bg-primary px-3 py-2 rounded-md self-center">
+            className="bg-primary px-3 py-2 rounded-full self-center">
             <DefaultText
               title="Lihat Detail"
               titleClassName="text-xs text-white"
@@ -171,7 +171,7 @@ export default function Portofolio() {
                 onPress={() => setActiveTab(item)}
                 activeOpacity={0.7}
                 key={key}
-                className={`border-[1px] border-primary mx-[5px] px-2 py-1 rounded-md ${item === activeTab ? 'bg-primary' : 'bg-white'
+                className={`border-[1px] border-primary mx-[5px] px-2 py-1 rounded-full ${item === activeTab ? 'bg-primary' : 'bg-white'
                   }`}>
                 <DefaultText
                   title={item}
@@ -185,13 +185,13 @@ export default function Portofolio() {
         </ScrollView>
       </View>
       {showPortofolioLoading ? <ActivityIndicator style={{ position: 'absolute', top: 150, left: 0, right: 0 }}
-        size={'large'} /> : <FlatList
+        size={'large'} /> : showPortofolio?.data?.length > 0 ? <FlatList
         data={showPortofolio?.data}
         keyExtractor={(_, key) => key.toString()}
         showsVerticalScrollIndicator={false}
         renderItem={({ item }) => <Item item={item} />}
         contentContainerStyle={styles.container}
-      />}
+      />: <DefaultText titleClassName='text-black mt-20 font-inter-semibold self-center' title={"Belum Memiliki Portofolio"}/>}
     </DefaultView>
   );
 }

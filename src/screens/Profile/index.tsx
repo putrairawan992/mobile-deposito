@@ -24,33 +24,33 @@ export default function Profile() {
 
   return (
     <DefaultView>
-        <DefaultHeader
-          title="Profil"
-          titleClassName="text-black"
-          iconColor={colors.black}
-        />
-        <View className="px-5 pb-3 flex-row items-center">
-          {/* <Image
+      <DefaultHeader
+        title="Profil"
+        titleClassName="text-black"
+        iconColor={colors.black}
+      />
+      <View className="px-5 pb-3 flex-row items-center">
+        {/* <Image
             source={{
               uri: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8cGVyc29ufGVufDB8fDB8fHww&auto=format&fit=crop&w=400&q=60',
             }}
             resizeMode="cover"
             className="bg-neutral-300 w-[80] h-[80] rounded-full"
           /> */}
-          <Gap width={15} />
-          <View className="flex-1">
-            <DefaultText
-              title={detailNasabah?.nama}
-              titleClassName="text-lg font-inter-bold"
-            />
-            <Gap height={5} />
-            <DefaultText
-              title={detailNasabah?.email}
-            />
-            <Gap height={5} />
-            <DefaultText title={detailNasabah?.phone} />
-          </View>
+        <Gap width={15} />
+        <View className="flex-1">
+          <DefaultText
+            title={detailNasabah?.nama}
+            titleClassName="text-lg font-inter-bold"
+          />
+          <Gap height={5} />
+          <DefaultText
+            title={detailNasabah?.email}
+          />
+          <Gap height={5} />
+          <DefaultText title={detailNasabah?.phone} />
         </View>
+      </View>
 
       <ScrollView showsVerticalScrollIndicator={false}>
         <View className="bg-neutral-300 px-3 py-1">
@@ -91,7 +91,7 @@ export default function Profile() {
         </TouchableOpacity>
         <Gap height={10} />
         <TouchableOpacity
-          onPress={() => navigationRef.navigate('RekeningSaya')}
+          onPress={() => navigationRef.navigate('RekeningSaya', { isUserBank: false })}
           activeOpacity={0.7}
           className="px-3 py-2 flex-row items-center">
           <DefaultText
@@ -143,7 +143,7 @@ export default function Profile() {
         <Gap height={30} />
         <TouchableOpacity
           activeOpacity={0.7}
-          className="self-center bg-primary py-2 px-4 rounded-md"
+          className="self-center bg-primary py-2 px-4 rounded-full"
           onPress={() => dispatch(logout())}>
           <DefaultText
             title="Keluar Akun"

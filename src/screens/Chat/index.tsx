@@ -1,4 +1,4 @@
-import { ActivityIndicator, ScrollView, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, Dimensions, Linking, ScrollView, TouchableOpacity, View } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import DefaultView from '../../components/DefaultView';
 import DefaultText from '../../components/DefaultText';
@@ -12,6 +12,7 @@ import { getChatListKeluhan } from '../../services/chat';
 
 import { getUserProfile } from '../../services/user';
 import socket from '../../utils/socket';
+import WebView from 'react-native-webview';
 
 export default function Chat() {
   const dispatch = useDispatch<RootDispatch>();
@@ -19,11 +20,12 @@ export default function Chat() {
   const { showKeluhanList, showKeluhanListLoading } = useSelector(
     (state: RootState) => state.chatReducer
   );
-  const { userProfile } = useSelector(
+  const { userProfile, token } = useSelector(
     (state: RootState) => state.userReducer
   );
 
   useEffect(() => {
+    Linking.openURL(`https://dev.depositosyariah.id/user?token=${token}`)
     dispatch(getUserProfile());
     dispatch(getChatListKeluhan());
   }, [dispatch]);
@@ -35,18 +37,30 @@ export default function Chat() {
     }
   }, [userProfile])
 
+  
 
   return (
     <DefaultView
       statusBarColor={colors.primaryLight}
       containerClassName="bg-primary-light">
-      <DefaultHeader title="Chat" />
-      <View className="bg-white p-6 flex-1 mx-10 my-8 rounded-lg">
-        <DefaultText
+      <DefaultHeader backButton={() => navigationRef.navigate("MyTabs")} title="Chat" />
+      <View className="flex-1 rounded-lg">
+        {/* <DefaultText
           title="Chat with us"
           titleClassName="text-base font-inter-semibold mx-5 my-3"
+        /> */}
+        <WebView
+          // keyboardDisplayRequiresUserAction={true}
+          // startInLoadingState 
+          javaScriptEnabled 
+          // originWhitelist={['*']}
+          // domStorageEnabled 
+          // sharedCookiesEnabled
+          // cacheEnabled
+          style={{ width: Dimensions.get('window').width }}
+          source={{ uri: `https://dev.depositosyariah.id/user?token=${token}` }}
         />
-        <ScrollView>
+        {/* <ScrollView>
           {showKeluhanListLoading ? <ActivityIndicator size={"large"} /> : showKeluhanList?.data?.length > 0 ?
             showKeluhanList?.data?.map((item: any) => {
               return <View className='p-2'>
@@ -63,10 +77,10 @@ export default function Chat() {
                 </TouchableOpacity>
               </View>
             }) : <DefaultText title="Belum ada pertanyaan." titleClassName='font-inter-bold text-center mt-10' />}
-        </ScrollView>
-        <TouchableOpacity onPress={() => navigationRef.navigate('ListChatProduct')} className='p-2 px-3 bg-white rounded-md border border-blue-700 text-blue-700 flex items-center'>
+        </ScrollView> */}
+        {/* <TouchableOpacity onPress={() => navigationRef.navigate('ListChatProduct')} className='p-2 px-3 bg-white rounded-md border border-blue-700 text-blue-700 flex items-center'>
           <DefaultText title="Kirim Pesan Baru" />
-        </TouchableOpacity>
+        </TouchableOpacity> */}
       </View>
     </DefaultView>
   );

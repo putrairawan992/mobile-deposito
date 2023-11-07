@@ -205,7 +205,7 @@ export default function PIN() {
         </TouchableOpacity>
       </View>
       {registerPasswordPinLoading ? <ActivityIndicator size={"large"} /> : <Button
-        title="LANJUT"
+        title="Lanjut"
         className="bg-primary mx-3 mb-7 self-center"
         titleClassName="text-white"
         onPress={onLanjut}

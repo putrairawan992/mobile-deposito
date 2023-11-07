@@ -6,7 +6,6 @@ import DefaultHeader from '../../components/DefaultHeader';
 import { colors } from '../../utils/colors';
 import Gap from '../../components/Gap';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import { io } from 'socket.io-client';
 import { addStorage, getStorage } from '../../utils/storage';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootDispatch, RootState } from '../../store';

@@ -146,7 +146,7 @@ export default function GantiEmail() {
         <TouchableOpacity
           onPress={onSave}
           activeOpacity={0.7}
-          className="bg-primary px-10 py-3 rounded-md self-center">
+          className="bg-primary px-10 py-3 rounded-full  self-center">
           <DefaultText title="SIMPAN" titleClassName="text-white" />
         </TouchableOpacity>
       </View>
