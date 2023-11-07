@@ -18,7 +18,7 @@ export type RootStackParamList = {
   };
   Beranda?: { fromUrl?: undefined };
   Chat: undefined;
-  ChatRegistrasi: {id?: undefined};
+  ChatRegistrasi: { id?: undefined };
   ChatTransaksi: undefined;
   DetailPribadi: undefined;
   ListChatProduct: undefined;
@@ -40,8 +40,8 @@ export type RootStackParamList = {
   };
   Profile: undefined;
   Register: undefined;
-  RekeningSaya: undefined;
-  RekeningSayaDetail?: {id?:undefined};
+  RekeningSaya?: { isUserBank?: boolean };
+  RekeningSayaDetail?: { id?: undefined };
   RekeningSayaTambah: undefined;
   SemuaBlog: undefined;
   SemuaPromo: undefined;

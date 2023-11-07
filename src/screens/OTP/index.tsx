@@ -239,7 +239,7 @@ export default function OTP({ route }: RootStackScreenProps<'OTP'>) {
         </TouchableOpacity>
       </View>
       <Button
-        title="LANJUT"
+        title="Lanjut"
         className="bg-primary mx-3 mb-7 self-center"
         titleClassName="text-white"
         onPress={onLanjut}

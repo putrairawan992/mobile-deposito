@@ -2,7 +2,7 @@ import axios from 'axios';
 import { RootDispatch } from '../store';
 import { API } from '../utils/constant';
 import Toast from 'react-native-toast-message';
-import { setshowPortofolio, setshowPortofolioDetail, setshowPortofolioLoading, setshowPortofolioLoadingDetail } from '../store/portofolio';
+import { setShowBuktiHasilPortofolioDetail, setShowBuktiHasilPortofolioLoadingDetail, setshowPortofolio, setshowPortofolioDetail, setshowPortofolioLoading, setshowPortofolioLoadingDetail } from '../store/portofolio';
 import { getStorage, removeStorage } from '../utils/storage';
 import { setToken } from '../store/user';
 import { navigationRef } from '../navigation/RootNavigation';
@@ -68,7 +68,7 @@ export const getPembatalanPortofolioDetail = (params: any, setShowModalBatal: an
 
 export const getPenarikanPortofolioDetail = (params: any, setShowModalBatal: any) => async (dispatch: RootDispatch) => {
   axios
-    .post(`${API}/penarikan/${params}`, {
+    .post(`${API}/penarikan/${params}`, null, {
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${await getStorage('token')}`,
@@ -113,6 +113,35 @@ export const getShowPortofolioDetail = (params: any) => async (dispatch: RootDis
           err.response?.data?.message ?? 'Terjadi error, coba lagi nanti.',
       })
       dispatch(setshowPortofolioLoadingDetail(false));
+      if (err?.response?.status === 401) {
+        removeStorage('token');
+        dispatch(setToken(null));
+        navigationRef.navigate('Login');
+      }
+    });
+};
+
+export const getShowBuktiBagiHasilPortofolioDetail = (params: any) => async (dispatch: RootDispatch) => {
+  dispatch(setShowBuktiHasilPortofolioLoadingDetail(true));
+  axios
+    .get(`${API}/buktibagihasil/${params}`, {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${await getStorage('token')}`,
+      },
+    })
+    .then(res => {
+      dispatch(setShowBuktiHasilPortofolioDetail(res?.data));
+      dispatch(setShowBuktiHasilPortofolioLoadingDetail(false));
+    })
+    .catch(err => {
+      Toast.show({
+        type: 'error',
+        text1: 'Error',
+        text2:
+          err.response?.data?.message ?? 'Terjadi error, coba lagi nanti.',
+      })
+      dispatch(setShowBuktiHasilPortofolioLoadingDetail(false));
       if (err?.response?.status === 401) {
         removeStorage('token');
         dispatch(setToken(null));

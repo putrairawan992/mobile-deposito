@@ -97,7 +97,7 @@ export default function SyaratKetentuan() {
           </View>
           <Gap height={20} />
           <Button
-            title="LANJUT"
+            title="Lanjut"
             className="bg-primary mx-10"
             titleClassName="text-white"
             onPress={onLanjut}

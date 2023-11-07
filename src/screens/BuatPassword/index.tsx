@@ -87,7 +87,7 @@ export default function BuatPassword({
         </View>
       </ScrollView>
       {registerPasswordPinLoading ? <ActivityIndicator size={"large"} /> : <Button
-        title="LANJUT"
+        title="Lanjut"
         className="bg-primary mx-10 my-5"
         titleClassName="text-white"
         onPress={onLanjut}

@@ -42,11 +42,13 @@ export const checkLogin =
           });
         })
         .catch(err => {
+          console.log("error", err);
+          
           Toast.show({
             type: 'error',
             text1: 'Error',
             text2:
-              err.response?.data?.message ?? 'Terjadi error, coba lagi nanti.',
+            err.response?.data ??  err.response?.data?.message ?? 'Terjadi error, coba lagi nanti.',
           });
         })
         .finally(() => dispatch(setCheckLoginLoading(false)));

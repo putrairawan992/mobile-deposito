@@ -191,15 +191,15 @@ export default function Register() {
         </ScrollView>
         <View className='flex-row items-center mb-5'>
           <Button
-            title="BACK"
-            className="bg-slate-600 ml-1 mr-0.5 my-5"
+            title="Kembali"
+            className="bg-primary ml-1 mr-0.5 my-5"
             titleClassName="text-white"
             onPress={() => {
               setPage(0);
             }}
           />
           <Button
-            title="LANJUT"
+            title="Lanjut"
             className="bg-primary ml-0.5 my-5"
             titleClassName="text-white"
             onPress={() => {
@@ -283,15 +283,15 @@ export default function Register() {
         </ScrollView>
         <View className='flex-row items-center mb-5'>
           <Button
-            title="BACK"
-            className="bg-slate-600 ml-1 mr-0.5 my-5"
+            title="Kembali"
+            className="bg-primary ml-1 mr-0.5 my-5"
             titleClassName="text-white"
             onPress={() => {
               setPage(1);
             }}
           />
           <Button
-            title="LANJUT"
+            title="Lanjut"
             className="bg-primary ml-0.5  my-5"
             titleClassName="text-white"
             onPress={() => {
@@ -365,15 +365,15 @@ export default function Register() {
         </ScrollView>
         <View className='flex-row items-center mb-5'>
           <Button
-            title="BACK"
-            className="bg-slate-600 ml-1 mr-0.5 my-5"
+            title="Kembali"
+            className="bg-primary ml-1 mr-0.5 my-5"
             titleClassName="text-white"
             onPress={() => {
               setPage(2);
             }}
           />
           <Button
-            title="LANJUT"
+            title="Lanjut"
             className="bg-primary ml-0.5  my-5"
             titleClassName="text-white"
             onPress={() => {
@@ -433,15 +433,15 @@ export default function Register() {
         </ScrollView>
         <View className='flex-row items-center mb-5'>
           <Button
-            title="BACK"
-            className="bg-slate-600 ml-1 mr-0.5 my-5"
+            title="Kembali"
+            className="bg-primary ml-1 mr-0.5 my-5"
             titleClassName="text-white"
             onPress={() => {
               setPage(3);
             }}
           />
           <Button
-            title="LANJUT"
+            title="Lanjut"
             className="bg-primary ml-0.5  my-5"
             titleClassName="text-white"
             onPress={() => {
@@ -570,8 +570,8 @@ export default function Register() {
         ) : (
           <View className='flex-row items-center mb-5'>
           <Button
-            title="BACK"
-            className="bg-slate-600 ml-1 mr-0.5 my-5"
+            title="Kembali"
+            className="bg-primary  ml-1 mr-0.5 my-5"
               titleClassName="text-white"
               onPress={() => {
                 setPage(4);
@@ -629,7 +629,7 @@ export default function Register() {
         </View>
       </ScrollView>
       <Button
-        title="LANJUT"
+        title="Lanjut"
         className="bg-primary mx-10 my-5"
         titleClassName="text-white"
         onPress={() => {

@@ -11,12 +11,13 @@ import { navigationRef } from '../../navigation/RootNavigation';
 import { RootStackScreenProps } from '../../navigation/interface';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootDispatch, RootState } from '../../store';
-import { getPembatalanPortofolioDetail, getPenarikanPortofolioDetail, getShowPortofolioDetail } from '../../services/portofolio';
+import { getPembatalanPortofolioDetail, getPenarikanPortofolioDetail, getShowBuktiBagiHasilPortofolioDetail, getShowPortofolioDetail } from '../../services/portofolio';
 import { formatRupiah } from '../../utils/currency';
 import { MAX_FILE_SIZE } from '../../utils/constant';
 import { Asset, launchImageLibrary } from 'react-native-image-picker';
 import Toast from 'react-native-toast-message';
 import ModalImage from '../../components/ModalImage';
+import ModalImagelunas from '../../components/ModalImage';
 import { uploadBuktiPengajuan } from '../../services/user';
 
 export default function PortofolioDetail({ route }: RootStackScreenProps<'PortofolioDetail'>) {
@@ -24,9 +25,10 @@ export default function PortofolioDetail({ route }: RootStackScreenProps<'Portof
   const [perpanjang, setPerpanjang] = useState<boolean>(true);
   const [showModalBatal, setShowModalBatal] = useState<boolean>(false);
   const [showImageUpload, setShowImageUpload] = useState<boolean>(false);
+  const [showImageUploadLunas, setShowImageUploadLunas] = useState<boolean>(false);
   const [isShowImageProsesPenarikan, setShowImageProsesPenarikan] = useState<boolean>(false);
   const [buktiTF, setBuktiTF] = useState<Asset | string>() as any;
-  const { showPortofolioDetail, showPortofolioLoadingDetail } = useSelector((state: RootState) => state.portofolioReducer);
+  const { showPortofolioDetail, showBuktiHasilPortofolioLoadingDetail, showButktiHasilPortofolioDetail, showPortofolioLoadingDetail } = useSelector((state: RootState) => state.portofolioReducer);
   const [upload_bukti_tf, setUpload_Bukti_Tf] = useState<string | Asset>(showPortofolioDetail?.data?.buktiTF ? `https://dev.depositosyariah.id/${showPortofolioDetail?.data?.buktiTF?.image}` : '') as any;
   const dispatch = useDispatch<RootDispatch>();
   const dummyStatus = [
@@ -44,16 +46,18 @@ export default function PortofolioDetail({ route }: RootStackScreenProps<'Portof
   const [flagSubmit, setFlagSubmit] = useState<string>('');
 
   useEffect(() => {
-    dispatch(getShowPortofolioDetail(no_transaksi))
+    dispatch(getShowPortofolioDetail(no_transaksi));
   }, [no_transaksi]);
 
   useEffect(() => {
+    dispatch(getShowBuktiBagiHasilPortofolioDetail(showPortofolioDetail?.data?.bagiHasil?.data?.no_transaksi));
     setUpload_Bukti_Tf(showPortofolioDetail?.data?.buktiTF?.image ? `https://dev.depositosyariah.id/${showPortofolioDetail?.data?.buktiTF?.image}` : null)
   }, [showPortofolioDetail])
 
-  useEffect(() => {
-    console.log("showPortofolioDetail?.data?.status", showPortofolioDetail?.data?.status);
+  console.log("showButktiHasilPortofolioDetail", showButktiHasilPortofolioDetail);
 
+
+  useEffect(() => {
     switch (parseInt(showPortofolioDetail?.data?.status)) {
       case 2:
         setMessageText("Tahapan berikutnya adalah persetujuan pengajuan deposito dari pihak Bank, mohon ditunggu");
@@ -120,6 +124,16 @@ export default function PortofolioDetail({ route }: RootStackScreenProps<'Portof
             "message": "Pelunasan", "status": true
           }])
         break;
+      default:
+        setTimeShow([
+          { "message": "Pengajuan Deposito", "status": true },
+          { "message": "Tanda Tangan Dokumen", "status": false },
+          { "message": "Pengajuan Disetujui BPR", "status": false },
+          { "message": "Pembayaran Berhasil", "status": false },
+          { "message": "Deposito Aktif", "status": false },
+          {
+            "message": "Pelunasan", "status": false
+          }])
     }
   }, [showPortofolioDetail?.data?.status])
 
@@ -184,8 +198,8 @@ export default function PortofolioDetail({ route }: RootStackScreenProps<'Portof
             <TouchableOpacity
               onPress={() => actionProsesPenarikan()}
               activeOpacity={0.7}
-              className="self-center flex px-3 py-2 bg-blue-600 text-white rounded-md py-1 px-4 text-xs">
-              <DefaultText title="Proses Penarikan" titleClassName="text-white" />
+              className="self-center flex px-3 py-2 bg-blue-600 text-white rounded-full py-1 px-4 text-xs">
+              <DefaultText title={isShowImageProsesPenarikan ? "Hide Proses Penarikan" : "Proses Penarikan"} titleClassName="text-white" />
             </TouchableOpacity>}
           <View className="w-full h-[1px] bg-neutral-300 my-3" />
           <View className="flex-row">
@@ -237,7 +251,7 @@ export default function PortofolioDetail({ route }: RootStackScreenProps<'Portof
               titleClassName="flex-1"
             />
             <DefaultText
-              title={showPortofolioDetail?.data?.periode[0]?.aro == 1 ? "Ya" : "Tidak"}
+              title={showPortofolioDetail?.data?.periode && showPortofolioDetail?.data?.periode[0]?.aro == 1 ? "Ya" : "Tidak"}
             />
           </View>
           <View className="w-full h-[1px] bg-neutral-300 my-3" />
@@ -262,44 +276,41 @@ export default function PortofolioDetail({ route }: RootStackScreenProps<'Portof
               </View>
             </View>
           })}
-          {!showPortofolioDetail?.data?.penarikan?.status &&
-            <View className="flex-row items-center">
-              {showPortofolioDetail?.data?.statuses[3]?.status &&
-                <DefaultText title="Bukti Transfer" titleClassName="flex-1" />}
-              {showPortofolioDetail?.data?.statuses[3]?.status && upload_bukti_tf ?
-                <Image source={{ uri: upload_bukti_tf }} style={{ height: 100, width: 130 }} /> :
-                showPortofolioDetail?.data?.statuses[3]?.status && 
-                <TouchableOpacity
-                  className='border-[1px] border-primary rounded-md w-[200] px-2 py-2 flex-row items-center'
-                  onPress={() => onOpeGallery(0)}>
-                  <DefaultText
-                    title={'Upload Image'}
-                    titleClassName="m-0 p-0 font-inter-regular "
-                    titleProps={{ numberOfLines: 1 }}
-                  />
-                  <Icon name="upload" style={{ marginLeft: 50 }} size={20} />
-                </TouchableOpacity>}
-              <Gap width={20} />
-              {showPortofolioDetail?.data?.statuses[3]?.status && upload_bukti_tf &&
-                <Icon name="eye" onPress={() => setShowImageUpload(true)} size={22} />
-              }
-              <Gap width={20} />
-              {showPortofolioDetail?.data?.statuses[3]?.status && upload_bukti_tf &&
-                <Icon name="trash-can"
-                  size={22}
-                  onPress={() => {
-                    setUpload_Bukti_Tf(undefined);
-                    setBuktiTF(undefined);
-                  }} />
-              }
+          {showPortofolioDetail?.data?.statuses && showPortofolioDetail?.data?.statuses[3]?.status && <View className="flex-row items-center">
+            <DefaultText title="Bukti Transfer" titleClassName="flex-1" />
+            {upload_bukti_tf ?
+              <Image source={{ uri: upload_bukti_tf }} style={{ height: 100, width: 130 }} /> :
+              <TouchableOpacity
+                className='border-[1px] border-primary rounded-full w-[200] px-2 py-2 flex-row items-center'
+                onPress={() => onOpeGallery(0)}>
+                <DefaultText
+                  title={'Upload Image'}
+                  titleClassName="m-0 p-0 font-inter-regular "
+                  titleProps={{ numberOfLines: 1 }}
+                />
+                <Icon name="upload" style={{ marginLeft: 50 }} size={20} />
+              </TouchableOpacity>}
+            <Gap width={20} />
+            {upload_bukti_tf &&
+              <Icon name="eye" onPress={() => setShowImageUpload(true)} size={22} />
+            }
+            <Gap width={20} />
+            {!showPortofolioDetail?.data?.penarikan?.status && upload_bukti_tf &&
+              <Icon name="trash-can"
+                size={22}
+                onPress={() => {
+                  setUpload_Bukti_Tf(undefined);
+                  setBuktiTF(undefined);
+                }} />
+            }
 
-            </View>}
+          </View>}
           <Gap height={10} />
-          {showPortofolioDetail?.data?.statuses[3]?.status && buktiTF?.uri &&
+          {!showPortofolioDetail?.data?.penarikan?.status && showPortofolioDetail?.data?.statuses && showPortofolioDetail?.data?.statuses[3]?.status && buktiTF?.uri &&
             <TouchableOpacity
               onPress={() => onSave()}
               activeOpacity={0.7}
-              className="self-center flex bg-primary px-3 py-2 rounded-md">
+              className="self-center flex bg-primary px-3 py-2 rounded-full">
               <DefaultText title="Submit Bukti Transfer" titleClassName="text-white" />
             </TouchableOpacity>}
           <Gap height={10} />
@@ -323,12 +334,14 @@ export default function PortofolioDetail({ route }: RootStackScreenProps<'Portof
               </View>
               <Gap height={30} />
               <View className="w-full h-[1px] bg-neutral-300 mb-3 mt-1" />
-              <View className="flex-row items-center">
-                <DefaultText title="Lihat Bukti Transfer" titleClassName="flex-1" />
-                <Image source={{ uri: upload_bukti_tf }} style={{ height: 100, width: 130 }} />
-                <Gap width={20} />
-                <Icon name="eye" onPress={() => setShowImageUpload(true)} size={22} />
-              </View>
+              {showButktiHasilPortofolioDetail?.data?.image &&
+                <View className="flex-row items-center">
+                  <DefaultText title="Lihat Bukti Transfer" titleClassName="flex-1" />
+                  <Image source={{ uri: `https://dev.depositosyariah.id/${showButktiHasilPortofolioDetail?.data?.image}` }}
+                    style={{ height: 100, width: 130 }} />
+                  <Gap width={20} />
+                  <Icon name="eye" onPress={() => setShowImageUploadLunas(true)} size={22} />
+                </View>}
             </View> : <View>
               <View className="w-full h-[1px] bg-neutral-300 mb-3 mt-1" />
               <View className="flex-row">
@@ -357,7 +370,7 @@ export default function PortofolioDetail({ route }: RootStackScreenProps<'Portof
             <TouchableOpacity
               onPress={() => { }}
               activeOpacity={0.7}
-              className="self-center bg-primary px-3 py-2 mr-3 rounded-md">
+              className="self-center bg-primary px-3 py-2 mr-3 rounded-full">
               <DefaultText title="Tanya produk" titleClassName="text-white" />
             </TouchableOpacity>
 
@@ -368,29 +381,35 @@ export default function PortofolioDetail({ route }: RootStackScreenProps<'Portof
                   setFlagSubmit("penarikan")
                 }}
                 activeOpacity={0.7}
-                className="self-center bg-primary px-3 py-2 mr-3  rounded-md">
+                className="self-center bg-primary px-3 py-2 mr-3  rounded-full">
                 <DefaultText title="Penarikan" titleClassName="text-white" />
               </TouchableOpacity>}
 
             {(showPortofolioDetail?.data?.status == 1 || showPortofolioDetail?.data?.status == 0) && <TouchableOpacity
               onPress={() => { setShowModalBatal(true); setFlagSubmit("pembatalan") }}
               activeOpacity={0.7}
-              className="self-center bg-primary px-3 py-2 mr-3  rounded-md">
+              className="self-center bg-primary px-3 py-2 mr-3  rounded-full">
               <DefaultText title="Pembatalan" titleClassName="text-white" />
             </TouchableOpacity>}
 
             <TouchableOpacity
               onPress={() => { navigationRef.navigate('Portofolio') }}
               activeOpacity={0.7}
-              className="self-center bg-primary px-3 py-2 mr-3  rounded-md">
+              className="self-center bg-primary px-3 py-2 mr-3  rounded-full">
               <DefaultText title="Tutup" titleClassName="text-white" />
             </TouchableOpacity>
           </View>
           <Gap height={20} />
         </View>}
       </ScrollView>
+      <ModalImagelunas
+        title={'Preview Image Bukti Transfer '}
+        hide={() => setShowImageUploadLunas(false)}
+        data={`https://dev.depositosyariah.id/${showButktiHasilPortofolioDetail?.data?.image}`}
+        show={showImageUploadLunas}
+        onConfirm={() => setShowImageUploadLunas(false)} />
       <ModalImage
-        title={showPortofolioDetail?.data?.penarikan?.status ? 'Preview Image Bukti Transfer ' : 'Preview Image Upload'}
+        title={'Preview Image Upload'}
         hide={() => setShowImageUpload(false)}
         data={upload_bukti_tf as string}
         show={showImageUpload}

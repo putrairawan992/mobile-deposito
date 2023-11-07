@@ -1,10 +1,10 @@
-import {TouchableOpacity, View} from 'react-native';
+import { TouchableOpacity, View } from 'react-native';
 import React from 'react';
 import Modal from 'react-native-modal';
 import DefaultText from '../DefaultText';
 import Gap from '../Gap';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import {colors} from '../../utils/colors';
+import { colors } from '../../utils/colors';
 
 interface ModalAlertProps {
   show: boolean;
@@ -37,20 +37,21 @@ export default function ModalAlert({
         <Gap height={15} />
 
         <View className='flex-row justify-center items-center mb-5'>
-        <TouchableOpacity
-          onPress={hide}
-          activeOpacity={0.7}
-          className="self-center px-5 bg-slate-600 py-2 rounded-md">
-          <DefaultText title="Close" titleClassName="text-white" />
-        </TouchableOpacity>
-        <Gap width={15} />
-        <TouchableOpacity
-          onPress={onConfirm}
-          activeOpacity={0.7}
-          className="self-center bg-primary px-5 py-2 rounded-md">
-          <DefaultText title="OK" titleClassName="text-white" />
-        </TouchableOpacity>
- 
+
+          <TouchableOpacity
+            onPress={onConfirm}
+            activeOpacity={0.7}
+            className="self-center bg-primary px-5 py-2 rounded-full">
+            <DefaultText title="Lanjut" titleClassName="text-white" />
+          </TouchableOpacity>
+          <Gap width={15} />
+
+          <TouchableOpacity
+            onPress={hide}
+            activeOpacity={0.7}
+            className="self-center px-5 bg-primary py-2 rounded-full">
+            <DefaultText title="Keluar" titleClassName="text-white" />
+          </TouchableOpacity>
         </View>
       </View>
     </Modal>

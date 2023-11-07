@@ -2,6 +2,7 @@ import {
   ActivityIndicator,
   Alert,
   Image,
+  Linking,
   ScrollView,
   StyleSheet,
   TouchableOpacity,
@@ -39,7 +40,7 @@ export default function Beranda() {
   const { showDashboard } = useSelector(
     (state: RootState) => state.dashboardReducer,
   );
-  const { detailNasabah, detailNasabahDetailLoading, userProfile, token } = useSelector(
+  const { detailNasabah, detailNasabahDetailLoading, token } = useSelector(
     (state: RootState) => state.userReducer,
   );
   const [loading, setLoading] = useState<boolean>(true);
@@ -59,6 +60,10 @@ export default function Beranda() {
   //     setUpdateProfile(true);
   //   }
   // }, [detailNasabah,userProfile]);
+
+  const redirectUrlChat = async() =>{
+    Linking.openURL(`https://dev.depositosyariah.id/user?token=${await getStorage("token")}`)
+  }
 
   useFocusEffect(useCallback(() => {
     if (!detailNasabahDetailLoading) {
@@ -103,7 +108,7 @@ export default function Beranda() {
           <Gap width={10} />
           <TouchableOpacity
             activeOpacity={0.7}
-            onPress={() => navigationRef.navigate('Chat')}>
+            onPress={() => redirectUrlChat() }>
             <Icon name="message" size={24} color={colors.black} />
           </TouchableOpacity>
         </View>
