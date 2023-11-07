@@ -77,12 +77,12 @@ export default function RekeningSaya({ route }: RootStackScreenProps<'RekeningSa
       />}
 
       <View className="pb-10 pt-3">
-        <TouchableOpacity
+      {showBankListLoading || showBankListLoadingProduct  ? null :  <TouchableOpacity
           onPress={() => navigationRef.navigate('RekeningSayaTambah')}
           activeOpacity={0.7}
           className="bg-primary px-10 py-3 rounded-full self-center">
           <DefaultText title="Tambah Akun Bank" titleClassName="text-white" />
-        </TouchableOpacity>
+        </TouchableOpacity>}
       </View>
     </DefaultView>
   );
