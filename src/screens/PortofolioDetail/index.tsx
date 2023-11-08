@@ -13,7 +13,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { RootDispatch, RootState } from '../../store';
 import { getPembatalanPortofolioDetail, getPenarikanPortofolioDetail, getShowBuktiBagiHasilPortofolioDetail, getShowPortofolioDetail } from '../../services/portofolio';
 import { formatRupiah } from '../../utils/currency';
-import { MAX_FILE_SIZE } from '../../utils/constant';
+import { MAX_FILE_SIZE, capitalizeFirstLetter } from '../../utils/constant';
 import { Asset, launchImageLibrary } from 'react-native-image-picker';
 import Toast from 'react-native-toast-message';
 import ModalImage from '../../components/ModalImage';
@@ -124,6 +124,14 @@ export default function PortofolioDetail({ route }: RootStackScreenProps<'Portof
             "message": "Pelunasan", "status": true
           }])
         break;
+      case 0:
+      case 6:
+        setMessageText('Portofolio telah dibatalkan');
+        setTimeShow([
+
+          { "message": "Pengajuan Deposito", "status": true },
+          { "message": "Dibatalkan", "status": true }])
+        break;
       default:
         setTimeShow([
           { "message": "Pengajuan Deposito", "status": true },
@@ -172,235 +180,274 @@ export default function PortofolioDetail({ route }: RootStackScreenProps<'Portof
     setShowImageProsesPenarikan(!isShowImageProsesPenarikan)
   }
   console.log(showPortofolioDetail?.data, "showPortofolioDetail?.data?.statuses[3]?.status ");
-
+  const bgVal = () => {
+    let bgColor = 'orange'
+    if (showPortofolioDetail?.data?.status === "6" || showPortofolioDetail?.data?.status === "0") {
+      bgColor = 'red'
+    }
+    if (showPortofolioDetail?.data?.status === "4") {
+      bgColor = 'bg-yellow-600'
+    }
+    if (showPortofolioDetail?.data?.status === "5") {
+      bgColor = '#6dd5ed'
+    }
+    if (showPortofolioDetail?.data?.status === "9") {
+      bgColor = '#2193b0'
+    }
+    return bgColor;
+  }
+  const statusVal = () => {
+    let status = 'Process';
+    if (showPortofolioDetail?.data?.status === "6" || showPortofolioDetail?.data?.status === "0") {
+      status = 'Batal'
+    }
+    if (showPortofolioDetail?.data?.status === "4") {
+      status = 'Pembayaran Berhasil'
+    }
+    if (showPortofolioDetail?.data?.status === "5") {
+      status = 'Aktif'
+    }
+    if (showPortofolioDetail?.data?.status === "9") {
+      status = 'Lunas'
+    }
+    return status;
+  }
   return (
     <DefaultView>
       <DefaultHeader backButton={() => navigationRef.navigate('Portofolio')} title="Detail Portofolio" />
       <ScrollView showsVerticalScrollIndicator={false}>
         {showPortofolioLoadingDetail ? <ActivityIndicator
-          size={'large'} /> : <View className="px-8">
-          <Gap height={15} />
-          <DefaultText
-            title="Detail Portofolio"
-            titleClassName="font-inter-semibold"
-          />
-          <View className="w-full h-[1px] bg-neutral-300 my-3" />
-          <DefaultText
-            title={showPortofolioDetail?.data?.namaMitra}
-            titleClassName="text-base font-inter-semibold"
-          />
-          <View className="w-full h-[1px] bg-neutral-300 my-3" />
-          <View className="flex-row">
-            <DefaultText title="No Transaksi" titleClassName="flex-1" />
-            <DefaultText title={no_transaksi} titleClassName="text-base font-inter-semibold" />
-          </View>
-          {showPortofolioDetail?.data?.penarikan?.status &&
-            <TouchableOpacity
-              onPress={() => actionProsesPenarikan()}
-              activeOpacity={0.7}
-              className="self-center flex px-3 py-2 bg-blue-600 text-white rounded-full py-1 px-4 text-xs">
-              <DefaultText title={isShowImageProsesPenarikan ? "Hide Proses Penarikan" : "Proses Penarikan"} titleClassName="text-white" />
-            </TouchableOpacity>}
-          <View className="w-full h-[1px] bg-neutral-300 my-3" />
-          <View className="flex-row">
+          size={'large'} /> :
+          <View className="px-8">
+            <Gap height={15} />
             <DefaultText
-              title={`Pilihan Tenor\n${showPortofolioDetail?.data?.tenor} Bulan`}
-              titleClassName="flex-1"
+              title="Detail Portofolio"
+              titleClassName="font-inter-semibold"
             />
-            <DefaultText title={`Bagi Hasil\n${showPortofolioDetail?.data?.bagi_hasil_setara}%`} />
-          </View>
-          <View className="w-full h-[1px] bg-neutral-300 my-3" />
-          <View className="flex-row">
-            <DefaultText title="Pengajuan Deposito" titleClassName="flex-1" />
-            <DefaultText title={`${formatRupiah(String(showPortofolioDetail?.data?.amount), 'Rp')}`} />
-          </View>
-          <Gap height={10} />
-          <View className="flex-row">
-            <DefaultText title="Estimasi Bagi Hasil" titleClassName="flex-1" />
-            <DefaultText title={`${formatRupiah(String(showPortofolioDetail?.data?.bagi_hasil), 'Rp')}`} />
-          </View>
-          <Gap height={10} />
-          <View className="flex-row">
-            <DefaultText
-              title="Estimasi Total Pengembalian"
-              titleClassName="flex-1"
-            />
-            <DefaultText title={`${formatRupiah(String(totalPengem), 'Rp')}`} />
-          </View>
-          <Gap height={10} />
-          <View className="w-full h-[1px] bg-neutral-300 my-3" />
-          <View className="flex-row">
-            <DefaultText title="Nama Pemilik Rekening" titleClassName="flex-1" />
-            <DefaultText title={showPortofolioDetail?.data?.norek?.atas_nama} />
-          </View>
-          <Gap height={10} />
-          <View className="flex-row">
-            <DefaultText title="No Rekening" titleClassName="flex-1" />
-            <DefaultText title={showPortofolioDetail?.data?.norek?.norek} />
-          </View>
-          <Gap height={10} />
-          <View className="flex-row">
-            <DefaultText title="Nama Bank" titleClassName="flex-1" />
-            <DefaultText title={showPortofolioDetail?.data?.norek?.nama} />
-          </View>
-          <Gap height={10} />
-          <View className="w-full h-[1px] bg-neutral-300 my-3" />
-          <View className="flex-row">
-            <DefaultText
-              title="Perpanjang Otomatis Deposito"
-              titleClassName="flex-1"
-            />
-            <DefaultText
-              title={showPortofolioDetail?.data?.periode && showPortofolioDetail?.data?.periode[0]?.aro == 1 ? "Ya" : "Tidak"}
-            />
-          </View>
-          <View className="w-full h-[1px] bg-neutral-300 my-3" />
-          {isShowImageProsesPenarikan ? null : showPortofolioDetail?.data?.norekMitra?.map((list: any) => {
-            return <View>
-              <Gap height={20} />
-              <DefaultText title='Rekening Pembayaran Deposito' titleClassName='font-inter-bold' />
-              <Gap height={10} />
-              <View className="flex-row">
-                <DefaultText title="Nama Bank" titleClassName="flex-1" />
-                <DefaultText title={list?.nama} />
-              </View>
-              <Gap height={5} />
-              <View className="flex-row">
-                <DefaultText title="Nama Pemilik" titleClassName="flex-1" />
-                <DefaultText title={list.atas_nama} />
-              </View>
-              <Gap height={5} />
-              <View className="flex-row">
-                <DefaultText title="Nomor Rekening" titleClassName="flex-1" />
-                <DefaultText title={list.norek} />
+            <View className="w-full h-[1px] bg-neutral-300 my-3" />
+            <View className="flex-row">
+              <DefaultText
+                title={showPortofolioDetail?.data?.namaMitra}
+                titleClassName="text-base flex-1 font-inter-semibold"
+              />
+              <View style={{ backgroundColor: bgVal() }} className={`px-3 py-2 rounded-md self-center`}>
+                <DefaultText
+                  title={capitalizeFirstLetter(statusVal())}
+                  titleClassName="text-xs text-white"
+                />
               </View>
             </View>
-          })}
-          {showPortofolioDetail?.data?.statuses && showPortofolioDetail?.data?.statuses[3]?.status && <View className="flex-row items-center">
-            <DefaultText title="Bukti Transfer" titleClassName="flex-1" />
-            {upload_bukti_tf ?
-              <Image source={{ uri: upload_bukti_tf }} style={{ height: 100, width: 130 }} /> :
+            <View className="w-full h-[1px] bg-neutral-300 my-3" />
+            <View className="flex-row">
+              <DefaultText title="No Transaksi" titleClassName="flex-1" />
+              <DefaultText title={no_transaksi} titleClassName="text-base font-inter-semibold" />
+            </View>
+            {showPortofolioDetail?.data?.penarikan?.status &&
               <TouchableOpacity
-                className='border-[1px] border-primary rounded-full w-[200] px-2 py-2 flex-row items-center'
-                onPress={() => onOpeGallery(0)}>
-                <DefaultText
-                  title={'Upload Image'}
-                  titleClassName="m-0 p-0 font-inter-regular "
-                  titleProps={{ numberOfLines: 1 }}
-                />
-                <Icon name="upload" style={{ marginLeft: 50 }} size={20} />
+                onPress={() => actionProsesPenarikan()}
+                activeOpacity={0.7}
+                className="self-center flex px-3 py-2 bg-blue-600 text-white rounded-full py-1 px-4 text-xs">
+                <DefaultText title={isShowImageProsesPenarikan ? "Hide Proses Penarikan" : "Proses Penarikan"} titleClassName="text-white" />
               </TouchableOpacity>}
-            <Gap width={20} />
-            {upload_bukti_tf &&
-              <Icon name="eye" onPress={() => setShowImageUpload(true)} size={22} />
-            }
-            <Gap width={20} />
-            {!showPortofolioDetail?.data?.penarikan?.status && upload_bukti_tf &&
-              <Icon name="trash-can"
-                size={22}
-                onPress={() => {
-                  setUpload_Bukti_Tf(undefined);
-                  setBuktiTF(undefined);
-                }} />
-            }
 
-          </View>}
-          <Gap height={10} />
-          {!showPortofolioDetail?.data?.penarikan?.status && showPortofolioDetail?.data?.statuses && showPortofolioDetail?.data?.statuses[3]?.status && buktiTF?.uri &&
-            <TouchableOpacity
-              onPress={() => onSave()}
-              activeOpacity={0.7}
-              className="self-center flex bg-primary px-3 py-2 rounded-full">
-              <DefaultText title="Submit Bukti Transfer" titleClassName="text-white" />
-            </TouchableOpacity>}
-          <Gap height={10} />
-          {isShowImageProsesPenarikan ?
-            <View>
-              <DefaultText title="Detail Transaksi Pengembalian" titleClassName="font-inter-bold" />
-              <Gap height={20} />
-              <View className="flex-row">
-                <DefaultText title={`Periode ${showPortofolioDetail?.data?.periode[0]?.start_date} - ${showPortofolioDetail?.data?.periode[0]?.end_date}`} titleClassName="flex-1" />
-                <DefaultText title={showPortofolioDetail?.data?.periode[0]?.statusNa} />
-              </View>
-              <Gap height={10} />
-              <View className="flex-row">
-                <DefaultText title="Pengembalian (Berhasil)" titleClassName="flex-1" />
-                <DefaultText title={formatRupiah(String(showPortofolioDetail?.data?.periode[0]?.no_trx[0]?.amount), 'Rp ')} />
-              </View>
-              <Gap height={10} />
-              <View className="flex-row">
-                <DefaultText title="Bagi Hasil (Berhasil)" titleClassName="flex-1" />
-                <DefaultText title={formatRupiah(String(showPortofolioDetail?.data?.periode[0]?.no_trx[1]?.amount), 'Rp ')} />
-              </View>
-              <Gap height={30} />
-              <View className="w-full h-[1px] bg-neutral-300 mb-3 mt-1" />
-              {showButktiHasilPortofolioDetail?.data?.image &&
-                <View className="flex-row items-center">
-                  <DefaultText title="Lihat Bukti Transfer" titleClassName="flex-1" />
-                  <Image source={{ uri: `https://dev.depositosyariah.id/${showButktiHasilPortofolioDetail?.data?.image}` }}
-                    style={{ height: 100, width: 130 }} />
-                  <Gap width={20} />
-                  <Icon name="eye" onPress={() => setShowImageUploadLunas(true)} size={22} />
-                </View>}
-            </View> : <View>
-              <View className="w-full h-[1px] bg-neutral-300 mb-3 mt-1" />
-              <View className="flex-row">
-                <DefaultText title="Proses" titleClassName="font-inter-bold" />
-              </View>
-              <Gap height={10} />
-              {messageText && <View
-                className="bg-primary-light rounded-2xl px-5 py-3 flex-row items-center">
-                <View className="flex-1">
-                  <DefaultText title={messageText} />
+            <View className="w-full h-[1px] bg-neutral-300 my-3" />
+            <View className="flex-row">
+              <DefaultText
+                title={`Pilihan Tenor\n${showPortofolioDetail?.data?.tenor} Bulan`}
+                titleClassName="flex-1"
+              />
+              <DefaultText title={`Bagi Hasil\n${showPortofolioDetail?.data?.bagi_hasil_setara}%`} />
+            </View>
+            <View className="w-full h-[1px] bg-neutral-300 my-3" />
+            <View className="flex-row">
+              <DefaultText title="Pengajuan Deposito" titleClassName="flex-1" />
+              <DefaultText title={`${formatRupiah(String(showPortofolioDetail?.data?.amount), 'Rp')}`} />
+            </View>
+            <Gap height={10} />
+            <View className="flex-row">
+              <DefaultText title="Estimasi Bagi Hasil" titleClassName="flex-1" />
+              <DefaultText title={`${formatRupiah(String(showPortofolioDetail?.data?.bagi_hasil), 'Rp')}`} />
+            </View>
+            <Gap height={10} />
+            <View className="flex-row">
+              <DefaultText
+                title="Estimasi Total Pengembalian"
+                titleClassName="flex-1"
+              />
+              <DefaultText title={`${formatRupiah(String(totalPengem), 'Rp')}`} />
+            </View>
+            <Gap height={10} />
+            <View className="w-full h-[1px] bg-neutral-300 my-3" />
+            <View className="flex-row">
+              <DefaultText title="Nama Pemilik Rekening" titleClassName="flex-1" />
+              <DefaultText title={showPortofolioDetail?.data?.norek?.atas_nama} />
+            </View>
+            <Gap height={10} />
+            <View className="flex-row">
+              <DefaultText title="No Rekening" titleClassName="flex-1" />
+              <DefaultText title={showPortofolioDetail?.data?.norek?.norek} />
+            </View>
+            <Gap height={10} />
+            <View className="flex-row">
+              <DefaultText title="Nama Bank" titleClassName="flex-1" />
+              <DefaultText title={showPortofolioDetail?.data?.norek?.nama} />
+            </View>
+            <Gap height={10} />
+            <View className="w-full h-[1px] bg-neutral-300 my-3" />
+            <View className="flex-row">
+              <DefaultText
+                title="Perpanjang Otomatis Deposito"
+                titleClassName="flex-1"
+              />
+              <DefaultText
+                title={showPortofolioDetail?.data?.periode && showPortofolioDetail?.data?.periode[0]?.aro == 1 ? "Ya" : "Tidak"}
+              />
+            </View>
+            <View className="w-full h-[1px] bg-neutral-300 my-3" />
+            {isShowImageProsesPenarikan ? null : showPortofolioDetail?.data?.norekMitra?.map((list: any) => {
+              return <View>
+                <Gap height={20} />
+                <DefaultText title='Rekening Pembayaran Deposito' titleClassName='font-inter-bold' />
+                <Gap height={10} />
+                <View className="flex-row">
+                  <DefaultText title="Nama Bank" titleClassName="flex-1" />
+                  <DefaultText title={list?.nama} />
                 </View>
-              </View>}
-              <Gap height={10} />
-              {timeShow?.map((list: any) => {
-                return <View className="flex-row items-center">
-                  <Icon name="check-circle" size={26} color={list.status ? colors.primary : '#dbd4c8'} />
-                  <DefaultText
-                    title={list.message}
-                    titleClassName="flex-1 ml-1"
-                  />
+                <Gap height={5} />
+                <View className="flex-row">
+                  <DefaultText title="Nama Pemilik" titleClassName="flex-1" />
+                  <DefaultText title={list.atas_nama} />
                 </View>
-              })}
+                <Gap height={5} />
+                <View className="flex-row">
+                  <DefaultText title="Nomor Rekening" titleClassName="flex-1" />
+                  <DefaultText title={list.norek} />
+                </View>
+              </View>
+            })}
+            {showPortofolioDetail?.data?.statuses && showPortofolioDetail?.data?.statuses[3]?.status && <View className="flex-row items-center">
+              <DefaultText title="Bukti Transfer" titleClassName="flex-1" />
+              {upload_bukti_tf ?
+                <Image source={{ uri: upload_bukti_tf }} style={{ height: 100, width: 130 }}  /> :
+                  <TouchableOpacity
+                    className='border-[1px] border-primary mt-2 rounded-full self-center flex-row px-4 py-2'
+                    onPress={() => onOpeGallery(0)}>
+                    <DefaultText
+                      title={'Upload Image'}
+                      titleClassName="font-inter-regular "
+                    />
+                    <Icon name="upload" size={20} />
+                  </TouchableOpacity>}
+              {upload_bukti_tf && <Gap width={20} />}
+              {upload_bukti_tf &&
+                <Icon name="eye" onPress={() => setShowImageUpload(true)} size={22} />
+              }
+              {!showPortofolioDetail?.data?.penarikan?.status && upload_bukti_tf &&<Gap width={20} />}
+              {!showPortofolioDetail?.data?.penarikan?.status && upload_bukti_tf &&
+                <Icon name="trash-can"
+                  size={22}
+                  onPress={() => {
+                    setUpload_Bukti_Tf(undefined);
+                    setBuktiTF(undefined);
+                  }} />
+              }
             </View>}
-          <Gap height={30} />
-          <View className="flex-row justify-center">
-            <TouchableOpacity
-              onPress={() => { }}
-              activeOpacity={0.7}
-              className="self-center bg-primary px-3 py-2 mr-3 rounded-full">
-              <DefaultText title="Tanya produk" titleClassName="text-white" />
-            </TouchableOpacity>
-
-            {showPortofolioDetail?.data?.status == 5 && !showPortofolioDetail?.data?.penarikan?.status &&
+            <Gap height={10} />
+            {!showPortofolioDetail?.data?.penarikan?.status && showPortofolioDetail?.data?.statuses && showPortofolioDetail?.data?.statuses[3]?.status && buktiTF?.uri &&
               <TouchableOpacity
-                onPress={() => {
-                  setShowModalBatal(true);
-                  setFlagSubmit("penarikan")
-                }}
+                onPress={() => onSave()}
+                activeOpacity={0.7}
+                className="self-center flex bg-primary px-3 py-2 rounded-full">
+                <DefaultText title="Submit Bukti Transfer" titleClassName="text-white" />
+              </TouchableOpacity>}
+            <Gap height={10} />
+            {isShowImageProsesPenarikan ?
+              <View>
+                <DefaultText title="Detail Transaksi Pengembalian" titleClassName="font-inter-bold" />
+                <Gap height={20} />
+                <View className="flex-row">
+                  <DefaultText title={`Periode ${showPortofolioDetail?.data?.periode[0]?.start_date} - ${showPortofolioDetail?.data?.periode[0]?.end_date}`} titleClassName="flex-1" />
+                  <DefaultText title={showPortofolioDetail?.data?.periode[0]?.statusNa} />
+                </View>
+                <Gap height={10} />
+                <View className="flex-row">
+                  <DefaultText title="Pengembalian (Berhasil)" titleClassName="flex-1" />
+                  <DefaultText title={formatRupiah(String(showPortofolioDetail?.data?.periode[0]?.no_trx[0]?.amount), 'Rp ')} />
+                </View>
+                <Gap height={10} />
+                <View className="flex-row">
+                  <DefaultText title="Bagi Hasil (Berhasil)" titleClassName="flex-1" />
+                  <DefaultText title={formatRupiah(String(showPortofolioDetail?.data?.periode[0]?.no_trx[1]?.amount), 'Rp ')} />
+                </View>
+                <Gap height={30} />
+                <View className="w-full h-[1px] bg-neutral-300 mb-3 mt-1" />
+                {showButktiHasilPortofolioDetail?.data?.image &&
+                  <View className="flex-row items-center">
+                    <DefaultText title="Lihat Bukti Transfer" titleClassName="flex-1" />
+                    <Image source={{ uri: `https://dev.depositosyariah.id/${showButktiHasilPortofolioDetail?.data?.image}` }}
+                      style={{ height: 100, width: 130 }} />
+                    <Gap width={20} />
+                    <Icon name="eye" onPress={() => setShowImageUploadLunas(true)} size={22} />
+                  </View>}
+              </View> : <View>
+                <View className="w-full h-[1px] bg-neutral-300 mb-3 mt-1" />
+                <View className="flex-row">
+                  <DefaultText title="Proses" titleClassName="font-inter-bold" />
+                </View>
+                <Gap height={10} />
+                {messageText && <View
+                  className="bg-primary-light rounded-2xl px-5 py-3 flex-row items-center">
+                  <View className="flex-1">
+                    <DefaultText title={messageText} />
+                  </View>
+                </View>}
+                <Gap height={10} />
+                {timeShow?.map((list: any) => {
+                  return <View className="flex-row items-center">
+                    <Icon name="check-circle" size={26} color={list.status ? colors.primary : '#dbd4c8'} />
+                    <DefaultText
+                      title={list.message}
+                      titleClassName="flex-1 ml-1"
+                    />
+                  </View>
+                })}
+              </View>}
+            <Gap height={30} />
+            <View className="flex-row justify-center">
+              <TouchableOpacity
+                onPress={() => { }}
+                activeOpacity={0.7}
+                className="self-center bg-primary px-3 py-2 mr-3 rounded-full">
+                <DefaultText title="Tanya produk" titleClassName="text-white" />
+              </TouchableOpacity>
+
+              {showPortofolioDetail?.data?.status == 5 && !showPortofolioDetail?.data?.penarikan?.status &&
+                <TouchableOpacity
+                  onPress={() => {
+                    setShowModalBatal(true);
+                    setFlagSubmit("penarikan")
+                  }}
+                  activeOpacity={0.7}
+                  className="self-center bg-primary px-3 py-2 mr-3  rounded-full">
+                  <DefaultText title="Penarikan" titleClassName="text-white" />
+                </TouchableOpacity>}
+
+              {(showPortofolioDetail?.data?.status == 1 || showPortofolioDetail?.data?.status == 2 || showPortofolioDetail?.data?.status == 3) && <TouchableOpacity
+                onPress={() => { setShowModalBatal(true); setFlagSubmit("pembatalan") }}
                 activeOpacity={0.7}
                 className="self-center bg-primary px-3 py-2 mr-3  rounded-full">
-                <DefaultText title="Penarikan" titleClassName="text-white" />
+                <DefaultText title="Pembatalan" titleClassName="text-white" />
               </TouchableOpacity>}
 
-            {(showPortofolioDetail?.data?.status == 1 || showPortofolioDetail?.data?.status == 0) && <TouchableOpacity
-              onPress={() => { setShowModalBatal(true); setFlagSubmit("pembatalan") }}
-              activeOpacity={0.7}
-              className="self-center bg-primary px-3 py-2 mr-3  rounded-full">
-              <DefaultText title="Pembatalan" titleClassName="text-white" />
-            </TouchableOpacity>}
-
-            <TouchableOpacity
-              onPress={() => { navigationRef.navigate('Portofolio') }}
-              activeOpacity={0.7}
-              className="self-center bg-primary px-3 py-2 mr-3  rounded-full">
-              <DefaultText title="Tutup" titleClassName="text-white" />
-            </TouchableOpacity>
-          </View>
-          <Gap height={20} />
-        </View>}
+              <TouchableOpacity
+                onPress={() => { navigationRef.navigate('Portofolio') }}
+                activeOpacity={0.7}
+                className="self-center bg-primary px-3 py-2 mr-3  rounded-full">
+                <DefaultText title="Tutup" titleClassName="text-white" />
+              </TouchableOpacity>
+            </View>
+            <Gap height={20} />
+          </View>}
       </ScrollView>
       <ModalImagelunas
         title={'Preview Image Bukti Transfer '}

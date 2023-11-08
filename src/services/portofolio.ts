@@ -8,11 +8,11 @@ import { setToken } from '../store/user';
 import { navigationRef } from '../navigation/RootNavigation';
 import { logout } from './user';
 
-export const getShowPortofolio = (params?: string) => async (dispatch: RootDispatch) => {
+export const getShowPortofolio = (params = `${API}/pengajuan`) => async (dispatch: RootDispatch) => {
   dispatch(setshowPortofolioLoading(true));
   let data;
   await axios
-    .get(params ? `${API}/pengajuan${params}` : `${API}/pengajuan`, {
+    .get(params, {
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${await getStorage('token')}`,
@@ -51,7 +51,7 @@ export const getPembatalanPortofolioDetail = (params: any, setShowModalBatal: an
     .then(res => {
       dispatch(getShowPortofolio());
       setShowModalBatal(false)
-      setTimeout(() => navigationRef.goBack(), 1000);
+      setTimeout(() => navigationRef.navigate("Portofolio"), 1000);
     })
     .catch(err => {
       if (err?.response?.status === 401) {
@@ -77,7 +77,7 @@ export const getPenarikanPortofolioDetail = (params: any, setShowModalBatal: any
     .then(res => {
       dispatch(getShowPortofolio());
       setShowModalBatal(false)
-      setTimeout(() => navigationRef.goBack(), 1000);
+      setTimeout(() => navigationRef.navigate("Portofolio"), 1000)
     })
     .catch(err => {
       if (err?.response?.status === 401) {

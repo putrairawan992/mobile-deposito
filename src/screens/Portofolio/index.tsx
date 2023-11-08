@@ -18,7 +18,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { RootDispatch, RootState } from '../../store';
 import { getShowPortofolio } from '../../services/portofolio';
 import { formatRupiah } from '../../utils/currency';
-import { capitalizeFirstLetter } from '../../utils/constant';
+import { API, capitalizeFirstLetter } from '../../utils/constant';
 
 const Item = ({ item }: any) => {
   const bgVal = () => {
@@ -137,25 +137,23 @@ export default function Portofolio() {
   const dispatch = useDispatch<RootDispatch>();
 
   useEffect(() => {
+    let params = `${API}/pengajuan`;
     switch (activeTab) {
-      case 'Semua':
-        setParams(undefined);
-        break;
       case 'Proses':
-        setParams('/status/1');
+        params = `${API}/pengajuan/status/1`;
         break;
       case 'Aktif':
-        setParams('/status/5');
+        params = `${API}/pengajuan/status/5`;
         break;
       case 'Lunas':
-        setParams('/status/9');
+        params = `${API}/pengajuan/status/9`;
         break;
       case 'Batal':
-        setParams('/status/0');
+        params = `${API}/pengajuan/status/0`;
         break;
     }
     dispatch(getShowPortofolio(params));
-  }, [activeTab, params]);
+  }, [activeTab]);
 
   return (
     <DefaultView>

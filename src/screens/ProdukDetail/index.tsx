@@ -1,4 +1,4 @@
-import { ScrollView, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, ScrollView, TouchableOpacity, View } from 'react-native';
 import React, { useState, useEffect } from 'react';
 import DefaultView from '../../components/DefaultView';
 import DefaultText from '../../components/DefaultText';
@@ -20,7 +20,7 @@ export default function ProdukDetail({
 }: RootStackScreenProps<'ProdukDetail'>) {
   const [activeNumber, setActiveNumber] = useState<number>(0);
   const id = route?.params?.noProduct;
-  const { showProductDetail } = useSelector(
+  const { showProductDetail, showProductDetailLoading } = useSelector(
     (state: RootState) => state.productReducer,
   );
   const dispatch = useDispatch<RootDispatch>();
@@ -33,7 +33,7 @@ export default function ProdukDetail({
     <DefaultView>
       <DefaultHeader title="Detail Deposito" />
       <ScrollView showsVerticalScrollIndicator={false}>
-        <View className="px-10">
+      {showProductDetailLoading ? <ActivityIndicator size={"large"} /> :  <View className="px-10">
           <Gap height={15} />
           <DefaultText
             title={showProductDetail?.nama}
@@ -148,7 +148,7 @@ export default function ProdukDetail({
                   title="No. Surat keputusan"
                   titleClassName="flex-1"
                 />
-                <DefaultText title={`${showProductDetail?.no_sk  || '-'}`} />
+                <DefaultText title={`${showProductDetail?.no_sk || '-'}`} />
               </View>
               <Gap height={10} />
               <View className="flex-row">
@@ -199,7 +199,7 @@ export default function ProdukDetail({
               </View>
             </View>
           )}
-        </View>
+        </View>}
       </ScrollView>
 
       <View className="pb-8 px-10 pt-2">
