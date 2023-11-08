@@ -51,7 +51,7 @@ export const getPembatalanPortofolioDetail = (params: any, setShowModalBatal: an
     .then(res => {
       dispatch(getShowPortofolio());
       setShowModalBatal(false)
-      setTimeout(() => navigationRef.goBack(), 1000);
+      setTimeout(() => navigationRef.navigate("Portofolio"), 1000);
     })
     .catch(err => {
       if (err?.response?.status === 401) {
@@ -77,7 +77,7 @@ export const getPenarikanPortofolioDetail = (params: any, setShowModalBatal: any
     .then(res => {
       dispatch(getShowPortofolio());
       setShowModalBatal(false)
-      setTimeout(() => navigationRef.goBack(), 1000);
+      setTimeout(() => navigationRef.navigate("Portofolio"), 1000)
     })
     .catch(err => {
       if (err?.response?.status === 401) {

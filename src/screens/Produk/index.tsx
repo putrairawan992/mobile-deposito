@@ -165,7 +165,7 @@ export default function Produk() {
             <Icon name="chevron-right" color={colors.white} size={20} />
           </TouchableOpacity>
           {showHasilSetara && (
-            <View className="bg-white border-[1px] border-primary p-1 rounded-full absolute top-[54] right-0 left-0 z-10">
+            <View className="bg-white border-[1px] border-primary p-1 rounded-md absolute top-[54] right-0 left-0 z-10">
               <TouchableOpacity
                 activeOpacity={0.7}
                 onPress={() => {
@@ -260,7 +260,7 @@ export default function Produk() {
             <Icon name="chevron-right" color={colors.white} size={20} />
           </TouchableOpacity>
           {showToner && (
-            <View className="bg-white border-[1px] border-primary p-1 rounded-full absolute top-[54] right-0 left-0 z-10">
+            <View className="bg-white border-[1px] border-primary p-1 rounded-md absolute top-[54] right-0 left-0 z-10">
               <TouchableOpacity
                 activeOpacity={0.7}
                 onPress={() => {
@@ -337,7 +337,7 @@ export default function Produk() {
       </View>
       <View className="p-5">
         <TextInput onChangeText={(e) => setSearchName(e)
-        } className="bg-gray-300 py-1 px-1 rounded-full items-center" placeholder='Search name' />
+        } className="bg-gray-300 py-1 px-1 rounded-full items-center" placeholder='Cari Produk' />
       </View>
       {showProcutLoading ?
         <ActivityIndicator

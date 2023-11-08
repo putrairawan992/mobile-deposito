@@ -51,7 +51,7 @@ export default function ModalBank({ show, hide, onConfirm }: ModalBankProps) {
         <Gap height={15} />
         <View className="p-5">
           <TextInput onChangeText={(e) => setBankSearchName(e)
-          } className="bg-gray-300 py-1 px-1 rounded-md items-center" placeholder='Search name' />
+          } className="bg-gray-300 py-1 px-1 rounded-md items-center" placeholder='Cari Nama Bank' />
         </View>
         <Gap height={30} />
         <ScrollView>
