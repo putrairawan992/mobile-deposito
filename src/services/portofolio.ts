@@ -8,11 +8,11 @@ import { setToken } from '../store/user';
 import { navigationRef } from '../navigation/RootNavigation';
 import { logout } from './user';
 
-export const getShowPortofolio = (params?: string) => async (dispatch: RootDispatch) => {
+export const getShowPortofolio = (params = `${API}/pengajuan`) => async (dispatch: RootDispatch) => {
   dispatch(setshowPortofolioLoading(true));
   let data;
   await axios
-    .get(params ? `${API}/pengajuan${params}` : `${API}/pengajuan`, {
+    .get(params, {
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${await getStorage('token')}`,

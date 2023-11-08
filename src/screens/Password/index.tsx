@@ -21,7 +21,7 @@ export default function Password({ route }: RootStackScreenProps<'Password'>) {
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [password, setPassword] = useState<string>('');
   const emailOrPhone = route.params.emailOrPhone;
-  const { forgotLoading } = useSelector((state: RootState) => state.userReducer);
+  const { forgotLoading,loginLoading } = useSelector((state: RootState) => state.userReducer);
   const dispatch = useDispatch<RootDispatch>();
 
 
@@ -75,8 +75,8 @@ export default function Password({ route }: RootStackScreenProps<'Password'>) {
         </View>
       </ScrollView>
 
-      {forgotLoading ? (
-        <ActivityIndicator />
+      {loginLoading || forgotLoading ? (
+        <ActivityIndicator size={"large"} />
       ) : (
         <Button
           title="Lanjut"
