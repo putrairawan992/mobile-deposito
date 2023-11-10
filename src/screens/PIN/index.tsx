@@ -1,11 +1,13 @@
 import {
   ActivityIndicator,
+  BackHandler,
   ScrollView,
+  ToastAndroid,
   TouchableOpacity,
   View,
   useWindowDimensions,
 } from 'react-native';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import DefaultView from '../../components/DefaultView';
 import DefaultText from '../../components/DefaultText';
 import Gap from '../../components/Gap';
@@ -16,6 +18,7 @@ import { showToast } from '../../utils/toast';
 import { registerPasswordPin } from '../../services/user';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootDispatch, RootState } from '../../store';
+import { useFocusEffect } from '@react-navigation/native';
 
 export default function PIN() {
   const [pin, setPin] = useState<string>('');
@@ -38,12 +41,23 @@ export default function PIN() {
     return () => clearInterval(intervalID);
   }, [timer]);
 
+  const handleBackPress = (): boolean => {
+    ToastAndroid.show('Tidak Bisa Kembali Selesaikan Isi PIN', ToastAndroid.SHORT);
+    return true;
+  };
+
+  useFocusEffect(
+    useCallback(() => {
+      BackHandler.addEventListener('hardwareBackPress', handleBackPress);
+      return () => BackHandler.removeEventListener('hardwareBackPress', handleBackPress);
+    }, [handleBackPress])
+  );
+
   const onLanjut = () => {
     if (pin.length < 6) {
       return showToast('Masukkan PIN');
     }
-
-    dispatch(registerPasswordPin({ pin: pin }, 'MyTabs'));
+    dispatch(registerPasswordPin({ pin: pin }, 'MyTabs', false));
   };
 
   return (

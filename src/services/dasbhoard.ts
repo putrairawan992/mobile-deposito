@@ -52,7 +52,8 @@ export const getSplashDashboard = () => async (dispatch: RootDispatch) => {
 
 export const getShowDashboard = () => async (dispatch: RootDispatch) => {
   dispatch(setShowDashboardLoading(true));
-  axios
+  let data;
+  await axios
     .get(`${API}/dashboard`, {
       headers: {
         'Content-Type': 'application/json',
@@ -60,6 +61,7 @@ export const getShowDashboard = () => async (dispatch: RootDispatch) => {
       },
     })
     .then(res => {
+      data = res?.data?.data
       dispatch(setShowDashboard(res?.data?.data));
       dispatch(setShowDashboardLoading(false));
     })
@@ -74,6 +76,7 @@ export const getShowDashboard = () => async (dispatch: RootDispatch) => {
       }
       dispatch(setShowDashboardLoading(false));
     });
+    return data;
 };
 
 export const getSkDashboard = () => async (dispatch: RootDispatch) => {

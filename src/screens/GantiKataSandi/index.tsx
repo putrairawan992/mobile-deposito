@@ -47,7 +47,7 @@ export default function GantiKataSandi() {
 
   const onSave = () => {
     if (
-      passwordSekarang.trim().length === 0 ||
+      // passwordSekarang.trim().length === 0 ||
       passwordBaru.trim().length === 0 ||
       passwordConfirm.trim().length === 0
     ) {
@@ -58,19 +58,19 @@ export default function GantiKataSandi() {
       return showToast('Password tidak cocok');
     }
 
-    if (pin.trim().length < 6) {
-      return showToast('Masukkan PIN anda');
-    }
+    // if (pin.trim().length < 6) {
+    //   return showToast('Masukkan PIN anda');
+    // }
 
-    dispatch(registerPasswordPin({ password: passwordConfirm, otp: otp, pin: pin }, 'Profile'))
+    dispatch(registerPasswordPin({ password: passwordConfirm, otp: otp }, 'Profile', false))
   };
 
   return (
     <DefaultView>
-      <DefaultHeader title="Ganti Kata  Sandi" />
+      <DefaultHeader title="Ganti Kata Sandi" />
       <ScrollView showsVerticalScrollIndicator={false}>
         <View className="px-5 py-3">
-          <View className="bg-primary-light rounded-2xl px-5 py-3 flex-row items-center">
+          {/* <View className="bg-primary-light rounded-2xl px-5 py-3 flex-row items-center">
             <View className="flex-1">
               <DefaultText
                 title="Kata sandi sekarang"
@@ -93,7 +93,7 @@ export default function GantiKataSandi() {
             </TouchableOpacity>
           </View>
 
-          <Gap height={15} />
+          <Gap height={15} /> */}
 
           <View className="bg-primary-light rounded-2xl px-5 py-5 flex-row items-center">
             <View className="flex-1">
@@ -141,6 +141,8 @@ export default function GantiKataSandi() {
               <TextInput
                 className="p-0 m-0 font-inter-bold"
                 placeholder="OTP"
+                maxLength={6}
+                keyboardType='numeric'
                 value={otp}
                 onChangeText={value => setOtp(value)}
               />
@@ -169,7 +171,7 @@ export default function GantiKataSandi() {
 
           <Gap height={15} />
 
-          <View className="bg-primary-light rounded-2xl px-5 py-3 flex-row items-center">
+          {/* <View className="bg-primary-light rounded-2xl px-5 py-3 flex-row items-center">
             <View className="flex-1">
               <DefaultText
                 title="Masukkan PIN kamu"
@@ -180,6 +182,8 @@ export default function GantiKataSandi() {
                 className="p-0 m-0 font-inter-bold"
                 placeholder="Masukkan PIN kamu"
                 value={pin}
+                maxLength={6}
+                keyboardType='numeric'
                 onChangeText={value => setPin(value)}
                 secureTextEntry={!showPin}
               />
@@ -190,7 +194,7 @@ export default function GantiKataSandi() {
               onPress={() => setShowPin(!showPin)}>
               <Icon name={showPin ? 'eye-off' : 'eye'} size={24} />
             </TouchableOpacity>
-          </View>
+          </View> */}
         </View>
       </ScrollView>
 

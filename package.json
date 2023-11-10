@@ -17,6 +17,7 @@
     "@react-navigation/native": "^6.1.7",
     "@react-navigation/native-stack": "^6.9.13",
     "@reduxjs/toolkit": "^1.9.5",
+    "@types/react-native-snap-carousel": "^3.8.8",
     "axios": "^1.4.0",
     "lodash": "^4.17.21",
     "moment": "^2.29.4",

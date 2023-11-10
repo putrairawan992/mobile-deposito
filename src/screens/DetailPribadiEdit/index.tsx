@@ -332,6 +332,8 @@ export default function DetailPribadiEdit({ route }: RootStackScreenProps<'Detai
                 className="p-0 m-0 font-inter-bold"
                 placeholder="Masukkan PIN kamu"
                 value={pin}
+                maxLength={6}
+                keyboardType='numeric'
                 onChangeText={value => setPin(value)}
                 secureTextEntry={!showPin}
               />

@@ -67,7 +67,7 @@ const Item = (data: any) => {
             />
             <Gap height={5} />
             <DefaultText
-              title="Proyeksi Bagi Hasil"
+              title="Bagi Hasil"
               titleClassName="text-xs text-white"
             />
             <DefaultText
@@ -159,7 +159,7 @@ export default function Produk() {
             className="bg-primary py-1 px-1 rounded-full flex-row items-center"
             onPress={() => setShowHasilSetara(!showHasilSetara)}>
             <DefaultText
-              title={`${hasilSetara || 'Pilih Hasil'}%/Tahun`}
+              title={`${hasilSetara || 'Hasil'}%/Tahun`}
               titleClassName="text-white flex-1"
             />
             <Icon name="chevron-right" color={colors.white} size={20} />

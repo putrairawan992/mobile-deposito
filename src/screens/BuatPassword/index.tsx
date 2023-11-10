@@ -1,5 +1,5 @@
-import { ActivityIndicator, ScrollView, TouchableOpacity, View } from 'react-native';
-import React, { useState } from 'react';
+import { ActivityIndicator, BackHandler, ScrollView, ToastAndroid, TouchableOpacity, View } from 'react-native';
+import React, { useCallback, useState } from 'react';
 import DefaultView from '../../components/DefaultView';
 import DefaultText from '../../components/DefaultText';
 import Button from '../../components/Button';
@@ -11,6 +11,7 @@ import { RootDispatch, RootState } from '../../store';
 import { useDispatch, useSelector } from 'react-redux';
 import { registerPasswordPin } from '../../services/user';
 import { RootStackScreenProps } from '../../navigation/interface';
+import { useFocusEffect } from '@react-navigation/native';
 
 export default function BuatPassword({
   route,
@@ -24,7 +25,19 @@ export default function BuatPassword({
   const { registerPasswordPinLoading } = useSelector(
     (state: RootState) => state.userReducer,
   );
-  
+  const isShowDashboard = route.params?.isShowDashboard;
+
+  const handleBackPress = (): boolean => {
+    ToastAndroid.show('Tidak Bisa Kembali Selesaikan Isi Password', ToastAndroid.SHORT);
+    return true;
+  };
+  useFocusEffect(
+    useCallback(() => {
+      BackHandler.addEventListener('hardwareBackPress', handleBackPress);
+      return () => BackHandler.removeEventListener('hardwareBackPress', handleBackPress);
+    }, [handleBackPress])
+  );
+
   const onLanjut = () => {
     if (password.trim().length === 0 || confirmPassword.trim().length === 0) {
       return showToast('Masukkan password');
@@ -34,7 +47,7 @@ export default function BuatPassword({
       return showToast('Password tidak cocok');
     }
 
-    dispatch(registerPasswordPin({ password: confirmPassword }));
+    dispatch(registerPasswordPin({ password: confirmPassword }, 'PIN', isShowDashboard));
   };
 
   return (

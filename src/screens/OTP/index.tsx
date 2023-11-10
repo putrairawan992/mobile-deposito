@@ -23,6 +23,7 @@ import { useFocusEffect } from '@react-navigation/native';
 
 export default function OTP({ route }: RootStackScreenProps<'OTP'>) {
   const emailOrPhone = route?.params?.emailOrPhone;
+  const isResetPassword = route?.params?.isResetPassword;
   const [otp, setOtp] = useState<string>('');
   const { width } = useWindowDimensions();
   const dispatch = useDispatch<RootDispatch>();
@@ -52,7 +53,7 @@ export default function OTP({ route }: RootStackScreenProps<'OTP'>) {
     if (otp.trim().length < 6) {
       return showToast('Masukkan OTP');
     }
-    dispatch(login(emailOrPhone, otp));
+    dispatch(login(emailOrPhone, otp, isResetPassword));
   };
 
   return (

@@ -2056,6 +2056,14 @@
   resolved "https://registry.npmjs.org/@types/react-native-background-timer/-/react-native-background-timer-2.0.1.tgz"
   integrity sha512-cCcvaZRI3dr1lsjqD7ZdL7H1H/CC4zeKQ9QZMbFQwlj8medmJkQUfEQXAbcTpWc7pur09feTpCCFOAEhR0Z4JA==
 
+"@types/react-native-snap-carousel@^3.8.8":
+  version "3.8.8"
+  resolved "https://registry.npmjs.org/@types/react-native-snap-carousel/-/react-native-snap-carousel-3.8.8.tgz"
+  integrity sha512-svKK+YCmVuMMQMBi8VkQt8MdRLASYcXpxDnDCpNoBgXxrdB4HFf++dJ91hlnpWchH+mDjTGzvcY0c366OorNtA==
+  dependencies:
+    "@types/react" "*"
+    "@types/react-native" "*"
+
 "@types/react-native-vector-icons@^6.4.13":
   version "6.4.13"
   resolved "https://registry.npmjs.org/@types/react-native-vector-icons/-/react-native-vector-icons-6.4.13.tgz"

@@ -1,10 +1,10 @@
 import {
   ActivityIndicator,
-  Alert,
+  BackHandler,
   Image,
   Linking,
-  ScrollView,
   StyleSheet,
+  ToastAndroid,
   TouchableOpacity,
   View,
   useWindowDimensions,
@@ -25,10 +25,11 @@ import { getShowPromo } from '../../services/product';
 import { RootDispatch, RootState } from '../../store';
 import { getShowDashboard } from '../../services/dasbhoard';
 import { formatRupiah } from '../../utils/currency';
-import { checkLogin, getDetailNasabah, getUserProfile, logout } from '../../services/user';
+import { checkLogin, getDetailNasabah, getUserProfile } from '../../services/user';
 import { getItem, getStorage } from '../../utils/storage';
 import { useFocusEffect } from '@react-navigation/native';
 import ModalAlert from '../../components/ModalAlert';
+import { ScrollView } from 'react-native-gesture-handler';
 
 export default function Beranda() {
   const { width } = useWindowDimensions();
@@ -40,7 +41,7 @@ export default function Beranda() {
   const { showDashboard } = useSelector(
     (state: RootState) => state.dashboardReducer,
   );
-  const { detailNasabah, detailNasabahDetailLoading, token } = useSelector(
+  const { detailNasabah, detailNasabahDetailLoading } = useSelector(
     (state: RootState) => state.userReducer,
   );
   const [loading, setLoading] = useState<boolean>(true);
@@ -55,15 +56,28 @@ export default function Beranda() {
     dispatch(getDetailNasabah());
   }, [dispatch]);
 
+  const handleBackPress = (): boolean => {
+    return true;
+  };
+  
+  useFocusEffect(
+    useCallback(() => {
+      BackHandler.addEventListener('hardwareBackPress', handleBackPress);
+      return () => BackHandler.removeEventListener('hardwareBackPress', handleBackPress);
+    }, [handleBackPress])
+  );
+
   // useEffect(() => {
   //   if (token && !userProfile?.data?.statuse?.profile && detailNasabah?.idUserNasabah) {
   //     setUpdateProfile(true);
   //   }
   // }, [detailNasabah,userProfile]);
 
-  const redirectUrlChat = async() =>{
-    Linking.openURL(`https://dev.depositosyariah.id/user?token=${await getStorage("token")}`)
+  const redirectUrlChat = async () => {
+    navigationRef.navigate("Chat", { token: await getStorage("token") });
+    //Linking.openURL(`https://dev.depositosyariah.id/user?token=${await getStorage("token")}`)
   }
+
 
   useFocusEffect(useCallback(() => {
     if (!detailNasabahDetailLoading) {
@@ -108,7 +122,7 @@ export default function Beranda() {
           <Gap width={10} />
           <TouchableOpacity
             activeOpacity={0.7}
-            onPress={() => redirectUrlChat() }>
+            onPress={() => redirectUrlChat()}>
             <Icon name="message" size={24} color={colors.black} />
           </TouchableOpacity>
         </View>
@@ -130,9 +144,9 @@ export default function Beranda() {
               height={100}
               // autoPlay={true}
               data={
-                [{ val: showDashboard?.bagiHasil, label: "Proyeksi Bagi Hasil" },
-                { val: showDashboard?.deposito, label: "Proyeksi Deposito" },
-                { val: showDashboard?.portofolio, label: "Proyeksi Portofolio" }]}
+                [{ val: showDashboard?.bagiHasil, label: "Bagi Hasil" },
+                { val: showDashboard?.deposito, label: "Total Deposito" },
+                { val: showDashboard?.portofolio, label: "Total Portofolio" }]}
               // scrollAnimationDuration={1000}
               onSnapToItem={index => setTopActive(index)}
               renderItem={({ item }) => (
@@ -143,7 +157,7 @@ export default function Beranda() {
                   />
                   <DefaultText
                     title={formatRupiah(String(item.val), "Rp")}
-                    titleClassName="font-inter-bold text-3xl"
+                    titleClassName="font-inter-bold text-xl"
                   />
                 </View>
               )}
@@ -169,7 +183,7 @@ export default function Beranda() {
         </LinearGradient>
         <Gap height={20} />
 
-        <ScrollView showsVerticalScrollIndicator={false}>
+        <ScrollView>
           <View className="flex-row items-center px-5">
             <DefaultText
               title="Pilihan Promo"
@@ -190,20 +204,21 @@ export default function Beranda() {
             width={width}
             height={width / 2}
             autoPlay={true}
+            autoPlayInterval={5000}
+            scrollAnimationDuration={100}
             data={(showPromo && showPromo?.length > 0) && showPromo || [1, 2, 3, 4]}
-            scrollAnimationDuration={1000}
             onSnapToItem={index => setPromoActive(index)}
-            renderItem={({ item }: any) => (
+            renderItem={({ item, index }: any) => (
               <TouchableOpacity activeOpacity={0.7} style={{ alignSelf: 'center' }}>
                 <Image
-                  style={{ width: width / 1.2, height: width / 2.2 }}
+                  style={{ width: width, height: width / 2 }}
                   source={{ uri: item.image }}
                   resizeMode="cover"
                 />
               </TouchableOpacity>
             )}
           />
-          <View className="flex-row justify-center">
+          <View className="flex-row mt-2 justify-center">
             {(showPromo && showPromo?.length > 0) && showPromo.map((item: any, key: any) => {
               return (
                 <View
@@ -217,7 +232,7 @@ export default function Beranda() {
           <View className="w-full h-[2] bg-neutral-300 my-3" />
           <View className="flex-row items-center px-5">
             <DefaultText
-              title="Update Deposito Syariah"
+              title="Artikel Terbaru"
               titleClassName="text-base font-inter-medium flex-1"
             />
             <TouchableOpacity

@@ -21,7 +21,7 @@ export default function Password({ route }: RootStackScreenProps<'Password'>) {
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [password, setPassword] = useState<string>('');
   const emailOrPhone = route.params.emailOrPhone;
-  const { forgotLoading,loginLoading } = useSelector((state: RootState) => state.userReducer);
+  const { forgotLoading, loginLoading } = useSelector((state: RootState) => state.userReducer);
   const dispatch = useDispatch<RootDispatch>();
 
 
@@ -29,7 +29,7 @@ export default function Password({ route }: RootStackScreenProps<'Password'>) {
     if (password.trim().length === 0) {
       return showToast('Masukkan password');
     }
-    dispatch(login(emailOrPhone, password));
+    dispatch(login(emailOrPhone, password, false));
   };
 
   return (

@@ -51,7 +51,7 @@ export default function AjukanDeposito({ route }: RootStackScreenProps<"AjukanDe
     }
     const payload = {
       id_norek: dataBank?.id,
-      aro: agree ? 1 : 0,
+      aro: perpanjang ? 1 : 0,
       amount: nominal?.replace(/\./g, ""),
       bagi_hasil: data?.estimasi_akhir?.toString(),
       tenor: showProductDetail?.tenor,
@@ -106,7 +106,7 @@ export default function AjukanDeposito({ route }: RootStackScreenProps<"AjukanDe
           </View>
           <Gap height={10} />
           <View className="flex-row">
-            <DefaultText title="Proyeksi Bagi Hasil" titleClassName="flex-1" />
+            <DefaultText title="Bagi Hasil" titleClassName="flex-1" />
             <DefaultText title={`${showProductDetail?.bagi_hasil}% / Tahun`} />
           </View>
         </View>

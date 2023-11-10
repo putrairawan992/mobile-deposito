@@ -1,5 +1,6 @@
 import {
   ActivityIndicator,
+  BackHandler,
   FlatList,
   ScrollView,
   StyleSheet,
@@ -19,6 +20,7 @@ import { RootDispatch, RootState } from '../../store';
 import { getShowPortofolio } from '../../services/portofolio';
 import { formatRupiah } from '../../utils/currency';
 import { API, capitalizeFirstLetter } from '../../utils/constant';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 
 const Item = ({ item }: any) => {
   const bgVal = () => {
@@ -30,13 +32,15 @@ const Item = ({ item }: any) => {
       bgColor = 'bg-yellow-600'
     }
     if (item.status === "5") {
-      bgColor = '#6dd5ed'
+      bgColor = '#2193b0'
     }
     if (item.status === "9") {
-      bgColor = '#2193b0'
+      bgColor = '#0f9b0f'
     }
     return bgColor;
   }
+  console.log("listporto", item.penarikan);
+
   const statusVal = () => {
     let status = 'Process';
     if (item.status === "6" || item.status === "0") {
@@ -45,7 +49,11 @@ const Item = ({ item }: any) => {
     if (item.status === "4") {
       status = 'Pembayaran Berhasil'
     }
-    if (item.status === "5") {
+    if (item?.penarikan?.status) {
+      status = 'Proses Penarikan'
+    } else if (item?.pengembalian?.status) {
+      status = 'Proses Pengembalian'
+    } else if (item?.status === "5") {
       status = 'Aktif'
     }
     if (item.status === "9") {
@@ -88,7 +96,7 @@ const Item = ({ item }: any) => {
         <Gap width={5} />
         <View className="flex-1">
           <DefaultText
-            title="Proyeksi Bagi Hasil"
+            title="Bagi Hasil"
             titleClassName="text-xs text-white"
           />
           <DefaultText title={`${item.bagi_hasil_perc}% / Tahun`} titleClassName="text-xs text-white" />
@@ -132,7 +140,6 @@ export default function Portofolio() {
     'Batal',
   ]);
   const [activeTab, setActiveTab] = useState<string>('Semua');
-  const [params, setParams] = useState<any>(undefined);
   const { showPortofolio, showPortofolioLoading } = useSelector((state: RootState) => state.portofolioReducer);
   const dispatch = useDispatch<RootDispatch>();
 
@@ -150,6 +157,9 @@ export default function Portofolio() {
         break;
       case 'Batal':
         params = `${API}/pengajuan/status/0`;
+        break;
+      default:
+        params = `${API}/pengajuan`;
         break;
     }
     dispatch(getShowPortofolio(params));
@@ -169,7 +179,7 @@ export default function Portofolio() {
                 onPress={() => setActiveTab(item)}
                 activeOpacity={0.7}
                 key={key}
-                className={`border-[1px] border-primary mx-[5px] px-2 py-1 rounded-full ${item === activeTab ? 'bg-primary' : 'bg-white'
+                className={`border-2 border border-primary mx-[5px] px-2 py-1 rounded-full ${item === activeTab ? 'bg-primary' : 'bg-white'
                   }`}>
                 <DefaultText
                   title={item}
@@ -182,14 +192,15 @@ export default function Portofolio() {
           })}
         </ScrollView>
       </View>
-      {showPortofolioLoading ? <ActivityIndicator style={{ position: 'absolute', top: 150, left: 0, right: 0 }}
+      {showPortofolioLoading ? 
+      <ActivityIndicator style={{ position: 'absolute', top: 150, left: 0, right: 0 }}
         size={'large'} /> : showPortofolio?.data?.length > 0 ? <FlatList
-        data={showPortofolio?.data}
-        keyExtractor={(_, key) => key.toString()}
-        showsVerticalScrollIndicator={false}
-        renderItem={({ item }) => <Item item={item} />}
-        contentContainerStyle={styles.container}
-      />: <DefaultText titleClassName='text-black mt-20 font-inter-semibold self-center' title={"Belum Memiliki Portofolio"}/>}
+          data={showPortofolio?.data}
+          keyExtractor={(_, key) => key.toString()}
+          showsVerticalScrollIndicator={false}
+          renderItem={({ item }) => <Item item={item} />}
+          contentContainerStyle={styles.container}
+        /> : <DefaultText titleClassName='text-black mt-20 font-inter-semibold self-center' title={"Belum Memiliki Portofolio"} />}
     </DefaultView>
   );
 }

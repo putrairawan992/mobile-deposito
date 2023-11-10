@@ -50,6 +50,11 @@ export default function Login() {
             }}
           />
         </View>
+        <View className="flex justify-center items-center">
+          <View className="mt-2 w-3/5 flex items-center bg-gray-200 rounded-md shadow-sm shadow-gray-600">
+            <DefaultText title="Contoh : 08xxxxxxxx" titleClassName='text-sm p-2' />
+          </View>
+        </View>
       </ScrollView>
       <View className="px-10 py-5">
         {checkLoginLoading ? (
