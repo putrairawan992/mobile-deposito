@@ -39,23 +39,24 @@ export const checkLogin =
           addStorage('typeLogin', res?.data?.data === 'password' ? 'Password' : 'OTP');
           navigationRef.navigate(res?.data?.data === 'password' ? 'Password' : 'OTP', {
             emailOrPhone,
+            isResetPassword: false
           });
         })
         .catch(err => {
           console.log("error", err);
-          
+
           Toast.show({
             type: 'error',
             text1: 'Error',
             text2:
-            err.response?.data ??  err.response?.data?.message ?? 'Terjadi error, coba lagi nanti.',
+              err.response?.data ?? err.response?.data?.message ?? 'Terjadi error, coba lagi nanti.',
           });
         })
         .finally(() => dispatch(setCheckLoginLoading(false)));
     };
 
 export const login =
-  (emailOrPhone: string, password: string) =>
+  (emailOrPhone: string, password: string, isResetPassword: any) =>
     async (dispatch: any) => {
       dispatch(setLoginLoading(true));
       await axios
@@ -72,14 +73,18 @@ export const login =
           addStorage('phone-email', emailOrPhone);
           dispatch(setToken(res?.data?.token));
           dispatch(getUserProfile())
-          dispatch(getDetailNasabah()).then((res: any) => {
-            if (res?.idUserNasabah) {
-              navigationRef.navigate("MyTabs");
-              removeStorage("register-completed");
-            } else {
-              navigationRef.navigate("SplashLogin")
-            }
-          });
+          if (isResetPassword) {
+            navigationRef.navigate("BuatPassword", { isShowDashboard: true });
+          } else {
+            dispatch(getDetailNasabah()).then((res: any) => {
+              if (res?.idUserNasabah) {
+                navigationRef.navigate("MyTabs");
+                removeStorage("register-completed");
+              } else {
+                navigationRef.navigate("SplashLogin")
+              }
+            });
+          }
         })
         .catch(err => {
           Toast.show({
@@ -218,9 +223,9 @@ export const updateNasabah =
           dispatch(setUpdateRegisterLoading(false));
           Toast.show({
             type: 'error',
-            text1: 'Error' + err?.response?.data?.errors?.pin[0],
+            text1: 'Error' + err?.response?.data?.errors?.pin ?? err?.response?.data?.errors?.pin[0],
             text2:
-              JSON.stringify(err.response?.data) ?? 'Terjadi error, coba lagi nanti.',
+              JSON.stringify(err.response?.data?.message) ?? 'Terjadi error, coba lagi nanti.',
           });
         });
     };
@@ -290,9 +295,12 @@ export const registerNasabah =
             text1: 'Success',
             text2: 'mendaftarkan akun.',
           });
-          navigationRef.navigate(
-            store.getState().userReducer?.checkLogin === 'password' ? 'MyTabs' : 'BuatPassword'
-          );
+          if (store.getState().userReducer?.checkLogin === 'password') {
+            navigationRef.navigate('MyTabs');
+          } else {
+            navigationRef.navigate('BuatPassword', { isShowDashboard: false })
+          }
+
           addStorage('register-completed', 'yes');
         })
         .catch(err => {
@@ -305,7 +313,7 @@ export const registerNasabah =
     };
 
 export const registerPasswordPin =
-  (payload: any, route = 'PIN') =>
+  (payload: any, route = 'PIN', isShowDashboard: any) =>
     async (dispatch: RootDispatch) => {
       dispatch(setRegisterPasswordPinLoading(true));
       axios
@@ -330,7 +338,11 @@ export const registerPasswordPin =
             dispatch(getDetailNasabah());
             dispatch(getUserProfile());
           }
-          navigationRef.navigate(route as any);
+          if (isShowDashboard) {
+            navigationRef.navigate("MyTabs");
+          } else {
+            navigationRef.navigate(route as any);
+          }
         })
         .catch(err => {
           dispatch(setRegisterPasswordPinLoading(false));
@@ -365,7 +377,7 @@ export const forgotPasswordPin =
             text2: 'Reset Password',
           });
           dispatch(setForgotLoading(false));
-          navigationRef.navigate('OTP', { emailOrPhone });
+          navigationRef.navigate('OTP', { emailOrPhone, isResetPassword: true });
         })
         .catch(err => {
           Toast.show({

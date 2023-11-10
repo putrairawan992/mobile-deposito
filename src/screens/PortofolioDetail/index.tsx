@@ -1,4 +1,4 @@
-import { ActivityIndicator, Image, ScrollView, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, BackHandler, Image, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import DefaultView from '../../components/DefaultView';
 import DefaultText from '../../components/DefaultText';
@@ -19,6 +19,7 @@ import Toast from 'react-native-toast-message';
 import ModalImage from '../../components/ModalImage';
 import ModalImagelunas from '../../components/ModalImage';
 import { uploadBuktiPengajuan } from '../../services/user';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 
 export default function PortofolioDetail({ route }: RootStackScreenProps<'PortofolioDetail'>) {
   const no_transaksi = route.params?.no_transaksi;
@@ -44,10 +45,19 @@ export default function PortofolioDetail({ route }: RootStackScreenProps<'Portof
   const [messageText, setMessageText] = useState<string | undefined>("Tahapan berikutnya adalah Tanda Tangan Dokumen, silahkan cek email Anda untuk tanda tangan dokumen");
   const totalPengem = parseInt(showPortofolioDetail?.data?.amount) + parseInt(showPortofolioDetail?.data?.bagi_hasil);
   const [flagSubmit, setFlagSubmit] = useState<string>('');
+  const navigation = useNavigation()
 
   useEffect(() => {
     dispatch(getShowPortofolioDetail(no_transaksi));
   }, [no_transaksi]);
+
+  useEffect(() =>
+  navigation.addListener('beforeRemove', (e) => {
+      e.preventDefault();
+      return navigation.navigate("Portofolio");
+  }),
+  [navigation]
+);
 
   useEffect(() => {
     dispatch(getShowBuktiBagiHasilPortofolioDetail(showPortofolioDetail?.data?.bagiHasil?.data?.no_transaksi));
@@ -179,7 +189,6 @@ export default function PortofolioDetail({ route }: RootStackScreenProps<'Portof
   const actionProsesPenarikan = () => {
     setShowImageProsesPenarikan(!isShowImageProsesPenarikan)
   }
-  console.log(showPortofolioDetail?.data, "showPortofolioDetail?.data?.statuses[3]?.status ");
   const bgVal = () => {
     let bgColor = 'orange'
     if (showPortofolioDetail?.data?.status === "6" || showPortofolioDetail?.data?.status === "0") {
@@ -189,10 +198,10 @@ export default function PortofolioDetail({ route }: RootStackScreenProps<'Portof
       bgColor = 'bg-yellow-600'
     }
     if (showPortofolioDetail?.data?.status === "5") {
-      bgColor = '#6dd5ed'
+      bgColor = '#2193b0'
     }
     if (showPortofolioDetail?.data?.status === "9") {
-      bgColor = '#2193b0'
+      bgColor = '#0f9b0f'
     }
     return bgColor;
   }
@@ -204,14 +213,29 @@ export default function PortofolioDetail({ route }: RootStackScreenProps<'Portof
     if (showPortofolioDetail?.data?.status === "4") {
       status = 'Pembayaran Berhasil'
     }
-    if (showPortofolioDetail?.data?.status === "5") {
+    if (showPortofolioDetail?.data?.penarikan?.status) {
+      status = 'Proses Penarikan'
+    } else if (showPortofolioDetail?.data?.pengembalian?.status) {
+      status = 'Proses Pengembalian'
+    } else if (showPortofolioDetail?.data?.status === "5") {
       status = 'Aktif'
     }
     if (showPortofolioDetail?.data?.status === "9") {
       status = 'Lunas'
     }
+    return { status: status };
+  };
+  
+  const statusTransaksi = () => {
+    let status;
+    showPortofolioDetail?.data?.periode?.forEach((per: any) => {
+      per.no_trx.forEach((trx: any) => {
+        status = parseInt(trx.status) === 5 ? 'Berhasil' : 'Proses'
+      })
+    })
     return status;
   }
+
   return (
     <DefaultView>
       <DefaultHeader backButton={() => navigationRef.navigate('Portofolio')} title="Detail Portofolio" />
@@ -232,7 +256,7 @@ export default function PortofolioDetail({ route }: RootStackScreenProps<'Portof
               />
               <View style={{ backgroundColor: bgVal() }} className={`px-3 py-2 rounded-md self-center`}>
                 <DefaultText
-                  title={capitalizeFirstLetter(statusVal())}
+                  title={capitalizeFirstLetter(statusVal().status)}
                   titleClassName="text-xs text-white"
                 />
               </View>
@@ -328,21 +352,21 @@ export default function PortofolioDetail({ route }: RootStackScreenProps<'Portof
             {showPortofolioDetail?.data?.statuses && showPortofolioDetail?.data?.statuses[3]?.status && <View className="flex-row items-center">
               <DefaultText title="Bukti Transfer" titleClassName="flex-1" />
               {upload_bukti_tf ?
-                <Image source={{ uri: upload_bukti_tf }} style={{ height: 100, width: 130 }}  /> :
-                  <TouchableOpacity
-                    className='border-[1px] border-primary mt-2 rounded-full self-center flex-row px-4 py-2'
-                    onPress={() => onOpeGallery(0)}>
-                    <DefaultText
-                      title={'Upload Image'}
-                      titleClassName="font-inter-regular "
-                    />
-                    <Icon name="upload" size={20} />
-                  </TouchableOpacity>}
+                <Image source={{ uri: upload_bukti_tf }} style={{ height: 100, width: 130 }} /> :
+                <TouchableOpacity
+                  className='border-[1px] border-primary mt-2 rounded-full self-center flex-row px-4 py-2'
+                  onPress={() => onOpeGallery(0)}>
+                  <DefaultText
+                    title={'Upload Image'}
+                    titleClassName="font-inter-regular "
+                  />
+                  <Icon name="upload" size={20} />
+                </TouchableOpacity>}
               {upload_bukti_tf && <Gap width={20} />}
               {upload_bukti_tf &&
                 <Icon name="eye" onPress={() => setShowImageUpload(true)} size={22} />
               }
-              {!showPortofolioDetail?.data?.penarikan?.status && upload_bukti_tf &&<Gap width={20} />}
+              {!showPortofolioDetail?.data?.penarikan?.status && upload_bukti_tf && <Gap width={20} />}
               {!showPortofolioDetail?.data?.penarikan?.status && upload_bukti_tf &&
                 <Icon name="trash-can"
                   size={22}
@@ -371,12 +395,28 @@ export default function PortofolioDetail({ route }: RootStackScreenProps<'Portof
                 </View>
                 <Gap height={10} />
                 <View className="flex-row">
-                  <DefaultText title="Pengembalian (Berhasil)" titleClassName="flex-1" />
+                  <DefaultText title="Penarikan" />
+                  <Gap width={5} />
+                  <View style={{ backgroundColor: statusTransaksi() === 'Berhasil' ? "#0f9b0f" : bgVal(), width: 70 }} className={`px-3 py-2 self-center rounded-md`}>
+                    <DefaultText
+                      title={capitalizeFirstLetter(statusTransaksi() as any)}
+                      titleClassName="text-xs text-white"
+                    />
+                  </View>
+                  <Text className='flex-1' />
                   <DefaultText title={formatRupiah(String(showPortofolioDetail?.data?.periode[0]?.no_trx[0]?.amount), 'Rp ')} />
                 </View>
                 <Gap height={10} />
                 <View className="flex-row">
-                  <DefaultText title="Bagi Hasil (Berhasil)" titleClassName="flex-1" />
+                  <DefaultText title="Bagi Hasil" />
+                  <Gap width={5} />
+                  <View style={{ backgroundColor: statusTransaksi() === 'Berhasil' ? "#0f9b0f" : bgVal(), width: 70 }} className={`px-3 py-2 self-center rounded-md`}>
+                    <DefaultText
+                      title={capitalizeFirstLetter(statusTransaksi() as any)}
+                      titleClassName="text-xs text-white"
+                    />
+                  </View>
+                  <Text className='flex-1' />
                   <DefaultText title={formatRupiah(String(showPortofolioDetail?.data?.periode[0]?.no_trx[1]?.amount), 'Rp ')} />
                 </View>
                 <Gap height={30} />
@@ -414,12 +454,12 @@ export default function PortofolioDetail({ route }: RootStackScreenProps<'Portof
               </View>}
             <Gap height={30} />
             <View className="flex-row justify-center">
-              <TouchableOpacity
+              {/* <TouchableOpacity
                 onPress={() => { }}
                 activeOpacity={0.7}
                 className="self-center bg-primary px-3 py-2 mr-3 rounded-full">
                 <DefaultText title="Tanya produk" titleClassName="text-white" />
-              </TouchableOpacity>
+              </TouchableOpacity> */}
 
               {showPortofolioDetail?.data?.status == 5 && !showPortofolioDetail?.data?.penarikan?.status &&
                 <TouchableOpacity

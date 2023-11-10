@@ -5,9 +5,11 @@ export type RootStackParamList = {
   Login: undefined;
   OTP: {
     emailOrPhone: string;
+    isResetPassword?: boolean;
   };
   Password: {
     emailOrPhone: string;
+    isResetPassword?: boolean;
   };
   AhliWaris: undefined;
   AhliWarisEdit?: {
@@ -17,7 +19,7 @@ export type RootStackParamList = {
     showProductDetail?: undefined;
   };
   Beranda?: { fromUrl?: undefined };
-  Chat: undefined;
+  Chat?: {token?: undefined};
   ChatRegistrasi: { id?: undefined };
   ChatTransaksi: undefined;
   DetailPribadi: undefined;
@@ -49,7 +51,7 @@ export type RootStackParamList = {
   SyaratKetentuan: undefined;
   FAQ: undefined;
   MyTabs: undefined;
-  BuatPassword?: undefined;
+  BuatPassword?: {isShowDashboard?: boolean};
 };
 
 export type RootStackScreenProps<T extends keyof RootStackParamList> =

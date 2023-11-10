@@ -1,4 +1,4 @@
-import { ActivityIndicator, Image, View } from 'react-native';
+import { ActivityIndicator, Image, View, useWindowDimensions } from 'react-native';
 import React, { createRef, useCallback, useEffect, useLayoutEffect, useState } from 'react';
 import DefaultView from '../../components/DefaultView';
 import { colors } from '../../utils/colors';
@@ -15,16 +15,20 @@ import { getSplashDashboard } from '../../services/dasbhoard';
 import { getItem } from '../../utils/storage';
 import { checkLogin } from '../../services/user';
 import { useFocusEffect } from '@react-navigation/native';
+import Carousel from 'react-native-reanimated-carousel';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 
 
 
 export default function Splash() {
+  const { width } = useWindowDimensions();
   const [initialPage, setInitialPage] = useState<number>(0);
   const ref = createRef<PagerView>();
   const dispatch = useDispatch<RootDispatch>();
   const { showSplashDashboard, showSplashListLoading } = useSelector(
     (state: RootState) => state.dashboardReducer,
   );
+  const [loading,setLoading] = useState(true);
   const { detailNasabah, detailNasabahDetailLoading, checkLoginLoading } = useSelector(
     (state: RootState) => state.userReducer,
   );
@@ -51,25 +55,17 @@ export default function Splash() {
 
   useEffect(() => {
     redirectFunction()
-    dispatch(getSplashDashboard())
+    dispatch(getSplashDashboard());
+    setTimeout(()=>{
+      setLoading(false)
+    },3000)
   }, [dispatch])
-
-  useEffect(() => {
-    const intervalID = setInterval(() => {
-      if (initialPage === 2) {
-        ref.current?.setPage(0);
-      } else {
-        ref.current?.setPage(initialPage + 1);
-      }
-    }, 5000);
-
-    return () => clearInterval(intervalID);
-  }, [initialPage, ref]);
 
 
   return (
     <DefaultView statusBarColor={colors.primaryLight}>
-      <LinearGradient
+      {loading ? <ActivityIndicator  style={{ position: 'absolute', top: 150, left: 0, right: 0 }}
+      size={'large'}/>:<LinearGradient
         className="flex-1"
         colors={[colors.primaryLight, colors.primary]}>
         <Gap height={15} />
@@ -78,56 +74,46 @@ export default function Splash() {
           source={images.splashLogo}
           resizeMode="contain"
         />
-        {showSplashListLoading ? <ActivityIndicator /> :
-          <PagerView
-            className="h-[200]"
-            ref={ref}
-            initialPage={initialPage}
-            onPageSelected={e => setInitialPage(e.nativeEvent.position)}>
-            {showSplashDashboard?.map((list: any, index: any) => {
-              return <View key={index + 1 || 1}>
-                <Image
-                  className="w-[200] h-[200] self-center"
-                  source={{ uri: list.image }}
-                  resizeMode="contain"
-                />
-              </View>
-            })}
-          </PagerView>
-        }
-        <DefaultText
-          title="Selamat datang di Deposito Syariah"
-          titleClassName="text-center font-inter-semibold text-lg"
+        <Carousel
+          loop
+          width={width}
+          height={300}
+          autoPlay={true}
+          autoPlayInterval={5000}
+          scrollAnimationDuration={100}
+          data={(showSplashDashboard && showSplashDashboard?.length > 0) && showSplashDashboard || [1, 2, 3, 4]}
+          onSnapToItem={index => setInitialPage(index)}
+          renderItem={({ item }: any) => (
+            <TouchableOpacity activeOpacity={0.7} style={{ alignSelf: 'center' }}>
+              <Image
+                style={{ width: width, height: 200 }}
+                source={{ uri: item.image }}
+                resizeMode="cover"
+              />
+              <Gap height={20} />
+              <DefaultText
+                title={item?.deskripsi?.length > 100 ? item?.deskripsi?.slice(0, 100) + '...' : item?.deskripsi}
+                titleClassName="text-center flex flex-wrap font-inter-semibold text-lg"
+              />
+            </TouchableOpacity>
+          )}
         />
-        <Gap height={15} />
-        <DefaultText
-          title={
-            'Aplikasi Marketplace Pertama Khusus Produk\nDeposito Syariah di Indonesia'
-          }
-          titleClassName="text-center"
-        />
-        <Gap height={20} />
-        <View className="flex-row justify-center">
-          <View
-            className={`w-[20] h-[4] rounded-full ${initialPage === 0 ? 'bg-white' : 'bg-neutral-500'
-              }`}
-          />
-          <Gap width={5} />
-          <View
-            className={`w-[20] h-[4] rounded-full ${initialPage === 1 ? 'bg-white' : 'bg-neutral-500'
-              }`}
-          />
-          <Gap width={5} />
-          <View
-            className={`w-[20] h-[4] rounded-full ${initialPage === 2 ? 'bg-white' : 'bg-neutral-500'
-              }`}
-          />
+        <View className="flex-row mt-1 justify-center">
+          {(showSplashDashboard && showSplashDashboard?.length > 0) && showSplashDashboard.map((item: any, key: any) => {
+            return (
+              <View
+                key={key}
+                className={`w-[15] h-[3] rounded-full mx-1 ${key === initialPage ? 'bg-white' : 'bg-neutral-500'
+                  }`}
+              />
+            );
+          })}
         </View>
-
+        <Gap height={20} />
         <View className="items-center absolute bottom-7 self-center">
           {checkLoginLoading ? <ActivityIndicator /> :
             <Button
-              title="MASUK"
+              title="Masuk"
               onPress={() => navigationRef.navigate('Login')}
             />
           }
@@ -143,7 +129,7 @@ export default function Splash() {
             resizeMode="contain"
           />
         </View>
-      </LinearGradient>
+      </LinearGradient>}
     </DefaultView>
   );
 }

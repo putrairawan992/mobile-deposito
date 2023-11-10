@@ -86,7 +86,9 @@ function StackNavigator() {
         }
       }
         if (!detailNasabahDetailLoading) {
-          useToken();
+          setTimeout(()=>{
+            useToken();
+          },2000)
         }
     }, [detailNasabah, detailNasabahDetailLoading, isShowContent]),
   );

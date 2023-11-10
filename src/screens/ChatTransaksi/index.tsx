@@ -55,7 +55,7 @@ const Item = ({
           <Gap width={10} />
           <View>
             <DefaultText
-              title="Proyeksi Bagi Hasil"
+              title="Bagi Hasil"
               titleClassName="text-[10px] text-white mb-[2px]"
             />
             <DefaultText

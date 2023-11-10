@@ -24,7 +24,7 @@ const Item = (item: any) => {
     <TouchableOpacity
       onPress={() => setShowMore(!showMore)}
       activeOpacity={0.7}
-      className="bg-green-200 border-[1px] border-green-600 p-2 rounded-full mb-3">
+      className="bg-green-200 border-[1px] border-green-600 p-2 rounded-md mb-3">
       <View className="flex-row">
         <DefaultText
           title={item?.item?.question}

@@ -45,7 +45,7 @@ export default function GantiPIN() {
 
   const onSave = () => {
     if (
-      PINSekarang.trim().length === 0 ||
+      // PINSekarang.trim().length === 0 ||
       PINBaru.trim().length === 0 ||
       PINConfirm.trim().length === 0
     ) {
@@ -60,7 +60,7 @@ export default function GantiPIN() {
     if (otp.length < 6) {
       return showToast('Masukkan OTP');
     }
-    dispatch(registerPasswordPin({ otp: otp, pin: PINConfirm }, 'Profile'))
+    dispatch(registerPasswordPin({ otp: otp, pin: PINConfirm }, 'Profile',false))
   };
 
   const resendOtp = () => {
@@ -75,7 +75,7 @@ export default function GantiPIN() {
       <DefaultHeader title="Ganti PIN" />
       <ScrollView showsVerticalScrollIndicator={false}>
         <View className="px-5 py-3">
-          <View className="bg-primary-light rounded-2xl px-5 py-3 flex-row items-center">
+          {/* <View className="bg-primary-light rounded-2xl px-5 py-3 flex-row items-center">
             <View className="flex-1">
               <DefaultText
                 title="PIN sekarang"
@@ -85,6 +85,8 @@ export default function GantiPIN() {
               <TextInput
                 className="p-0 m-0 font-inter-bold"
                 placeholder="PIN sekarang"
+                maxLength={6}
+                keyboardType='name-phone-pad'
                 value={PINSekarang}
                 onChangeText={value => setPINSekarang(value)}
                 secureTextEntry={!showPINSekarang}
@@ -98,13 +100,15 @@ export default function GantiPIN() {
             </TouchableOpacity>
           </View>
 
-          <Gap height={15} />
+          <Gap height={15} /> */}
 
           <View className="bg-primary-light rounded-2xl px-5 py-5 flex-row items-center">
             <View className="flex-1">
               <TextInput
                 className="p-0 m-0 font-inter-bold"
                 placeholder="Masukkan PIN baru"
+                maxLength={6}
+                keyboardType='numeric'
                 value={PINBaru}
                 onChangeText={value => setPINBaru(value)}
                 secureTextEntry={!showPINBaru}
@@ -125,6 +129,8 @@ export default function GantiPIN() {
               <TextInput
                 className="p-0 m-0 font-inter-bold"
                 placeholder="Konfirmasi PIN baru"
+                maxLength={6}
+                keyboardType='numeric'
                 value={PINConfirm}
                 onChangeText={value => setPINConfirm(value)}
                 secureTextEntry={!showPINConfirm}
@@ -143,6 +149,8 @@ export default function GantiPIN() {
               <TextInput
                 className="p-0 m-0 font-inter-bold"
                 placeholder="OTP"
+                maxLength={6}
+                keyboardType='numeric'
                 value={otp}
                 onChangeText={value => setOtp(value)}
               />

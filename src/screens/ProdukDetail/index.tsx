@@ -103,7 +103,7 @@ export default function ProdukDetail({
               <Gap height={10} />
               <View className="flex-row">
                 <DefaultText
-                  title="Proyeksi Bagi Hasil"
+                  title="Bagi Hasil"
                   titleClassName="flex-1"
                 />
                 <DefaultText title={`${showProductDetail?.bagi_hasil}% / Tahun`} />

@@ -13,19 +13,20 @@ import { getChatListKeluhan } from '../../services/chat';
 import { getUserProfile } from '../../services/user';
 import socket from '../../utils/socket';
 import WebView from 'react-native-webview';
+import { RootStackScreenProps } from '../../navigation/interface';
 
-export default function Chat() {
+export default function Chat({ route }: RootStackScreenProps<"Chat">) {
   const dispatch = useDispatch<RootDispatch>();
   const [paramsUserChat, setParamsUserChat] = useState<string | undefined>(undefined);
   const { showKeluhanList, showKeluhanListLoading } = useSelector(
     (state: RootState) => state.chatReducer
   );
-  const { userProfile, token } = useSelector(
+  const token = route.params?.token;
+  const { userProfile } = useSelector(
     (state: RootState) => state.userReducer
   );
 
   useEffect(() => {
-    Linking.openURL(`https://dev.depositosyariah.id/user?token=${token}`)
     dispatch(getUserProfile());
     dispatch(getChatListKeluhan());
   }, [dispatch]);
@@ -37,7 +38,6 @@ export default function Chat() {
     }
   }, [userProfile])
 
-  
 
   return (
     <DefaultView
@@ -50,15 +50,17 @@ export default function Chat() {
           titleClassName="text-base font-inter-semibold mx-5 my-3"
         /> */}
         <WebView
+          // allowsLinkPreview
+          // allowsCrossDomainNavigation
+          javaScriptEnabled
           // keyboardDisplayRequiresUserAction={true}
           // startInLoadingState 
-          javaScriptEnabled 
-          // originWhitelist={['*']}
           // domStorageEnabled 
           // sharedCookiesEnabled
           // cacheEnabled
           style={{ width: Dimensions.get('window').width }}
           source={{ uri: `https://dev.depositosyariah.id/user?token=${token}` }}
+        //url={`https://dev.depositosyariah.id/user?token=${token}`}
         />
         {/* <ScrollView>
           {showKeluhanListLoading ? <ActivityIndicator size={"large"} /> : showKeluhanList?.data?.length > 0 ?
