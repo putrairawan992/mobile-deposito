@@ -37,7 +37,6 @@ export default function Password({ route }: RootStackScreenProps<'Password'>) {
 
   return (
     <DefaultView>
-      <ScrollView showsVerticalScrollIndicator={false}>
         <View className="px-5 py-3">
           <Image
             className="w-[200] h-[100] self-center"
@@ -46,7 +45,7 @@ export default function Password({ route }: RootStackScreenProps<'Password'>) {
           />
           <Gap height={15} />
           <View style={{
-            marginTop: WIDTH / 3
+            marginTop: WIDTH / 5
           }}>
             <DefaultText
               title="Masukkan Password"
@@ -86,7 +85,6 @@ export default function Password({ route }: RootStackScreenProps<'Password'>) {
             </TouchableOpacity>
           </View>
         </View>
-      </ScrollView>
 
       {loginLoading || forgotLoading ? (
         <ActivityIndicator size={"large"} />

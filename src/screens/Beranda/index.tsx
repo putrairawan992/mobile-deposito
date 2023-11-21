@@ -5,6 +5,7 @@ import {
   Dimensions,
   Image,
   StyleSheet,
+  Text,
   TouchableOpacity,
   View,
   useWindowDimensions,
@@ -35,6 +36,7 @@ import SwiperFlatList, { Pagination, PaginationProps } from 'react-native-swiper
 import { HEIGHT, WIDTH } from '../../utils/constant';
 import { getShowArtikelList } from '../../services/artikel';
 import moment from 'moment';
+import { getShowNotificationList } from '../../services/notification';
 
 
 export default function Beranda() {
@@ -52,12 +54,17 @@ export default function Beranda() {
   const { showArtikelListData } = useSelector(
     (state: RootState) => state.artikelReducer,
   );
+  const { showNotificationList } = useSelector(
+    (state: RootState) => state.notificationReducer,
+  );
   const [index, setIndex] = React.useState<number>(0);
   const [updateProfile, setUpdateProfile] = useState<boolean>(false);
   const [dtNasabah, setDtNasabah] = useState<any>();
+  const [notifCount, setNotifCount] = useState<number>(0);
   const dispatch = useDispatch<RootDispatch>();
 
   useEffect(() => {
+    dispatch(getShowNotificationList());
     dispatch(getShowPromo());
     dispatch(getUserProfile());
     dispatch(getShowArtikelList())
@@ -72,7 +79,7 @@ export default function Beranda() {
     return true;
   };
 
-  console.log("showArtikelListData", showArtikelListData);
+  console.log("showNotificationList", showNotificationList?.data);
 
 
   useFocusEffect(
@@ -92,6 +99,12 @@ export default function Beranda() {
     navigationRef.navigate("Chat", { token: await getStorage("token") });
   }
 
+  const sumNotifications = (notifications: any[]): number => {
+    return notifications.reduce((total, notification) => {
+      return total + (notification?.notifikasi === '1' ? 1 : 0);
+    }, 0);
+  };
+
   useFocusEffect(useCallback(() => {
     dispatch(getShowDashboard());
     dispatch(getDetailNasabah());
@@ -99,8 +112,10 @@ export default function Beranda() {
 
   useFocusEffect(
     useCallback(() => {
+      const totalNotifications: number = sumNotifications(showNotificationList.data);
       setDtNasabah(detailNasabah);
-    }, [detailNasabah]));
+      setNotifCount(totalNotifications);
+    }, [detailNasabah, showNotificationList]));
 
   const CustomPagination = (props: JSX.IntrinsicAttributes & PaginationProps) => {
     return (
@@ -126,9 +141,13 @@ export default function Beranda() {
             resizeMode="contain"
           />
           <Gap classname="flex-1" />
+
           <TouchableOpacity
             activeOpacity={0.7}
             onPress={() => navigationRef.navigate('Notifikasi')}>
+            {notifCount > 0 && <View className='bg-red-500 absolute right-4 bottom-3 px-1 py-0.3 rounded-full'>
+              <Text className='text-white'>{notifCount}</Text>
+            </View>}
             <Icon name="bell" size={24} color={'#2A8E54'} />
           </TouchableOpacity>
           <Gap width={10} />
@@ -222,14 +241,14 @@ export default function Beranda() {
                 data={showPromo}
                 // scrollAnimationDuration={5000}
                 onSnapToItem={index => setIndex(index)}
-                renderItem={({ item}) => (
+                renderItem={({ item }) => (
                   <View style={styles.child}>
-                  <Image
-                    style={{ width: WIDTH / 1.1, height: "100%" }}
-                    source={{ uri: item?.image }}
-                    resizeMode="contain"
-                  />
-                </View>
+                    <Image
+                      style={{ width: WIDTH / 1.1, height: "100%" }}
+                      source={{ uri: item?.image }}
+                      resizeMode="contain"
+                    />
+                  </View>
                 )}
               />
               {/* <CarouselSnap
@@ -406,6 +425,6 @@ const styles = StyleSheet.create({
   containerBlog: {
     paddingHorizontal: 5,
   },
-  child: { width},
+  child: { width },
 });
 

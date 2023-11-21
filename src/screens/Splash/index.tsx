@@ -17,6 +17,7 @@ import { useFocusEffect } from '@react-navigation/native';
 import { addStorage, getExitTime, getStorage } from '../../utils/storage';
 import { checkLogin, getDetailNasabah } from '../../services/user';
 import { WIDTH } from '../../utils/constant';
+import Carousel from 'react-native-reanimated-carousel';
 
 export default function Splash() {
   const { width } = useWindowDimensions();
@@ -27,6 +28,7 @@ export default function Splash() {
   const { checkLoginLoading } = useSelector(
     (state: RootState) => state.userReducer,
   );
+  const [index, setIndex] = React.useState<number>(0);
   const [loadingShow, setLoadingShow] = useState<boolean>(true);
   const { detailNasabah, detailNasabahDetailLoading } = useSelector(
     (state: RootState) => state.userReducer,
@@ -122,31 +124,60 @@ export default function Splash() {
         resizeMode="contain"
       />
       {showSplashDashboard && showSplashDashboard?.length > 0 &&
-        <SwiperFlatList
-          autoplay
-          autoplayDelay={5}
-          autoplayLoop
-          showPagination
-          PaginationComponent={CustomPagination}
+        <Carousel
+          loop
+          width={width}
+          height={width / 1.3}
+          autoPlay={true}
+          autoPlayInterval={5000}
           data={showSplashDashboard}
+          onSnapToItem={index => setIndex(index)}
           renderItem={({ item }) => (
-            <View className='items-center' style={{ height: WIDTH / 1.4, width: WIDTH, padding: 15 }}>
-              <Image
-                style={{ width: width, height: WIDTH / 1.3 }}
-                source={{ uri: item.image }}
-                resizeMode="contain"
-              />
-              {/* <Gap height={20} />
-              <DefaultText
-                title={item?.deskripsi?.length > 100 ? item?.deskripsi?.slice(0, 100) + '...' : item?.deskripsi}
-                titleClassName="text-center flex flex-wrap font-inter-semibold text-md"
-              /> */}
+            <Image
+              style={{ width: width, height: "100%" }}
+              source={{ uri: item.image }}
+              resizeMode="contain"
+            />
 
-            </View>
           )}
-        />}
+        />
+        // <SwiperFlatList
+        //   autoplay
+        //   autoplayDelay={5}
+        //   autoplayLoop
+        //   showPagination
+        //   PaginationComponent={CustomPagination}
+        //   data={showSplashDashboard}
+        //   renderItem={({ item }) => (
+        //     <View className='items-center' style={{ height: WIDTH / 1.4, width: WIDTH, padding: 15 }}>
+        //       <Image
+        //         style={{ width: width, height: WIDTH / 1.3 }}
+        //         source={{ uri: item.image }}
+        //         resizeMode="contain"
+        //       />
+        //       {/* <Gap height={20} />
+        //       <DefaultText
+        //         title={item?.deskripsi?.length > 100 ? item?.deskripsi?.slice(0, 100) + '...' : item?.deskripsi}
+        //         titleClassName="text-center flex flex-wrap font-inter-semibold text-md"
+        //       /> */}
+
+        //     </View>
+        //   )}
+        // />
+      }
+        <Gap height={10} />
+          <View className="flex-row justify-center">
+            {(showSplashDashboard && showSplashDashboard?.length > 0) && showSplashDashboard.map((item: any, key: any) => {
+              return (
+                <View
+                  key={key}
+                  className={`w-[15] h-[3] rounded-full mx-1 ${key === index ? 'bg-white' : 'bg-neutral-400'}`}
+                />
+              );
+            })}
+          </View>
       <Gap height={20} />
-      <View className="items-center absolute bottom-7 self-center">
+      <View className="items-center absolute bottom-12 self-center">
         {checkLoginLoading || loadingShow ? <ActivityIndicator /> :
           <Button
             title="Masuk"
