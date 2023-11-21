@@ -52,12 +52,12 @@ export default function PortofolioDetail({ route }: RootStackScreenProps<'Portof
   }, [no_transaksi]);
 
   useEffect(() =>
-  navigation.addListener('beforeRemove', (e) => {
+    navigation.addListener('beforeRemove', (e) => {
       e.preventDefault();
       return navigation.navigate("Portofolio");
-  }),
-  [navigation]
-);
+    }),
+    [navigation]
+  );
 
   useEffect(() => {
     dispatch(getShowBuktiBagiHasilPortofolioDetail(showPortofolioDetail?.data?.bagiHasil?.data?.no_transaksi));
@@ -225,7 +225,7 @@ export default function PortofolioDetail({ route }: RootStackScreenProps<'Portof
     }
     return { status: status };
   };
-  
+
   const statusTransaksi = () => {
     let status;
     showPortofolioDetail?.data?.periode?.forEach((per: any) => {
@@ -240,7 +240,9 @@ export default function PortofolioDetail({ route }: RootStackScreenProps<'Portof
     <DefaultView>
       <DefaultHeader backButton={() => navigationRef.navigate('Portofolio')} title="Detail Portofolio" />
       <ScrollView showsVerticalScrollIndicator={false}>
-        {showPortofolioLoadingDetail ? <ActivityIndicator
+        {showPortofolioLoadingDetail ? 
+        <ActivityIndicator 
+        style={{ position: 'absolute', top: 150, left: 0, right: 0 }}
           size={'large'} /> :
           <View className="px-8">
             <Gap height={15} />

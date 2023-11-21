@@ -27,13 +27,13 @@ import { getShowPromo } from '../../services/product';
 import { RootDispatch, RootState } from '../../store';
 import { getShowDashboard } from '../../services/dasbhoard';
 import { formatRupiah } from '../../utils/currency';
-import { checkLogin, getDetailNasabah, getUserProfile } from '../../services/user';
-import { getExitTime, getStorage, removeStorage, saveExitTime } from '../../utils/storage';
-import { useFocusEffect, useIsFocused } from '@react-navigation/native';
+import {  getDetailNasabah, getUserProfile } from '../../services/user';
+import { getStorage, } from '../../utils/storage';
+import { useFocusEffect } from '@react-navigation/native';
 import ModalAlert from '../../components/ModalAlert';
 import { ScrollView } from 'react-native-gesture-handler';
-import SwiperFlatList, { Pagination, PaginationProps } from 'react-native-swiper-flatlist';
-import { HEIGHT, WIDTH } from '../../utils/constant';
+import  { Pagination, PaginationProps } from 'react-native-swiper-flatlist';
+import {  WIDTH } from '../../utils/constant';
 import { getShowArtikelList } from '../../services/artikel';
 import moment from 'moment';
 import { getShowNotificationList } from '../../services/notification';
@@ -64,7 +64,6 @@ export default function Beranda() {
   const dispatch = useDispatch<RootDispatch>();
 
   useEffect(() => {
-    dispatch(getShowNotificationList());
     dispatch(getShowPromo());
     dispatch(getUserProfile());
     dispatch(getShowArtikelList())
@@ -100,36 +99,23 @@ export default function Beranda() {
   }
 
   const sumNotifications = (notifications: any[]): number => {
-    return notifications.reduce((total, notification) => {
+    return notifications?.reduce((total, notification) => {
       return total + (notification?.notifikasi === '1' ? 1 : 0);
     }, 0);
   };
 
   useFocusEffect(useCallback(() => {
     dispatch(getShowDashboard());
+    dispatch(getShowNotificationList());
     dispatch(getDetailNasabah());
   }, [dispatch]))
 
   useFocusEffect(
     useCallback(() => {
-      const totalNotifications: number = sumNotifications(showNotificationList.data);
+      const totalNotifications: number = sumNotifications(showNotificationList?.data);
       setDtNasabah(detailNasabah);
       setNotifCount(totalNotifications);
     }, [detailNasabah, showNotificationList]));
-
-  const CustomPagination = (props: JSX.IntrinsicAttributes & PaginationProps) => {
-    return (
-      <Pagination
-        {...props}
-        paginationActiveColor="#4286f4"
-        paginationStyle={{
-          top: 270,
-          marginBottom: 15
-        }}
-        paginationStyleItem={{ width: 15, height: 3, borderRadius: 8 }}
-      />
-    );
-  };
 
   return (
     showDashboardLoading ? <ActivityIndicator size="large" style={{ position: 'absolute', top: 150, left: 0, right: 0 }} /> :

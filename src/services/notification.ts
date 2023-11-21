@@ -5,6 +5,7 @@ import Toast from 'react-native-toast-message';
 import { getStorage } from '../utils/storage';
 import { logout } from './user';
 import { setShowNotificationList, setShowReadNotificationList, setShowReadNotificationListLoading } from '../store/notification';
+import { navigationRef } from '../navigation/RootNavigation';
 
 
 export const getShowNotificationList = () => async (dispatch: RootDispatch) => {
