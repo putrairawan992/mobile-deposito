@@ -3,7 +3,7 @@ import { RootDispatch } from '../store';
 import { API } from '../utils/constant';
 import Toast from 'react-native-toast-message';
 import { setShowBankDetail, setShowBankList, setShowBankListLoading, setShowBankListLoadingProduct, setShowBankListProduct, setShowDashboard, setShowDashboardLoading, setShowDashboardSkLoading, setShowFaqDashboard, setShowFaqDashboardLoading, setShowSkDashboard, setShowSplashListLoading, setSplashDashboard } from '../store/dashboard';
-import { getStorage, removeStorage } from '../utils/storage';
+import { addStorage, getStorage, removeStorage } from '../utils/storage';
 import { setToken } from '../store/user';
 import { navigationRef } from '../navigation/RootNavigation';
 
@@ -61,6 +61,11 @@ export const getShowDashboard = () => async (dispatch: RootDispatch) => {
       },
     })
     .then(res => {
+      if (res?.data?.data?.statuses['5'].status) {
+        addStorage("isPassword", false)
+      } else {
+        addStorage("isPassword", true)
+      }
       data = res?.data?.data
       dispatch(setShowDashboard(res?.data?.data));
       dispatch(setShowDashboardLoading(false));
@@ -76,7 +81,7 @@ export const getShowDashboard = () => async (dispatch: RootDispatch) => {
       }
       dispatch(setShowDashboardLoading(false));
     });
-    return data;
+  return data;
 };
 
 export const getSkDashboard = () => async (dispatch: RootDispatch) => {
@@ -134,8 +139,8 @@ export const getShowBankListProduk = () => async (dispatch: RootDispatch) => {
       },
     })
     .then(res => {
-      console.log("ress==>",res?.data);
-      
+      console.log("ress==>", res?.data);
+
       dispatch(setShowBankListProduct(res?.data));
       dispatch(setShowBankListLoadingProduct(false));
     }).catch(err => {

@@ -68,3 +68,22 @@ export const removeStorage = async (key: string) => {
 export const clearStorage = async () => {
   await AsyncStorage.clear();
 };
+
+export const saveExitTime = async () => {
+  try {
+    const exitTime = new Date().getTime().toString();
+    await AsyncStorage.setItem('@exitTime', exitTime);
+  } catch (error) {
+    console.error('Error saving exit time:', error);
+  }
+};
+
+export const getExitTime = async () => {
+  try {
+    const exitTime = await AsyncStorage.getItem('@exitTime');
+    return exitTime ? parseInt(exitTime) : null;
+  } catch (error) {
+    console.error('Error getting exit time:', error);
+    return null;
+  }
+};

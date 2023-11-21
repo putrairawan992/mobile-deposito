@@ -103,7 +103,7 @@ export default function DetailPribadi() {
           </View>
           <Gap height={5} />
           <View className="flex-row items-center">
-            <DefaultText title="Foto Ktp" titleClassName="flex-1" />
+            <DefaultText title="Foto KTP" titleClassName="flex-1" />
             <TouchableOpacity onPress={() => setShowImageKtp(true)}   className="border-[1px] border-primary rounded-md w-[160] px-2 py-2">
               {detailNasabah?.image_ktp ? <Image source={{ uri: `https://dev.depositosyariah.id/${detailNasabah?.image_ktp}` }} style={{ width: 150, height: 100 }} /> : <DefaultText title="-" titleClassName="text-black" />}
             </TouchableOpacity>
@@ -117,7 +117,7 @@ export default function DetailPribadi() {
           </View>
           <Gap height={5} />
           <View className="flex-row items-center">
-            <DefaultText title="Foto Ktp Ahli Waris" titleClassName="flex-1" />
+            <DefaultText title="Foto KTP Ahli Waris" titleClassName="flex-1" />
             <TouchableOpacity onPress={() => setShowImageKtpAhliWaris(true)}  className="border-[1px] border-primary rounded-md w-[160] px-2 py-2">
               {detailNasabah?.image_ktp_ahli_waris ? <Image source={{ uri: `https://dev.depositosyariah.id/${detailNasabah?.image_ktp_ahli_waris}` }} style={{ width: 150, height: 100 }} /> : <DefaultText title="-" titleClassName="text-black" />}
             </TouchableOpacity>
@@ -147,7 +147,7 @@ export default function DetailPribadi() {
         show={showImageSelfieKtp}
         onConfirm={() => setShowImageSelfieKtp(false)} />
       <ModalImageAhliWaris
-        title='Preview Ktp Ahli Waris'
+        title='Preview KTP Ahli Waris'
         hide={() => setShowImageKtpAhliWaris(false)}
         data={detailNasabah?.image_ktp_ahli_waris ? `https://dev.depositosyariah.id/${detailNasabah?.image_ktp_ahli_waris}` : null as any}
         show={showImageKtpAhliWaris}

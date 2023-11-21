@@ -20,6 +20,7 @@ import Toast from 'react-native-toast-message';
 import { addStorage, getStorage, removeStorage, setItem } from '../utils/storage';
 import { navigationRef } from '../navigation/RootNavigation';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { getShowDashboard } from './dasbhoard';
 
 export const checkLogin =
   (emailOrPhone: string) =>
@@ -69,24 +70,30 @@ export const login =
         .then(res => {
           dispatch(setUser(res?.data));
           addStorage('token', res?.data?.token);
-          setItem("token-expired", res?.data?.token, 666);
+          setItem("token-expired", res?.data?.token, 2);
           addStorage('phone-email', emailOrPhone);
+          removeStorage('@exitTime');
+          removeStorage('detected-exitTime');
           dispatch(setToken(res?.data?.token));
-          dispatch(getUserProfile())
-          if (isResetPassword) {
-            navigationRef.navigate("BuatPassword", { isShowDashboard: true });
-          } else {
-            dispatch(getDetailNasabah()).then((res: any) => {
-              if (res?.idUserNasabah) {
+          dispatch(getUserProfile());
+          dispatch(getShowDashboard()).then((showDash: any) => {
+            dispatch(getDetailNasabah()).then((detailNash: any) => {
+              if (!showDash?.statuses['5'].status && detailNash?.idUserNasabah) {
+                addStorage("resetPass","passReset")
+                navigationRef.navigate("BuatPassword", { isShowDashboard: true });
+              } else if (showDash?.statuses['5'].status && detailNash?.idUserNasabah) {
                 navigationRef.navigate("MyTabs");
-                removeStorage("register-completed");
+                removeStorage("resetPass");
               } else {
                 navigationRef.navigate("SplashLogin")
               }
+              dispatch(setLoginLoading(false))
             });
-          }
+
+          });
         })
         .catch(err => {
+          dispatch(setLoginLoading(false))
           Toast.show({
             type: 'error',
             text1: 'Error',
@@ -94,7 +101,6 @@ export const login =
               err.response?.data?.message ?? err.response?.data ?? 'Terjadi error, coba lagi nanti.',
           });
         })
-        .finally(() => dispatch(setLoginLoading(false)));
     };
 
 export const getReqOtp = () => async (dispatch: RootDispatch) => {
@@ -136,7 +142,7 @@ export const getDetailNasabah = () => async (dispatch: RootDispatch) => {
     })
     .catch(err => {
       if (err?.response?.status === 401) {
-        dispatch(logout())
+        // dispatch(logout())
       }
       if (err?.response?.status !== 401) {
         Toast.show({
@@ -223,7 +229,7 @@ export const updateNasabah =
           dispatch(setUpdateRegisterLoading(false));
           Toast.show({
             type: 'error',
-            text1: 'Error' + err?.response?.data?.errors?.pin ?? err?.response?.data?.errors?.pin[0],
+            text1: 'Error',
             text2:
               JSON.stringify(err.response?.data?.message) ?? 'Terjadi error, coba lagi nanti.',
           });
@@ -300,8 +306,6 @@ export const registerNasabah =
           } else {
             navigationRef.navigate('BuatPassword', { isShowDashboard: false })
           }
-
-          addStorage('register-completed', 'yes');
         })
         .catch(err => {
           Toast.show({
@@ -371,11 +375,6 @@ export const forgotPasswordPin =
           },
         )
         .then(() => {
-          Toast.show({
-            type: 'success',
-            text1: 'Success',
-            text2: 'Reset Password',
-          });
           dispatch(setForgotLoading(false));
           navigationRef.navigate('OTP', { emailOrPhone, isResetPassword: true });
         })

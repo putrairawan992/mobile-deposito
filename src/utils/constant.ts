@@ -1,8 +1,12 @@
+import { Dimensions } from 'react-native';
 import { getStorage } from './storage';
 
 export const API =
   'https://dev.depositosyariah.id/api';
 
+
+ export const WIDTH = Dimensions.get('window').width;
+ export const HEIGHT = Dimensions.get('window').height;
 
 export const getToken = async ()=>{
   return await getStorage('token');

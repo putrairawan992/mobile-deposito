@@ -1,4 +1,4 @@
-import { ScrollView, TextInput, TouchableOpacity, View } from 'react-native';
+import { ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import DefaultView from '../../components/DefaultView';
 import DefaultText from '../../components/DefaultText';
@@ -11,20 +11,17 @@ import { showToast } from '../../utils/toast';
 import { RootDispatch, RootState } from '../../store';
 import { useDispatch, useSelector } from 'react-redux';
 import { checkLogin, getDetailNasabah, getReqOtp, registerPasswordPin } from '../../services/user';
+import { validatePassword } from '../../utils/function';
 
 export default function GantiKataSandi() {
-  const [showPasswordSekarang, setShowPasswordSekarang] =
-    useState<boolean>(false);
   const [showPasswordBaru, setShowPasswordBaru] = useState<boolean>(false);
   const [showPasswordConfirm, setShowPasswordConfirm] =
     useState<boolean>(false);
-  const [showPin, setShowPin] = useState<boolean>(false);
   const [showModalSuccess, setShowModalSuccess] = useState<boolean>(false);
   const [otp, setOtp] = useState<string>('');
-  const [passwordSekarang, setPasswordSekarang] = useState<string>('');
+  const [isValid, setIsValid] = useState(true);
   const [passwordBaru, setPasswordBaru] = useState<string>('');
   const [passwordConfirm, setPasswordConfirm] = useState<string>('');
-  const [pin, setPin] = useState<string>('');
   const [timer, setTimer] = useState<number>(0);
   const dispatch = useDispatch<RootDispatch>();
 
@@ -47,23 +44,20 @@ export default function GantiKataSandi() {
 
   const onSave = () => {
     if (
-      // passwordSekarang.trim().length === 0 ||
       passwordBaru.trim().length === 0 ||
       passwordConfirm.trim().length === 0
     ) {
       return showToast('Data belum lengkap');
     }
-
+    if (!isValid) {
+      return;
+    }
     if (passwordBaru !== passwordConfirm) {
       return showToast('Password tidak cocok');
     }
-
-    // if (pin.trim().length < 6) {
-    //   return showToast('Masukkan PIN anda');
-    // }
-
     dispatch(registerPasswordPin({ password: passwordConfirm, otp: otp }, 'Profile', false))
   };
+
 
   return (
     <DefaultView>
@@ -101,7 +95,10 @@ export default function GantiKataSandi() {
                 className="p-0 m-0 font-inter-bold"
                 placeholder="Kata sandi baru"
                 value={passwordBaru}
-                onChangeText={value => setPasswordBaru(value)}
+                onChangeText={value => {
+                  setPasswordBaru(value);
+                  setIsValid(validatePassword(value));
+                }}
                 secureTextEntry={!showPasswordBaru}
               />
             </View>
@@ -112,7 +109,14 @@ export default function GantiKataSandi() {
               <Icon name={showPasswordBaru ? 'eye-off' : 'eye'} size={24} />
             </TouchableOpacity>
           </View>
-
+          {!isValid && (
+            <View style={styles.errorContainer}>
+              <Text style={styles.errorText}>
+                Password harus terdiri dari minimal 8 karakter, memiliki minimal 1 huruf kecil,
+                1 huruf besar, 1 angka, dan 1 tanda baca.
+              </Text>
+            </View>
+          )}
           <Gap height={15} />
 
           <View className="bg-primary-light rounded-2xl px-5 py-5 flex-row items-center">
@@ -219,3 +223,18 @@ export default function GantiKataSandi() {
     </DefaultView>
   );
 }
+
+const styles = StyleSheet.create({
+  invalidInput: {
+    borderColor: 'red',
+  },
+  errorContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 5,
+  },
+  errorText: {
+    marginLeft: 5,
+    color: 'red',
+  },
+});

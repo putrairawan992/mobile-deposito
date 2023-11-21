@@ -60,7 +60,7 @@ export default function GantiPIN() {
     if (otp.length < 6) {
       return showToast('Masukkan OTP');
     }
-    dispatch(registerPasswordPin({ otp: otp, pin: PINConfirm }, 'Profile',false))
+    dispatch(registerPasswordPin({ otp: otp, pin: PINConfirm }, 'Profile', false))
   };
 
   const resendOtp = () => {

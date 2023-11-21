@@ -1,5 +1,5 @@
 import { FlatList, Image, TouchableOpacity, View } from 'react-native';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import DefaultView from '../../components/DefaultView';
 import DefaultText from '../../components/DefaultText';
 import DefaultHeader from '../../components/DefaultHeader';
@@ -12,12 +12,14 @@ export default function SemuaPromo() {
   const { showPromo } = useSelector(
     (state: RootState) => state.productReducer,
   );
+  const [showMore, setShowMore] = useState<boolean>(false);
   const dispatch = useDispatch<RootDispatch>();
+  const [indexes, setIndexes] = useState<any>()
 
   useEffect(() => {
     dispatch(getShowPromo());
   }, [dispatch]);
-  
+
   return (
     <DefaultView>
       <DefaultHeader title="Semua Promo" />
@@ -25,19 +27,33 @@ export default function SemuaPromo() {
         data={showPromo}
         keyExtractor={(_, key) => key.toString()}
         showsVerticalScrollIndicator={false}
-        renderItem={({ item }) => {
+        renderItem={({ item, index }) => {
           return (
-            <TouchableOpacity
-              activeOpacity={0.7}
+            <View
               className="mx-3 flex-row border-[1px] border-primary rounded-xl p-2 my-2">
               <Image
-                source={{uri:item?.image}}
+                source={{ uri: item?.image }}
                 resizeMode="cover"
                 className="w-[100] h-[60]"
               />
               <Gap width={10} />
               <View className="flex-1">
-                <DefaultText title={item?.deskripsi} />
+                {item?.deskripsi?.length > 300 ?
+                  (index === indexes && showMore) ?
+                    <>
+                      <DefaultText title={item?.deskripsi} />
+                      <TouchableOpacity onPress={() => { setShowMore(false); setIndexes(index) }}>
+                        <DefaultText title="Tutup Semua" titleClassName="text-xs underline text-blue-600" />
+                      </TouchableOpacity>
+                    </> :
+                    <>
+                      <DefaultText title={item?.deskripsi?.slice(0, 100) + '...'} />
+                      <TouchableOpacity onPress={() => { setShowMore(true); setIndexes(index) }}>
+                        <DefaultText title="Lihat Semua" titleClassName="text-xs underline text-blue-600" />
+                      </TouchableOpacity>
+                    </> :
+                  <DefaultText title={item?.deskripsi} />
+                }
                 <Gap height={5} />
                 <DefaultText
                   title={`deposito by ${item?.namaMitra}`}
@@ -45,7 +61,7 @@ export default function SemuaPromo() {
                 />
                 <DefaultText title={item?.end_date} titleClassName="text-xs" />
               </View>
-            </TouchableOpacity>
+            </View>
           );
         }}
       />

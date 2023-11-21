@@ -10,6 +10,7 @@ import { showToast } from '../../utils/toast';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootDispatch, RootState } from '../../store';
 import { checkLogin } from '../../services/user';
+import { WIDTH } from '../../utils/constant';
 
 export default function Login() {
   const [phone, setPhone] = useState<string>('');
@@ -27,33 +28,36 @@ export default function Login() {
   return (
     <DefaultView>
       <ScrollView>
-        <View className="px-5 py-3">
+        <View className="px-5 py-3 ">
           <Image
             className="w-[200] h-[100] self-center"
             source={images.logo}
             resizeMode="contain"
           />
           <Gap height={15} />
-          <DefaultText title="Masuk" titleClassName="font-inter-bold text-xl" />
-          <Gap height={10} />
-          <DefaultText
-            title="Silahkan Masukan Nomor HP Anda"
-            titleClassName=""
-          />
-          <Gap height={10} />
-          <Input
-            title="Nomor HP"
-            value={phone}
-            onChangeText={value => setPhone(value)}
-            textInputProps={{
-              keyboardType: 'phone-pad',
-            }}
-          />
-        </View>
-        <View className="flex justify-center items-center">
-          <View className="mt-2 w-3/5 flex items-center bg-gray-200 rounded-md shadow-sm shadow-gray-600">
-            <DefaultText title="Contoh : 08xxxxxxxx" titleClassName='text-sm p-2' />
+
+          <View style={{
+            marginTop: WIDTH / 3
+          }}>
+
+            <DefaultText title="Masuk" titleClassName="font-inter-bold text-xl" />
+            <Gap height={10} />
+            <DefaultText
+              title="Silahkan Masukan Nomor HP Anda"
+              titleClassName=""
+            />
+            <Gap height={10} />
+            <Input
+              title="Nomor HP"
+              value={phone}
+              onChangeText={value => setPhone(value)}
+              textInputProps={{
+                keyboardType: 'phone-pad',
+                placeholder: '08xxxxxxxx'
+              }}
+            />
           </View>
+
         </View>
       </ScrollView>
       <View className="px-10 py-5">
@@ -68,6 +72,7 @@ export default function Login() {
           />
         )}
       </View>
+
     </DefaultView>
   );
 }
