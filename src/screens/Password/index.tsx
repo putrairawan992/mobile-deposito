@@ -1,5 +1,6 @@
 import {
   ActivityIndicator,
+  Image,
   ScrollView,
   TouchableOpacity,
   View,
@@ -16,6 +17,8 @@ import { RootDispatch, RootState } from '../../store';
 import { useDispatch, useSelector } from 'react-redux';
 import { forgotPasswordPin, login } from '../../services/user';
 import { RootStackScreenProps } from '../../navigation/interface';
+import { images } from '../../utils/images';
+import { WIDTH } from '../../utils/constant';
 
 export default function Password({ route }: RootStackScreenProps<'Password'>) {
   const [showPassword, setShowPassword] = useState<boolean>(false);
@@ -36,42 +39,52 @@ export default function Password({ route }: RootStackScreenProps<'Password'>) {
     <DefaultView>
       <ScrollView showsVerticalScrollIndicator={false}>
         <View className="px-5 py-3">
-          <DefaultText
-            title="Masukkan Password"
-            titleClassName="font-inter-bold text-lg"
+          <Image
+            className="w-[200] h-[100] self-center"
+            source={images.logo}
+            resizeMode="contain"
           />
-          <Gap height={10} />
-          <Input
-            title="Password kamu"
-            titleClassName="text-center"
-            textInputProps={{
-              secureTextEntry: !showPassword,
-            }}
-            ComponentRight={
-              <TouchableOpacity
-                onPress={() => setShowPassword(!showPassword)}
-                activeOpacity={0.7}
-                className="ml-1">
-                <Icon name={showPassword ? 'eye-off' : 'eye'} size={20} />
-              </TouchableOpacity>
-            }
-            value={password}
-            onChangeText={value => setPassword(value)}
-          />
-          <Gap height={10} />
-          <TouchableOpacity
-            activeOpacity={0.7}
-            onPress={() =>
-              dispatch(
-                forgotPasswordPin({ username: emailOrPhone }, emailOrPhone),
-              )
-            }
-            className="border-b-[1px] border-b-blue-400 self-start">
+          <Gap height={15} />
+          <View style={{
+            marginTop: WIDTH / 3
+          }}>
             <DefaultText
-              title="Lupa Password ?"
-              titleClassName="text-blue-400"
+              title="Masukkan Password"
+              titleClassName="font-inter-bold text-lg"
             />
-          </TouchableOpacity>
+            <Gap height={10} />
+            <Input
+              title="Password kamu"
+              titleClassName="text-left"
+              textInputProps={{
+                secureTextEntry: !showPassword,
+              }}
+              ComponentRight={
+                <TouchableOpacity
+                  onPress={() => setShowPassword(!showPassword)}
+                  activeOpacity={0.7}
+                  className="ml-1">
+                  <Icon name={showPassword ? 'eye-off' : 'eye'} size={20} />
+                </TouchableOpacity>
+              }
+              value={password}
+              onChangeText={value => setPassword(value)}
+            />
+            <Gap height={10} />
+            <TouchableOpacity
+              activeOpacity={0.7}
+              onPress={() =>
+                dispatch(
+                  forgotPasswordPin({ username: emailOrPhone }, emailOrPhone),
+                )
+              }
+              className="border-b-[1px] border-b-blue-400 self-start">
+              <DefaultText
+                title="Lupa Password ?"
+                titleClassName="text-blue-400"
+              />
+            </TouchableOpacity>
+          </View>
         </View>
       </ScrollView>
 

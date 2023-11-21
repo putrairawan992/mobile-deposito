@@ -40,6 +40,9 @@ export type RootStackParamList = {
   ProdukDetail?: {
     noProduct?: undefined
   };
+  BlogDetail:{
+    id?:undefined;
+  }
   Profile: undefined;
   Register: undefined;
   RekeningSaya?: { isUserBank?: boolean };

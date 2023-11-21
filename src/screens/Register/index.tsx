@@ -560,7 +560,7 @@ export default function Register() {
           show={showImageSelfieKtp}
           onConfirm={() => setShowImageSelfieKtp(false)} />
         <ModalImageAhliWaris
-          title='Preview Ktp Ahli Waris'
+          title='Preview KTP Ahli Waris'
           hide={() => setShowImageKtpAhliWaris(false)}
           data={fotoKtpAhliWaris?.uri as string}
           show={showImageKtpAhliWaris}

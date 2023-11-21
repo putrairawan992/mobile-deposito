@@ -1,13 +1,13 @@
 import {
   ActivityIndicator,
-  BackHandler,
+  AppState,
   FlatList,
   ScrollView,
   StyleSheet,
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import DefaultView from '../../components/DefaultView';
 import DefaultText from '../../components/DefaultText';
 import DefaultHeader from '../../components/DefaultHeader';
@@ -20,7 +20,7 @@ import { RootDispatch, RootState } from '../../store';
 import { getShowPortofolio } from '../../services/portofolio';
 import { formatRupiah } from '../../utils/currency';
 import { API, capitalizeFirstLetter } from '../../utils/constant';
-import { useFocusEffect, useNavigation } from '@react-navigation/native';
+import { useFocusEffect } from '@react-navigation/native';
 
 const Item = ({ item }: any) => {
   const bgVal = () => {
@@ -39,7 +39,6 @@ const Item = ({ item }: any) => {
     }
     return bgColor;
   }
-  console.log("listporto", item.penarikan);
 
   const statusVal = () => {
     let status = 'Process';
@@ -143,6 +142,10 @@ export default function Portofolio() {
   const { showPortofolio, showPortofolioLoading } = useSelector((state: RootState) => state.portofolioReducer);
   const dispatch = useDispatch<RootDispatch>();
 
+  useFocusEffect(useCallback(() => {
+    dispatch(getShowPortofolio(`${API}/pengajuan`));
+  }, [dispatch]));
+
   useEffect(() => {
     let params = `${API}/pengajuan`;
     switch (activeTab) {
@@ -163,7 +166,7 @@ export default function Portofolio() {
         break;
     }
     dispatch(getShowPortofolio(params));
-  }, [activeTab]);
+  }, [dispatch, activeTab]);
 
   return (
     <DefaultView>
@@ -178,8 +181,9 @@ export default function Portofolio() {
               <TouchableOpacity
                 onPress={() => setActiveTab(item)}
                 activeOpacity={0.7}
+                style={{ borderRadius: 8, borderColor: '#2A8E54', borderWidth: 1 }}
                 key={key}
-                className={`border-2 border border-primary mx-[5px] px-2 py-1 rounded-full ${item === activeTab ? 'bg-primary' : 'bg-white'
+                className={`mx-[5px] px-2 py-1 ${item === activeTab ? 'bg-primary' : 'bg-white'
                   }`}>
                 <DefaultText
                   title={item}
@@ -192,15 +196,15 @@ export default function Portofolio() {
           })}
         </ScrollView>
       </View>
-      {showPortofolioLoading ? 
-      <ActivityIndicator style={{ position: 'absolute', top: 150, left: 0, right: 0 }}
-        size={'large'} /> : showPortofolio?.data?.length > 0 ? <FlatList
-          data={showPortofolio?.data}
-          keyExtractor={(_, key) => key.toString()}
-          showsVerticalScrollIndicator={false}
-          renderItem={({ item }) => <Item item={item} />}
-          contentContainerStyle={styles.container}
-        /> : <DefaultText titleClassName='text-black mt-20 font-inter-semibold self-center' title={"Belum Memiliki Portofolio"} />}
+      {showPortofolioLoading ?
+        <ActivityIndicator style={{ position: 'absolute', top: 150, left: 0, right: 0 }}
+          size={'large'} /> : showPortofolio?.data?.length > 0 ? <FlatList
+            data={showPortofolio?.data}
+            keyExtractor={(_, key) => key.toString()}
+            showsVerticalScrollIndicator={false}
+            renderItem={({ item }) => <Item item={item} />}
+            contentContainerStyle={styles.container}
+          /> : <DefaultText titleClassName='text-black mt-20 font-inter-semibold self-center' title={"Belum Memiliki Portofolio"} />}
     </DefaultView>
   );
 }

@@ -22,25 +22,25 @@ const TabItem = ({title, active, onPress, onLongPress}: TabItemInterface) => {
       {title === 'Beranda' ? (
         <MaterialCommunityIcons
           name={active ? 'home' : 'home-outline'}
-          size={30}
+          size={22}
           color={active ? colors.primary : colors.black}
         />
       ) : title === 'Produk' ? (
         <MaterialCommunityIcons
           name={active ? 'wallet' : 'wallet-outline'}
-          size={30}
+          size={22}
           color={active ? colors.primary : colors.black}
         />
       ) : title === 'Portofolio' ? (
         <MaterialCommunityIcons
           name={active ? 'file-account' : 'file-account-outline'}
-          size={30}
+          size={22}
           color={active ? colors.primary : colors.black}
         />
       ) : title === 'Profile' ? (
         <MaterialCommunityIcons
           name={active ? 'account' : 'account-outline'}
-          size={30}
+          size={22}
           color={active ? colors.primary : colors.black}
         />
       ) : null}

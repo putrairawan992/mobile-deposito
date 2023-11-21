@@ -49,9 +49,9 @@ export const getPembatalanPortofolioDetail = (params: any, setShowModalBatal: an
       },
     })
     .then(res => {
-      dispatch(getShowPortofolio());
+      dispatch(getShowPortofolio(`${API}/pengajuan`))
       setShowModalBatal(false)
-      setTimeout(() => navigationRef.navigate("Portofolio"), 1000);
+      setTimeout(() => navigationRef.navigate("Portofolio"), 1500);
     })
     .catch(err => {
       if (err?.response?.status === 401) {
@@ -74,10 +74,10 @@ export const getPenarikanPortofolioDetail = (params: any, setShowModalBatal: any
         Authorization: `Bearer ${await getStorage('token')}`,
       },
     })
-    .then(res => {
-      dispatch(getShowPortofolio());
+    .then(() => {
+      dispatch(getShowPortofolio(`${API}/pengajuan`))
       setShowModalBatal(false)
-      setTimeout(() => navigationRef.navigate("Portofolio"), 1000)
+      setTimeout(() => navigationRef.navigate("Portofolio"), 1500)
     })
     .catch(err => {
       if (err?.response?.status === 401) {

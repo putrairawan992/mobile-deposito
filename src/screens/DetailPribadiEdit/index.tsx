@@ -295,7 +295,7 @@ export default function DetailPribadiEdit({ route }: RootStackScreenProps<'Detai
           </View>
           <Gap height={5} />
           <View className="flex-row items-center">
-            <DefaultText title="Foto KTP " titleClassName="flex-1" />
+            <DefaultText title="Foto KTP Ahli Waris" titleClassName="flex-1" />
             {image_ktp_ahli_waris ?
               <TouchableOpacity onPress={() => setShowImageKtpAhliWaris(true)}>
                 <View>
@@ -378,7 +378,7 @@ export default function DetailPribadiEdit({ route }: RootStackScreenProps<'Detai
         show={showImageSelfieKtp}
         onConfirm={() => setShowImageSelfieKtp(false)} />
       <ModalImageAhliWaris
-        title='Preview Ktp Ahli Waris'
+        title='Preview KTP Ahli Waris'
         hide={() => setShowImageKtpAhliWaris(false)}
         data={image_ktp_ahli_waris as any}
         show={showImageKtpAhliWaris}

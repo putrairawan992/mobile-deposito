@@ -1,4 +1,4 @@
-import { ActivityIndicator, FlatList, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, AppState, FlatList, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
 import React, { useCallback, useEffect, useState } from 'react';
 import DefaultView from '../../components/DefaultView';
 import DefaultText from '../../components/DefaultText';
@@ -12,7 +12,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import { RootDispatch, RootState } from '../../store';
 import { getShowProductNasabah } from '../../services/product';
 import { formatRupiah } from '../../utils/currency';
-import { useFocusEffect } from '@react-navigation/native';
+import { useFocusEffect, useIsFocused } from '@react-navigation/native';
+import { checkLogin, getDetailNasabah } from '../../services/user';
+import { getExitTime, getStorage, saveExitTime } from '../../utils/storage';
 
 const Item = (data: any) => {
   const noProduct = data?.data?.item?.no_produk;
@@ -126,6 +128,7 @@ export default function Produk() {
   const dispatch = useDispatch<RootDispatch>();
 
   useEffect(() => {
+    dispatch(getDetailNasabah());
     dispatch(getShowProductNasabah());
   }, [dispatch]);
 
@@ -150,7 +153,7 @@ export default function Produk() {
   return (
     <DefaultView>
       <DefaultHeader title="Produk Deposito" />
-      <View className="flex-row px-3 py-2 z-50">
+      <View className="flex-row mx-3 p-1">
         <View className="flex-1">
           <DefaultText title="Bagi Hasil Setara" />
           <Gap height={2.5} />
@@ -335,13 +338,13 @@ export default function Produk() {
           )}
         </View>
       </View>
-      <View className="p-5">
+      <View className="mx-3 p-1 mb-3">
         <TextInput onChangeText={(e) => setSearchName(e)
         } className="bg-gray-300 py-1 px-1 rounded-full items-center" placeholder='Cari Produk' />
       </View>
       {showProcutLoading ?
         <ActivityIndicator
-          style={{ position: 'absolute', top: 150, left: 0, right: 0 }}
+          style={{ position: 'absolute', top: 250, left: 0, right: 0 }}
           size={'large'}
         /> :
         <FlatList

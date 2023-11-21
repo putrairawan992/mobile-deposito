@@ -1,10 +1,10 @@
 import {
   ActivityIndicator,
+  AppState,
   BackHandler,
+  Dimensions,
   Image,
-  Linking,
   StyleSheet,
-  ToastAndroid,
   TouchableOpacity,
   View,
   useWindowDimensions,
@@ -18,6 +18,7 @@ import { colors } from '../../utils/colors';
 import Gap from '../../components/Gap';
 import LinearGradient from 'react-native-linear-gradient';
 import Carousel from 'react-native-reanimated-carousel';
+import CarouselSnap from 'react-native-snap-carousel';
 import Button from '../../components/Button';
 import { navigationRef } from '../../navigation/RootNavigation';
 import { useDispatch, useSelector } from 'react-redux';
@@ -26,25 +27,32 @@ import { RootDispatch, RootState } from '../../store';
 import { getShowDashboard } from '../../services/dasbhoard';
 import { formatRupiah } from '../../utils/currency';
 import { checkLogin, getDetailNasabah, getUserProfile } from '../../services/user';
-import { getItem, getStorage } from '../../utils/storage';
-import { useFocusEffect } from '@react-navigation/native';
+import { getExitTime, getStorage, removeStorage, saveExitTime } from '../../utils/storage';
+import { useFocusEffect, useIsFocused } from '@react-navigation/native';
 import ModalAlert from '../../components/ModalAlert';
 import { ScrollView } from 'react-native-gesture-handler';
+import SwiperFlatList, { Pagination, PaginationProps } from 'react-native-swiper-flatlist';
+import { HEIGHT, WIDTH } from '../../utils/constant';
+import { getShowArtikelList } from '../../services/artikel';
+import moment from 'moment';
+
 
 export default function Beranda() {
   const { width } = useWindowDimensions();
   const { showPromo } = useSelector(
     (state: RootState) => state.productReducer,
   );
-  const [promoActive, setPromoActive] = useState<number>(0);
   const [topActive, setTopActive] = useState<number>(0);
-  const { showDashboard } = useSelector(
+  const { showDashboard, showDashboardLoading } = useSelector(
     (state: RootState) => state.dashboardReducer,
   );
-  const { detailNasabah, detailNasabahDetailLoading } = useSelector(
+  const { detailNasabah } = useSelector(
     (state: RootState) => state.userReducer,
   );
-  const [loading, setLoading] = useState<boolean>(true);
+  const { showArtikelListData } = useSelector(
+    (state: RootState) => state.artikelReducer,
+  );
+  const [index, setIndex] = React.useState<number>(0);
   const [updateProfile, setUpdateProfile] = useState<boolean>(false);
   const [dtNasabah, setDtNasabah] = useState<any>();
   const dispatch = useDispatch<RootDispatch>();
@@ -52,14 +60,21 @@ export default function Beranda() {
   useEffect(() => {
     dispatch(getShowPromo());
     dispatch(getUserProfile());
-    dispatch(getShowDashboard());
-    dispatch(getDetailNasabah());
+    dispatch(getShowArtikelList())
+    dispatch(getShowDashboard()).then(async (res: any) => {
+      if (!res?.statuses['5'].status && await getStorage("resetPass")) {
+        navigationRef.navigate("BuatPassword", { isShowDashboard: true });
+      }
+    });
   }, [dispatch]);
 
   const handleBackPress = (): boolean => {
     return true;
   };
-  
+
+  console.log("showArtikelListData", showArtikelListData);
+
+
   useFocusEffect(
     useCallback(() => {
       BackHandler.addEventListener('hardwareBackPress', handleBackPress);
@@ -75,39 +90,36 @@ export default function Beranda() {
 
   const redirectUrlChat = async () => {
     navigationRef.navigate("Chat", { token: await getStorage("token") });
-    //Linking.openURL(`https://dev.depositosyariah.id/user?token=${await getStorage("token")}`)
   }
 
-
   useFocusEffect(useCallback(() => {
-    if (!detailNasabahDetailLoading) {
-      const useNasabah = async () => {
-        setLoading(false);
-        if (await getStorage('register-completed') === null) {
-          if (await getItem("token-expired") && !detailNasabah.idUserNasabah) {
-            if (await getStorage('skIsTrue') === null) {
-              navigationRef.navigate("SyaratKetentuan");
-            } else {
-              navigationRef.navigate("Register");
-            }
-          }
-          if (await getStorage("phone-email") && await getItem("token-expired") === undefined) {
-            dispatch(checkLogin(await getStorage("phone-email")))
-          }
-        }
-      }
-      setTimeout(() => {
-        useNasabah();
-      }, 2222)
+    dispatch(getShowDashboard());
+    dispatch(getDetailNasabah());
+  }, [dispatch]))
+
+  useFocusEffect(
+    useCallback(() => {
       setDtNasabah(detailNasabah);
-    }
-  }, [detailNasabah, detailNasabahDetailLoading])
-  );
+    }, [detailNasabah]));
+
+  const CustomPagination = (props: JSX.IntrinsicAttributes & PaginationProps) => {
+    return (
+      <Pagination
+        {...props}
+        paginationActiveColor="#4286f4"
+        paginationStyle={{
+          top: 270,
+          marginBottom: 15
+        }}
+        paginationStyleItem={{ width: 15, height: 3, borderRadius: 8 }}
+      />
+    );
+  };
 
   return (
-    loading ? <ActivityIndicator size="large" style={{ position: 'absolute', top: 150, left: 0, right: 0 }} /> :
+    showDashboardLoading ? <ActivityIndicator size="large" style={{ position: 'absolute', top: 150, left: 0, right: 0 }} /> :
       <DefaultView>
-        <View className="flex-row items-center px-5 py-2 border-b-[1px] border-b-neutral-300">
+        <View className="flex-row items-center px-5 py-2 mb-2">
           <Image
             className="w-[80] h-[40]"
             source={images.logo}
@@ -117,13 +129,13 @@ export default function Beranda() {
           <TouchableOpacity
             activeOpacity={0.7}
             onPress={() => navigationRef.navigate('Notifikasi')}>
-            <Icon name="bell" size={24} color={colors.black} />
+            <Icon name="bell" size={24} color={'#2A8E54'} />
           </TouchableOpacity>
           <Gap width={10} />
           <TouchableOpacity
             activeOpacity={0.7}
             onPress={() => redirectUrlChat()}>
-            <Icon name="message" size={24} color={colors.black} />
+            <Icon name="message" size={24} color={'#2A8E54'} />
           </TouchableOpacity>
         </View>
         <LinearGradient
@@ -137,31 +149,33 @@ export default function Beranda() {
           />
           <Gap height={10} />
           <View className="flex-row items-center">
-            <Carousel
-              loop
-              width={width / 1.2}
-              {...{ vertical: true }}
-              height={100}
-              // autoPlay={true}
-              data={
-                [{ val: showDashboard?.bagiHasil, label: "Bagi Hasil" },
-                { val: showDashboard?.deposito, label: "Total Deposito" },
-                { val: showDashboard?.portofolio, label: "Total Portofolio" }]}
-              // scrollAnimationDuration={1000}
-              onSnapToItem={index => setTopActive(index)}
-              renderItem={({ item }) => (
-                <View className="bg-white p-3 rounded-lg flex-1 mr-2">
-                  <DefaultText
-                    title={item.label}
-                    titleClassName="font-inter-medium"
-                  />
-                  <DefaultText
-                    title={formatRupiah(String(item.val), "Rp")}
-                    titleClassName="font-inter-bold text-xl"
-                  />
-                </View>
-              )}
-            />
+            <View className="bg-white p-3 rounded-lg flex-1 mr-2">
+              <Carousel
+                loop
+                width={width / 1.2}
+                {...{ vertical: true }}
+                height={50}
+                // autoPlay={true}
+                data={
+                  [{ val: showDashboard?.bagiHasil, label: "Bagi Hasil" },
+                  { val: showDashboard?.deposito, label: "Total Deposito" },
+                  { val: showDashboard?.portofolio, label: "Total Portofolio" }]}
+                // scrollAnimationDuration={1000}
+                onSnapToItem={index => setTopActive(index)}
+                renderItem={({ item, index }) => (
+                  <View>
+                    <DefaultText
+                      title={item.label}
+                      titleClassName="font-inter-medium"
+                    />
+                    <DefaultText
+                      title={formatRupiah(String(item.val), "Rp")}
+                      titleClassName="font-inter-bold text-xl"
+                    />
+                  </View>
+                )}
+              />
+            </View>
             <Gap width={10} />
             <View>
               <View
@@ -182,7 +196,6 @@ export default function Beranda() {
           </View>
         </LinearGradient>
         <Gap height={20} />
-
         <ScrollView>
           <View className="flex-row items-center px-5">
             <DefaultText
@@ -198,38 +211,62 @@ export default function Beranda() {
               />
             </TouchableOpacity>
           </View>
+          {showPromo && showPromo?.length > 0 &&
+            <View style={{ paddingLeft: 18, paddingRight: 15 }}>
+              <Carousel
+                loop
+                width={width}
+                height={width / 2}
+                autoPlay={true}
+                autoPlayInterval={5000}
+                data={showPromo}
+                // scrollAnimationDuration={5000}
+                onSnapToItem={index => setIndex(index)}
+                renderItem={({ item}) => (
+                  <View style={styles.child}>
+                  <Image
+                    style={{ width: WIDTH / 1.1, height: "100%" }}
+                    source={{ uri: item?.image }}
+                    resizeMode="contain"
+                  />
+                </View>
+                )}
+              />
+              {/* <CarouselSnap
+                data={showPromo}
+                renderItem={({ item }) => (
+                  <View style={styles.child}>
+                    <Image
+                      style={{ width: WIDTH / 1.1, height: "100%" }}
+                      source={{ uri: item?.image }}
+                      resizeMode="contain"
+                    />
+                  </View>
+                )}
+                loop
+                autoplay
+                // autoplayDelay={5000}
+                // autoplayInterval={5000}
+                activeSlideAlignment={'start'}
+                onSnapToItem={i => setIndex(i)}
+                sliderWidth={WIDTH}
+                itemWidth={WIDTH}
+                sliderHeight={HEIGHT}
+              /> */}
+            </View>}
           <Gap height={10} />
-          <Carousel
-            loop
-            width={width}
-            height={width / 2}
-            autoPlay={true}
-            autoPlayInterval={5000}
-            scrollAnimationDuration={100}
-            data={(showPromo && showPromo?.length > 0) && showPromo || [1, 2, 3, 4]}
-            onSnapToItem={index => setPromoActive(index)}
-            renderItem={({ item, index }: any) => (
-              <TouchableOpacity activeOpacity={0.7} style={{ alignSelf: 'center' }}>
-                <Image
-                  style={{ width: width, height: width / 2 }}
-                  source={{ uri: item.image }}
-                  resizeMode="cover"
-                />
-              </TouchableOpacity>
-            )}
-          />
-          <View className="flex-row mt-2 justify-center">
+          <View className="flex-row justify-center">
             {(showPromo && showPromo?.length > 0) && showPromo.map((item: any, key: any) => {
               return (
                 <View
                   key={key}
-                  className={`w-[15] h-[3] rounded-full mx-1 ${key === promoActive ? 'bg-blue-500' : 'bg-neutral-400 '
-                    }`}
+                  className={`w-[15] h-[3] rounded-full mx-1 ${key === index ? 'bg-blue-500' : 'bg-neutral-400'}`}
                 />
               );
             })}
           </View>
           <View className="w-full h-[2] bg-neutral-300 my-3" />
+          <Gap height={10} />
           <View className="flex-row items-center px-5">
             <DefaultText
               title="Artikel Terbaru"
@@ -249,29 +286,31 @@ export default function Beranda() {
             horizontal={true}
             showsHorizontalScrollIndicator={false}
             contentContainerStyle={styles.containerBlog}>
-            {[1, 2, 3].map((_, key) => {
+            {showArtikelListData && showArtikelListData?.length > 0 && showArtikelListData.map((item: any, key: number) => {
               return (
                 <TouchableOpacity
                   key={key}
                   activeOpacity={0.7}
+                  onPress={() => navigationRef.navigate("BlogDetail", { id: item.id })}
                   className="p-2 border-[1px] border-primary self-start rounded-xl mx-2"
                   style={{ width: width / 2.1, height: width / 2 }}>
                   <Image
                     style={{ height: width / 4.2 }}
                     className="w-full"
-                    source={images.promo}
+                    source={{ uri: item.image }}
                     resizeMode="cover"
                   />
+                  <Gap height={10} />
                   <DefaultText
-                    title="Perbedaan Kerja Keras dan Kerja Cerdas, Lebih Baik Mana?"
+                    title={item.judul}
                     titleClassName="font-inter-medium text-xs text-primary"
                     titleProps={{
                       numberOfLines: 2,
                     }}
                   />
-                  <View className="absolute bottom-2 left-2">
-                    <DefaultText title="deposito HIK" titleClassName="text-xs" />
-                    <DefaultText title="04 July 2023" titleClassName="text-xs" />
+                  <View className="absolute bottom-1 left-2">
+                    <DefaultText title={item.author} titleClassName="text-xs" />
+                    <DefaultText title={moment(item.created_at).format("DD MMMM YYYY")} titleClassName="text-xs" />
                   </View>
                 </TouchableOpacity>
               );
@@ -296,17 +335,17 @@ export default function Beranda() {
               <Gap width={10} />
               <View className="flex-1">
                 <DefaultText
-                  title="Bagi Hasil hingga 6,75%"
+                  title="Mau Deposito? Mudah!"
                   titleClassName="font-inter-medium"
                 />
                 <Gap height={2.5} />
                 <DefaultText
-                  title="#LebihUntung"
+                  title="#LebihMudah"
                   titleClassName="font-inter-medium text-xs text-primary"
                 />
                 <Gap height={2.5} />
                 <DefaultText
-                  title="Sesuai dengan aturan LPS dari lebih tinggi dari Bagi Hasil deposito biasa"
+                  title="Aplikasi yang mudah digunakan, mau deposito tidak perlu pergi ke Bank."
                   titleClassName="text-xs"
                 />
               </View>
@@ -331,7 +370,7 @@ export default function Beranda() {
                 />
                 <Gap height={2.5} />
                 <DefaultText
-                  title="Cukup 1x daftar dan nikmati kemudian buka deposito di ratusan BPS terseleksi di Indonesia"
+                  title="Cukup 1x daftar dan nikmati kemudian buka deposito di ratusan BPR terseleksi di Indonesia"
                   titleClassName="text-xs"
                 />
               </View>
@@ -361,9 +400,12 @@ export default function Beranda() {
       </DefaultView>
   );
 }
+const { width } = Dimensions.get('window');
 
 const styles = StyleSheet.create({
   containerBlog: {
     paddingHorizontal: 5,
   },
+  child: { width},
 });
+

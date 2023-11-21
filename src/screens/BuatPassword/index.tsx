@@ -1,5 +1,5 @@
-import { ActivityIndicator, BackHandler, ScrollView, ToastAndroid, TouchableOpacity, View } from 'react-native';
-import React, { useCallback, useState } from 'react';
+import { ActivityIndicator, BackHandler, ScrollView, StyleSheet, Text, ToastAndroid, TouchableOpacity, View } from 'react-native';
+import React, { useCallback, useEffect, useState } from 'react';
 import DefaultView from '../../components/DefaultView';
 import DefaultText from '../../components/DefaultText';
 import Button from '../../components/Button';
@@ -9,9 +9,10 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { showToast } from '../../utils/toast';
 import { RootDispatch, RootState } from '../../store';
 import { useDispatch, useSelector } from 'react-redux';
-import { registerPasswordPin } from '../../services/user';
+import { logout, registerPasswordPin } from '../../services/user';
 import { RootStackScreenProps } from '../../navigation/interface';
 import { useFocusEffect } from '@react-navigation/native';
+import { validatePassword } from '../../utils/function';
 
 export default function BuatPassword({
   route,
@@ -25,12 +26,15 @@ export default function BuatPassword({
   const { registerPasswordPinLoading } = useSelector(
     (state: RootState) => state.userReducer,
   );
+
+  const [isValid, setIsValid] = useState(true);
   const isShowDashboard = route.params?.isShowDashboard;
 
   const handleBackPress = (): boolean => {
     ToastAndroid.show('Tidak Bisa Kembali Selesaikan Isi Password', ToastAndroid.SHORT);
     return true;
   };
+
   useFocusEffect(
     useCallback(() => {
       BackHandler.addEventListener('hardwareBackPress', handleBackPress);
@@ -42,11 +46,12 @@ export default function BuatPassword({
     if (password.trim().length === 0 || confirmPassword.trim().length === 0) {
       return showToast('Masukkan password');
     }
-
     if (password !== confirmPassword) {
       return showToast('Password tidak cocok');
     }
-
+    if (!isValid) {
+      return;
+    }
     dispatch(registerPasswordPin({ password: confirmPassword }, 'PIN', isShowDashboard));
   };
 
@@ -74,8 +79,19 @@ export default function BuatPassword({
               </TouchableOpacity>
             }
             value={password}
-            onChangeText={value => setPassword(value)}
+            onChangeText={value => {
+              setPassword(value);
+              setIsValid(validatePassword(value));
+            }}
           />
+          {!isValid && (
+            <View style={styles.errorContainer}>
+              <Text style={styles.errorText}>
+                Password harus terdiri dari minimal 8 karakter, memiliki minimal 1 huruf kecil,
+                1 huruf besar, 1 angka, dan 1 tanda baca.
+              </Text>
+            </View>
+          )}
           <Gap height={10} />
           <Input
             title="Konfirmasi password kamu"
@@ -108,3 +124,18 @@ export default function BuatPassword({
     </DefaultView>
   );
 }
+
+const styles = StyleSheet.create({
+  invalidInput: {
+    borderColor: 'red',
+  },
+  errorContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 5,
+  },
+  errorText: {
+    marginLeft: 5,
+    color: 'red',
+  },
+});

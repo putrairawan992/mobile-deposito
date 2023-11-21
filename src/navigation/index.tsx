@@ -1,7 +1,6 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import React, { useCallback, useEffect, useLayoutEffect, useState } from 'react';
-
+import React, { useCallback, useEffect, useState } from 'react';
 import { RootStackParamList } from './interface';
 import Login from '../screens/Login';
 import Splash from '../screens/Splash';
@@ -39,12 +38,15 @@ import SemuaPromo from '../screens/SemuaPromo';
 import BottomNavigator from '../components/BottomNavigator';
 import BuatPassword from '../screens/BuatPassword';
 import Password from '../screens/Password';
+import { getExitTime, getStorage, removeStorage, saveExitTime } from '../utils/storage';
+import { AppState } from 'react-native';
+import ListChatProduct from '../screens/Chat/ListChatProduct';
+import { useFocusEffect, useIsFocused } from '@react-navigation/native';
+import { navigationRef } from './RootNavigation';
+import { checkLogin, getDetailNasabah } from '../services/user';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootDispatch, RootState } from '../store';
-import { getDetailNasabah } from '../services/user';
-import { getItem } from '../utils/storage';
-import { ActivityIndicator } from 'react-native';
-import ListChatProduct from '../screens/Chat/ListChatProduct';
+import BlogDetail from '../screens/BlogDetail';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 const Tab = createBottomTabNavigator();
@@ -64,77 +66,72 @@ function MyTabs() {
 }
 
 function StackNavigator() {
-  const {  detailNasabah, detailNasabahDetailLoading } = useSelector((state: RootState) => state.userReducer);
-  const dispatch = useDispatch<RootDispatch>();
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [isShowContent, setIsShowContent] = useState<boolean>(false);
-
-  useLayoutEffect(() => {
-    dispatch(getDetailNasabah());
-  }, [dispatch]);
+  const [loading, setLoading] = useState<boolean>(true);
 
 
-  useLayoutEffect(
-    useCallback(() => {
-      const useToken = async () => {
-        if (await getItem("token-expired") &&  detailNasabah?.idUserNasabah) {
-          setIsLoading(false);
-          setIsShowContent(true);
-        } else {
-          setIsShowContent(false);
-          setIsLoading(false);
-        }
+  useEffect(() => {
+    setTimeout(() => {
+      setLoading(false);
+    }, 1888)
+  }, []);
+
+
+  const handleExit = async () => {
+    await saveExitTime();
+  };
+
+
+  useEffect(() => {
+    const subscription = AppState.addEventListener('change', async nextAppState => {
+      if (nextAppState === 'background') {
+        await handleExit();
       }
-        if (!detailNasabahDetailLoading) {
-          setTimeout(()=>{
-            useToken();
-          },2000)
-        }
-    }, [detailNasabah, detailNasabahDetailLoading, isShowContent]),
-  );
+    });
+    return () => {
+      subscription.remove();
+    };
+  }, [useIsFocused]);
+
 
   return (
-    isLoading ? 
-    <ActivityIndicator 
-      style={{ position: 'absolute', top: 150, left: 0, right: 0 }}
-      size={'large'} /> :
-      <Stack.Navigator
-        initialRouteName={!isShowContent  ?  "Splash" : "MyTabs" }
-        screenOptions={{ animation: 'slide_from_right', headerShown: false }}>
-        <Stack.Screen component={Splash} name="Splash" />
-        <Stack.Screen component={Login} name="Login" />
-        <Stack.Screen component={OTP} name="OTP" />
-        <Stack.Screen component={Register} name="Register" />
-        <Stack.Screen component={MyTabs} name="MyTabs" />
-        <Stack.Screen component={AhliWaris} name="AhliWaris" />
-        <Stack.Screen component={AhliWarisEdit} name="AhliWarisEdit" />
-        <Stack.Screen component={AjukanDeposito} name="AjukanDeposito" />
-        <Stack.Screen component={Chat} name="Chat" />
-        <Stack.Screen component={ChatRegistrasi} name="ChatRegistrasi" />
-        <Stack.Screen component={ChatTransaksi} name="ChatTransaksi" />
-        <Stack.Screen component={DetailPribadi} name="DetailPribadi" />
-        <Stack.Screen component={DetailPribadiEdit} name="DetailPribadiEdit" />
-        <Stack.Screen component={Fanpage} name="Fanpage" />
-        <Stack.Screen component={FAQ} name="FAQ" />
-        <Stack.Screen component={GantiPIN} name="GantiPIN" />
-        <Stack.Screen component={GantiEmail} name="GantiEmail" />
-        <Stack.Screen component={GantiKataSandi} name="GantiKataSandi" />
-        <Stack.Screen component={Notifikasi} name="Notifikasi" />
-        <Stack.Screen component={PIN} name="PIN" />
-        <Stack.Screen component={PortofolioDetail} name="PortofolioDetail" />
-        <Stack.Screen component={ProdukDetail} name="ProdukDetail" />
-        <Stack.Screen component={ListChatProduct} name="ListChatProduct" />
-        <Stack.Screen component={RekeningSaya} name="RekeningSaya" />
-        <Stack.Screen component={KeamananAkun} name="KeamananAkun" />
-        <Stack.Screen component={RekeningSayaDetail} name="RekeningSayaDetail" />
-        <Stack.Screen component={RekeningSayaTambah} name="RekeningSayaTambah" />
-        <Stack.Screen component={SemuaBlog} name="SemuaBlog" />
-        <Stack.Screen component={SemuaPromo} name="SemuaPromo" />
-        <Stack.Screen component={SplashLogin} name="SplashLogin" />
-        <Stack.Screen component={SyaratKetentuan} name="SyaratKetentuan" />
-        <Stack.Screen component={BuatPassword} name="BuatPassword" />
-        <Stack.Screen component={Password} name="Password" />
-      </Stack.Navigator>
+    <Stack.Navigator
+      initialRouteName={"Splash"}
+      screenOptions={{ animation: 'slide_from_right', headerShown: false }}>
+      <Stack.Screen component={Login} name="Login" />
+      <Stack.Screen component={OTP} name="OTP" />
+      <Stack.Screen component={Register} name="Register" />
+      <Stack.Screen component={BlogDetail} name="BlogDetail" />
+      <Stack.Screen component={MyTabs} name="MyTabs" />
+      <Stack.Screen component={AhliWaris} name="AhliWaris" />
+      <Stack.Screen component={Splash} name="Splash" />
+      <Stack.Screen component={AhliWarisEdit} name="AhliWarisEdit" />
+      <Stack.Screen component={AjukanDeposito} name="AjukanDeposito" />
+      <Stack.Screen component={Chat} name="Chat" />
+      <Stack.Screen component={ChatRegistrasi} name="ChatRegistrasi" />
+      <Stack.Screen component={ChatTransaksi} name="ChatTransaksi" />
+      <Stack.Screen component={DetailPribadi} name="DetailPribadi" />
+      <Stack.Screen component={DetailPribadiEdit} name="DetailPribadiEdit" />
+      <Stack.Screen component={Fanpage} name="Fanpage" />
+      <Stack.Screen component={FAQ} name="FAQ" />
+      <Stack.Screen component={GantiPIN} name="GantiPIN" />
+      <Stack.Screen component={GantiEmail} name="GantiEmail" />
+      <Stack.Screen component={GantiKataSandi} name="GantiKataSandi" />
+      <Stack.Screen component={Notifikasi} name="Notifikasi" />
+      <Stack.Screen component={PIN} name="PIN" />
+      <Stack.Screen component={PortofolioDetail} name="PortofolioDetail" />
+      <Stack.Screen component={ProdukDetail} name="ProdukDetail" />
+      <Stack.Screen component={ListChatProduct} name="ListChatProduct" />
+      <Stack.Screen component={RekeningSaya} name="RekeningSaya" />
+      <Stack.Screen component={KeamananAkun} name="KeamananAkun" />
+      <Stack.Screen component={RekeningSayaDetail} name="RekeningSayaDetail" />
+      <Stack.Screen component={RekeningSayaTambah} name="RekeningSayaTambah" />
+      <Stack.Screen component={SemuaBlog} name="SemuaBlog" />
+      <Stack.Screen component={SemuaPromo} name="SemuaPromo" />
+      <Stack.Screen component={SplashLogin} name="SplashLogin" />
+      <Stack.Screen component={SyaratKetentuan} name="SyaratKetentuan" />
+      <Stack.Screen component={BuatPassword} name="BuatPassword" />
+      <Stack.Screen component={Password} name="Password" />
+    </Stack.Navigator>
   );
 }
 
