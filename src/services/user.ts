@@ -8,6 +8,7 @@ import {
   setDetailNasabahDetailLoading,
   setForgotLoading,
   setLoginLoading,
+  setLogoNasabah,
   setPhoneEmail,
   setRegisterLoading,
   setRegisterPasswordPinLoading,
@@ -72,6 +73,7 @@ export const login =
           addStorage('token', res?.data?.token);
           setItem("token-expired", res?.data?.token, 2);
           addStorage('phone-email', emailOrPhone);
+          addStorage('passwordSekarang', password);
           removeStorage('@exitTime');
           removeStorage('detected-exitTime');
           dispatch(setToken(res?.data?.token));
@@ -79,7 +81,7 @@ export const login =
           dispatch(getShowDashboard()).then((showDash: any) => {
             dispatch(getDetailNasabah()).then((detailNash: any) => {
               if (!showDash?.statuses['5'].status && detailNash?.idUserNasabah) {
-                addStorage("resetPass","passReset")
+                addStorage("resetPass", "passReset")
                 navigationRef.navigate("BuatPassword", { isShowDashboard: true });
               } else if (showDash?.statuses['5'].status && detailNash?.idUserNasabah) {
                 navigationRef.navigate("MyTabs");
@@ -155,6 +157,35 @@ export const getDetailNasabah = () => async (dispatch: RootDispatch) => {
     }).finally(() => {
       dispatch(setDetailNasabahDetailLoading(false));
     });
+  return data;
+};
+
+export const getLogoNasabah = () => async (dispatch: RootDispatch) => {
+  let data;
+  await axios
+    .get(`${API}/logo`, {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${await getStorage('token')}`,
+      },
+    })
+    .then(res => {
+      dispatch(setLogoNasabah(res?.data?.data))
+      data = res?.data?.data[0]
+    })
+    .catch(err => {
+      if (err?.response?.status === 401) {
+        // dispatch(logout())
+      }
+      if (err?.response?.status !== 401) {
+        Toast.show({
+          type: 'error',
+          text1: 'Error',
+          text2:
+            err.response?.data?.message ?? 'Terjadi error, coba lagi nanti.',
+        })
+      }
+    })
   return data;
 };
 
@@ -349,6 +380,8 @@ export const registerPasswordPin =
           }
         })
         .catch(err => {
+          console.log("error===>", err.response);
+
           dispatch(setRegisterPasswordPinLoading(false));
           Toast.show({
             type: 'error',

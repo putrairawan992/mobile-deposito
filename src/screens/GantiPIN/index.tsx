@@ -1,4 +1,5 @@
 import {
+  ActivityIndicator,
   ScrollView,
   TextInput,
   TouchableOpacity,
@@ -13,8 +14,8 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import Gap from '../../components/Gap';
 import ModalAlert from '../../components/ModalAlert';
 import { showToast } from '../../utils/toast';
-import { useDispatch } from 'react-redux';
-import { RootDispatch } from '../../store';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootDispatch, RootState } from '../../store';
 import { getReqOtp, registerPasswordPin } from '../../services/user';
 
 export default function GantiPIN() {
@@ -28,6 +29,9 @@ export default function GantiPIN() {
   const [otp, setOtp] = useState<string>('');
   const [timer, setTimer] = useState<number>(0);
   const dispatch = useDispatch<RootDispatch>();
+  const { registerPasswordPinLoading } = useSelector(
+    (state: RootState) => state.userReducer,
+  );
 
   useEffect(() => {
     if (timer > 0) {
@@ -67,8 +71,6 @@ export default function GantiPIN() {
     setTimer(60);
     dispatch(getReqOtp());
   }
-
-
 
   return (
     <DefaultView>
@@ -204,12 +206,12 @@ export default function GantiPIN() {
       </ScrollView>
 
       <View className="pb-10 pt-3">
-        <TouchableOpacity
+      {registerPasswordPinLoading ? <ActivityIndicator size={"large"}/>:   <TouchableOpacity
           onPress={onSave}
           activeOpacity={0.7}
           className="bg-primary px-10 py-3 rounded-full self-center">
           <DefaultText title="SIMPAN" titleClassName="text-white" />
-        </TouchableOpacity>
+        </TouchableOpacity>}
       </View>
 
 

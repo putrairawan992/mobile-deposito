@@ -23,6 +23,9 @@ export default function BlogDetail({ route }: RootStackScreenProps<'BlogDetail'>
         dispatch(getShowArtikelDetaill(idParams))
     }, [idParams]);
 
+    console.log("showArtikelDetailData?.data?.isi ",showArtikelDetailData?.data?.isi );
+    
+
     return (
         showArtikelDetailDataLoading ? <ActivityIndicator size={"large"} style={{ top: 150 }} /> : <DefaultView>
             <DefaultHeader title="Artikel Detail" />
@@ -34,7 +37,7 @@ export default function BlogDetail({ route }: RootStackScreenProps<'BlogDetail'>
                         <DefaultText title={showArtikelDetailData?.data?.author} titleClassName='text-xs mr-2' />
                         <DefaultText titleClassName='text-xs' title={moment(showArtikelDetailData?.data?.created_at).format('DD MMMM YYYY')} />
                     </View>
-                    <RenderHTML contentWidth={WIDTH} source={{ html: showArtikelDetailData?.data?.isi }} />
+                    <RenderHTML contentWidth={WIDTH} enableExperimentalMarginCollapsing={true}  source={{ html:`<!DOCTYPE html><html><body style="">${ showArtikelDetailData?.data?.isi }</body></html>`}} />
                 </View>
             </ScrollView>
         </DefaultView>

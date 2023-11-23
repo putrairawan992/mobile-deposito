@@ -9,7 +9,7 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { navigationRef } from '../../navigation/RootNavigation';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootDispatch, RootState } from '../../store';
-import {  getDetailNasabah, logout } from '../../services/user';
+import { getDetailNasabah, logout } from '../../services/user';
 
 export default function Profile() {
   const { detailNasabah } = useSelector(
@@ -23,12 +23,12 @@ export default function Profile() {
   }, [dispatch]);
 
   function maskEmail(email: string): string {
-    const [username, domain] = email.split('@');
-    const maskedUsername = username.substring(0, 3) + '*'.repeat(username.length - 3);
-    const maskedDomain = domain.substring(0, 2) + '*'.repeat(domain.length - 2);
+    const [username, domain] = email?.split('@');
+    const maskedUsername = username?.substring(0, 3) + '*'.repeat(username?.length - 3);
+    const maskedDomain = domain?.substring(0, 2) + '*'.repeat(domain?.length - 2);
     return `${maskedUsername}@${maskedDomain}.com`;
   }
-  
+
   function maskPhoneNumber(phoneNumber: string): string {
     const maskedNumber = phoneNumber.substring(0, 2) + '*'.repeat(phoneNumber.length - 6) + phoneNumber.substring(phoneNumber.length - 4);
     return maskedNumber;

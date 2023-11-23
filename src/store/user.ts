@@ -20,6 +20,7 @@ interface InitialState {
   checkLogin: any;
   userProfile: any;
   detailNasabah: any;
+  logoNasabah: any;
   loginLoading: boolean;
   checkLoginLoading: boolean;
   forgotLoading: boolean;
@@ -36,6 +37,7 @@ const initialState: InitialState = {
   userProfile: null,
   checkLogin: null,
   detailNasabah: null,
+  logoNasabah:null,
   phone_email: null,
   token: null,
   registerPasswordPinLoading: false,
@@ -94,6 +96,9 @@ export const userSlice = createSlice({
     },
     setUpdateRegisterLoading:(state, action) => {
       state.updateRegisterLoading = action.payload;
+    },
+    setLogoNasabah:(state, action) => {
+      state.logoNasabah = action.payload;
     }
   },
 });
@@ -101,6 +106,7 @@ export const userSlice = createSlice({
 export default userSlice.reducer;
 
 export const {
+  setLogoNasabah,
   setUpdateRegisterLoading,
   setRegisterPasswordPinLoading,
   setUserProfileLoading,

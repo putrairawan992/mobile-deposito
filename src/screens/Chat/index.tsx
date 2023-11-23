@@ -14,6 +14,7 @@ import { getUserProfile } from '../../services/user';
 import socket from '../../utils/socket';
 import WebView from 'react-native-webview';
 import { RootStackScreenProps } from '../../navigation/interface';
+import { SYARIAH_URL } from '../../utils/constant';
 
 export default function Chat({ route }: RootStackScreenProps<"Chat">) {
   const dispatch = useDispatch<RootDispatch>();
@@ -59,7 +60,7 @@ export default function Chat({ route }: RootStackScreenProps<"Chat">) {
           // sharedCookiesEnabled
           // cacheEnabled
           style={{ width: Dimensions.get('window').width }}
-          source={{ uri: `https://dev.depositosyariah.id/user?token=${token}` }}
+          source={{ uri: `${SYARIAH_URL}/user?token=${token}` }}
         //url={`https://dev.depositosyariah.id/user?token=${token}`}
         />
         {/* <ScrollView>

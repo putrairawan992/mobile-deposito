@@ -13,7 +13,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { RootDispatch, RootState } from '../../store';
 import { getPembatalanPortofolioDetail, getPenarikanPortofolioDetail, getShowBuktiBagiHasilPortofolioDetail, getShowPortofolioDetail } from '../../services/portofolio';
 import { formatRupiah } from '../../utils/currency';
-import { MAX_FILE_SIZE, capitalizeFirstLetter } from '../../utils/constant';
+import { MAX_FILE_SIZE, SYARIAH_URL, capitalizeFirstLetter } from '../../utils/constant';
 import { Asset, launchImageLibrary } from 'react-native-image-picker';
 import Toast from 'react-native-toast-message';
 import ModalImage from '../../components/ModalImage';
@@ -30,7 +30,7 @@ export default function PortofolioDetail({ route }: RootStackScreenProps<'Portof
   const [isShowImageProsesPenarikan, setShowImageProsesPenarikan] = useState<boolean>(false);
   const [buktiTF, setBuktiTF] = useState<Asset | string>() as any;
   const { showPortofolioDetail, showBuktiHasilPortofolioLoadingDetail, showButktiHasilPortofolioDetail, showPortofolioLoadingDetail } = useSelector((state: RootState) => state.portofolioReducer);
-  const [upload_bukti_tf, setUpload_Bukti_Tf] = useState<string | Asset>(showPortofolioDetail?.data?.buktiTF ? `https://dev.depositosyariah.id/${showPortofolioDetail?.data?.buktiTF?.image}` : '') as any;
+  const [upload_bukti_tf, setUpload_Bukti_Tf] = useState<string | Asset>(showPortofolioDetail?.data?.buktiTF ? `${SYARIAH_URL}/${showPortofolioDetail?.data?.buktiTF?.image}` : '') as any;
   const dispatch = useDispatch<RootDispatch>();
   const dummyStatus = [
     { "message": "Pengajuan Deposito", "status": true },
@@ -61,7 +61,7 @@ export default function PortofolioDetail({ route }: RootStackScreenProps<'Portof
 
   useEffect(() => {
     dispatch(getShowBuktiBagiHasilPortofolioDetail(showPortofolioDetail?.data?.bagiHasil?.data?.no_transaksi));
-    setUpload_Bukti_Tf(showPortofolioDetail?.data?.buktiTF?.image ? `https://dev.depositosyariah.id/${showPortofolioDetail?.data?.buktiTF?.image}` : null)
+    setUpload_Bukti_Tf(showPortofolioDetail?.data?.buktiTF?.image ? `${SYARIAH_URL}/${showPortofolioDetail?.data?.buktiTF?.image}` : null)
   }, [showPortofolioDetail])
 
   console.log("showButktiHasilPortofolioDetail", showButktiHasilPortofolioDetail);
@@ -426,7 +426,7 @@ export default function PortofolioDetail({ route }: RootStackScreenProps<'Portof
                 {showButktiHasilPortofolioDetail?.data?.image &&
                   <View className="flex-row items-center">
                     <DefaultText title="Lihat Bukti Transfer" titleClassName="flex-1" />
-                    <Image source={{ uri: `https://dev.depositosyariah.id/${showButktiHasilPortofolioDetail?.data?.image}` }}
+                    <Image source={{ uri: `${SYARIAH_URL}/${showButktiHasilPortofolioDetail?.data?.image}` }}
                       style={{ height: 100, width: 130 }} />
                     <Gap width={20} />
                     <Icon name="eye" onPress={() => setShowImageUploadLunas(true)} size={22} />
@@ -494,7 +494,7 @@ export default function PortofolioDetail({ route }: RootStackScreenProps<'Portof
       <ModalImagelunas
         title={'Preview Image Bukti Transfer '}
         hide={() => setShowImageUploadLunas(false)}
-        data={`https://dev.depositosyariah.id/${showButktiHasilPortofolioDetail?.data?.image}`}
+        data={`${SYARIAH_URL}/${showButktiHasilPortofolioDetail?.data?.image}`}
         show={showImageUploadLunas}
         onConfirm={() => setShowImageUploadLunas(false)} />
       <ModalImage

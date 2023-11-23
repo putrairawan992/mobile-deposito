@@ -15,17 +15,17 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
 import SwiperFlatList, { Pagination, PaginationProps } from 'react-native-swiper-flatlist';
 import { useFocusEffect } from '@react-navigation/native';
 import { addStorage, getExitTime, getStorage } from '../../utils/storage';
-import { checkLogin, getDetailNasabah } from '../../services/user';
+import { checkLogin, getDetailNasabah, getLogoNasabah } from '../../services/user';
 import { WIDTH } from '../../utils/constant';
 import Carousel from 'react-native-reanimated-carousel';
 
 export default function Splash() {
   const { width } = useWindowDimensions();
   const dispatch = useDispatch<RootDispatch>();
-  const { showSplashDashboard } = useSelector(
+  const { showSplashDashboard, showSplashListLoading } = useSelector(
     (state: RootState) => state.dashboardReducer,
   );
-  const { checkLoginLoading } = useSelector(
+  const { checkLoginLoading, logoNasabah } = useSelector(
     (state: RootState) => state.userReducer,
   );
   const [index, setIndex] = React.useState<number>(0);
@@ -82,8 +82,9 @@ export default function Splash() {
   }, [loadingShow]);
 
   useEffect(() => {
+    dispatch(getLogoNasabah())
     dispatch(getSplashDashboard());
-  }, [])
+  }, [dispatch])
 
   const CustomPagination = (props: JSX.IntrinsicAttributes & PaginationProps) => {
     return (
@@ -97,6 +98,7 @@ export default function Splash() {
       />
     );
   };
+  console.log("logoNasabah", logoNasabah);
 
   if (loadingShow) {
     return <DefaultView statusBarColor={colors.primaryLight}>
@@ -117,7 +119,6 @@ export default function Splash() {
     <LinearGradient
       className="flex-1"
       colors={[colors.primaryLight, colors.primary]}>
-      <Gap height={15} />
       <Image
         className="w-[180] h-[120] self-center"
         source={images.splashLogo}
@@ -141,44 +142,21 @@ export default function Splash() {
 
           )}
         />
-        // <SwiperFlatList
-        //   autoplay
-        //   autoplayDelay={5}
-        //   autoplayLoop
-        //   showPagination
-        //   PaginationComponent={CustomPagination}
-        //   data={showSplashDashboard}
-        //   renderItem={({ item }) => (
-        //     <View className='items-center' style={{ height: WIDTH / 1.4, width: WIDTH, padding: 15 }}>
-        //       <Image
-        //         style={{ width: width, height: WIDTH / 1.3 }}
-        //         source={{ uri: item.image }}
-        //         resizeMode="contain"
-        //       />
-        //       {/* <Gap height={20} />
-        //       <DefaultText
-        //         title={item?.deskripsi?.length > 100 ? item?.deskripsi?.slice(0, 100) + '...' : item?.deskripsi}
-        //         titleClassName="text-center flex flex-wrap font-inter-semibold text-md"
-        //       /> */}
-
-        //     </View>
-        //   )}
-        // />
       }
-        <Gap height={10} />
-          <View className="flex-row justify-center">
-            {(showSplashDashboard && showSplashDashboard?.length > 0) && showSplashDashboard.map((item: any, key: any) => {
-              return (
-                <View
-                  key={key}
-                  className={`w-[15] h-[3] rounded-full mx-1 ${key === index ? 'bg-white' : 'bg-neutral-400'}`}
-                />
-              );
-            })}
-          </View>
-      <Gap height={20} />
-      <View className="items-center absolute bottom-12 self-center">
-        {checkLoginLoading || loadingShow ? <ActivityIndicator /> :
+      <Gap height={10} />
+      <View className="flex-row justify-center">
+        {(showSplashDashboard && showSplashDashboard?.length > 0) && showSplashDashboard.map((item: any, key: any) => {
+          return (
+            <View
+              key={key}
+              className={`w-[15] h-[3] rounded-full mx-1 ${key === index ? 'bg-white' : 'bg-neutral-400'}`}
+            />
+          );
+        })}
+      </View>
+      <View style={{ bottom: -180 }} className="items-center absolute self-center">
+        {checkLoginLoading || showSplashListLoading ?
+          <ActivityIndicator size="large" /> :
           <Button
             title="Masuk"
             onPress={() => navigationRef.navigate('Login')}
@@ -190,12 +168,26 @@ export default function Splash() {
           titleClassName="text-white font-inter-medium"
         />
         <Gap height={15} />
-        <Image
-          className="w-[200] h-[50] self-center"
-          source={images.splashFooter}
-          resizeMode="contain"
-        />
+        {logoNasabah && logoNasabah.length > 0 && <Carousel
+          loop
+          width={width}
+          autoPlay={false}
+          height={width / 1.3}
+          data={logoNasabah}
+          renderItem={({ item }) => (
+            <Image
+              className="w-[200] h-[50] self-center"
+              source={{ uri: item.image }}
+              resizeMode="contain"
+            />
+          )}
+        />}
       </View>
+      {/* <Image
+            className="w-[200] h-[50] self-center"
+            source={images.splashFooter}
+            resizeMode="contain"
+          /> */}
     </LinearGradient>
   </DefaultView>
   );

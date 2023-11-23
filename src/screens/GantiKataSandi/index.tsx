@@ -11,20 +11,26 @@ import { showToast } from '../../utils/toast';
 import { RootDispatch, RootState } from '../../store';
 import { useDispatch, useSelector } from 'react-redux';
 import { checkLogin, getDetailNasabah, getReqOtp, registerPasswordPin } from '../../services/user';
-import { validatePassword } from '../../utils/function';
+import { validatePassword, validatePasswordSekarang } from '../../utils/function';
+import { ActivityIndicator } from 'react-native';
 
 export default function GantiKataSandi() {
   const [showPasswordBaru, setShowPasswordBaru] = useState<boolean>(false);
+  const [showPasswordSekarang, setShowPasswordSekarang] = useState<boolean>(false);
   const [showPasswordConfirm, setShowPasswordConfirm] =
     useState<boolean>(false);
   const [showModalSuccess, setShowModalSuccess] = useState<boolean>(false);
   const [otp, setOtp] = useState<string>('');
   const [isValid, setIsValid] = useState(true);
+  const [isValidPassword, setIsValidPassword] = useState(true);
   const [passwordBaru, setPasswordBaru] = useState<string>('');
+  const [passwordSekarang, setPasswordSekarang] = useState<string>('');
   const [passwordConfirm, setPasswordConfirm] = useState<string>('');
   const [timer, setTimer] = useState<number>(0);
   const dispatch = useDispatch<RootDispatch>();
-
+  const { registerPasswordPinLoading } = useSelector(
+    (state: RootState) => state.userReducer,
+  );
   useEffect(() => {
     const intervalID = setInterval(() => {
       if (timer === 0) {
@@ -52,6 +58,9 @@ export default function GantiKataSandi() {
     if (!isValid) {
       return;
     }
+    if (!isValidPassword) {
+      return;
+    }
     if (passwordBaru !== passwordConfirm) {
       return showToast('Password tidak cocok');
     }
@@ -64,7 +73,7 @@ export default function GantiKataSandi() {
       <DefaultHeader title="Ganti Kata Sandi" />
       <ScrollView showsVerticalScrollIndicator={false}>
         <View className="px-5 py-3">
-          {/* <View className="bg-primary-light rounded-2xl px-5 py-3 flex-row items-center">
+          <View className="bg-primary-light rounded-2xl px-5 py-3 flex-row items-center">
             <View className="flex-1">
               <DefaultText
                 title="Kata sandi sekarang"
@@ -75,7 +84,10 @@ export default function GantiKataSandi() {
                 className="p-0 m-0 font-inter-bold"
                 placeholder="Kata sandi sekarang"
                 value={passwordSekarang}
-                onChangeText={value => setPasswordSekarang(value)}
+                onChangeText={async (value) => {
+                  setPasswordSekarang(value);
+                  setIsValidPassword(await validatePasswordSekarang(value))
+                }}
                 secureTextEntry={!showPasswordSekarang}
               />
             </View>
@@ -87,7 +99,14 @@ export default function GantiKataSandi() {
             </TouchableOpacity>
           </View>
 
-          <Gap height={15} /> */}
+          {!isValidPassword && (
+            <View style={styles.errorContainer}>
+              <Text style={styles.errorText}>
+                Password lama salah
+              </Text>
+            </View>
+          )}
+          <Gap height={15} />
 
           <View className="bg-primary-light rounded-2xl px-5 py-5 flex-row items-center">
             <View className="flex-1">
@@ -203,12 +222,12 @@ export default function GantiKataSandi() {
       </ScrollView>
 
       <View className="pb-10 pt-3">
-        <TouchableOpacity
+        {registerPasswordPinLoading ? <ActivityIndicator size={"large"} /> : <TouchableOpacity
           onPress={onSave}
           activeOpacity={0.7}
           className="bg-primary px-10 py-3 rounded-full  self-center">
-          <DefaultText title="SIMPAN" titleClassName="text-white" />
-        </TouchableOpacity>
+          <DefaultText title="Simpan" titleClassName="text-white" />
+        </TouchableOpacity>}
       </View>
 
       <ModalAlert
