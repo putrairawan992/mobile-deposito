@@ -189,19 +189,21 @@ export default function Register() {
             />
           </View>
         </ScrollView>
-        <View className='flex-row items-center mb-5'>
+        <View className='flex-row items-center justify-center mb-5'>
           <Button
             title="Kembali"
-            className="bg-primary ml-1 mr-0.5 my-5"
-            titleClassName="text-white"
+            py='px-4'
+            className="bg-primary mr-4 my-5"
+            titleClassName="text-white text-small"
             onPress={() => {
               setPage(0);
             }}
           />
           <Button
             title="Lanjut"
-            className="bg-primary ml-0.5 my-5"
-            titleClassName="text-white"
+            py='px-4'
+            className="bg-primary mr-4 my-5"
+            titleClassName="text-white text-small"
             onPress={() => {
               if (
                 ktp?.trim()?.length === 0 ||
@@ -284,16 +286,18 @@ export default function Register() {
         <View className='flex-row items-center mb-5'>
           <Button
             title="Kembali"
-            className="bg-primary ml-1 mr-0.5 my-5"
-            titleClassName="text-white"
+            py='px-4'
+            className="bg-primary mr-4 my-5"
+            titleClassName="text-white text-small"
             onPress={() => {
               setPage(1);
             }}
           />
           <Button
             title="Lanjut"
-            className="bg-primary ml-0.5  my-5"
-            titleClassName="text-white"
+            py='px-4'
+            className="bg-primary mr-4 my-5"
+            titleClassName="text-white text-small"
             onPress={() => {
               if (
                 perusahaan?.trim()?.length === 0 ||
@@ -366,16 +370,18 @@ export default function Register() {
         <View className='flex-row items-center mb-5'>
           <Button
             title="Kembali"
-            className="bg-primary ml-1 mr-0.5 my-5"
-            titleClassName="text-white"
+            py='px-4'
+            className="bg-primary mr-4 my-5"
+            titleClassName="text-white text-small"
             onPress={() => {
               setPage(2);
             }}
           />
           <Button
             title="Lanjut"
-            className="bg-primary ml-0.5  my-5"
-            titleClassName="text-white"
+            py='px-4'
+            className="bg-primary mr-4 my-5"
+            titleClassName="text-white text-small"
             onPress={() => {
               if (
                 ahliWaris?.trim()?.length === 0 ||
@@ -434,16 +440,18 @@ export default function Register() {
         <View className='flex-row items-center mb-5'>
           <Button
             title="Kembali"
-            className="bg-primary ml-1 mr-0.5 my-5"
-            titleClassName="text-white"
+            py='px-4'
+            className="bg-primary mr-4 my-5"
+            titleClassName="text-white text-small"
             onPress={() => {
               setPage(3);
             }}
           />
           <Button
             title="Lanjut"
-            className="bg-primary ml-0.5  my-5"
-            titleClassName="text-white"
+            py='px-4'
+            className="bg-primary mr-4 my-5"
+            titleClassName="text-white text-small"
             onPress={() => {
               if (
                 bank?.trim()?.length === 0 ||
@@ -569,18 +577,20 @@ export default function Register() {
           <ActivityIndicator />
         ) : (
           <View className='flex-row items-center mb-5'>
-          <Button
-            title="Kembali"
-            className="bg-primary  ml-1 mr-0.5 my-5"
-              titleClassName="text-white"
+            <Button
+              title="Kembali"
+              py='px-4'
+              className="bg-primary mr-4 my-5"
+              titleClassName="text-white text-small"
               onPress={() => {
                 setPage(4);
               }}
             />
             <Button
               title="Submit"
-              className="bg-primary ml-0.5  my-5"
-              titleClassName="text-white"
+              py='px-4'
+              className="bg-primary mr-4 my-5"
+              titleClassName="text-white text-small"
               onPress={() => actionSubmitRegister()}
             />
           </View>

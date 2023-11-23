@@ -8,6 +8,8 @@ interface ButtonProps {
   buttonColors?: string[];
   className?: string;
   titleClassName?: string;
+  py?:string;
+  rounded?: string;
 }
 
 export default function Button({
@@ -15,12 +17,14 @@ export default function Button({
   onPress,
   className,
   titleClassName,
+  py = 'px-16',
+  rounded = 'rounded-full'
 }: ButtonProps) {
   return (
     <TouchableOpacity
       activeOpacity={0.7}
       onPress={onPress}
-      className={`bg-white px-16 py-2 rounded-full justify-center items-center ${className}`}>
+      className={`${py} ${rounded} bg-white py-2 justify-center items-center ${className}`}>
       <DefaultText
         title={title}
         titleClassName={`text-lg font-inter-bold text-primary ${titleClassName}`}

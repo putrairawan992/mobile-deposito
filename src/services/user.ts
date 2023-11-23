@@ -366,17 +366,18 @@ export const registerPasswordPin =
           Toast.show({
             type: 'success',
             text1: 'Sukses',
-            text2: res?.data ?? `Berhasil Membuat ${route === 'PIN' ? 'PIN' : 'Password'}`,
+            text2: res?.data,
           });
+          addStorage("passwordSekarang", payload?.password);
           dispatch(setRegisterPasswordPinLoading(false));
           if (route === 'MyTabs') {
             dispatch(getDetailNasabah());
             dispatch(getUserProfile());
           }
           if (isShowDashboard) {
-            navigationRef.navigate("MyTabs");
+            setTimeout(() => navigationRef.navigate("MyTabs"), 2000);
           } else {
-            navigationRef.navigate(route as any);
+            setTimeout(() => navigationRef.navigate(route as any), 2000);
           }
         })
         .catch(err => {
