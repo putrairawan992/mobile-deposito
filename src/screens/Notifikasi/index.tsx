@@ -21,13 +21,25 @@ export default function Notifikasi() {
   }, [dispatch]);
 
   const renderItem = ({ item }: { item: any }) => {
+    console.log("renderItem", item);
+
     return (
       <TouchableOpacity
         activeOpacity={0.7}
         onPress={() => {
           dispatch(getShowReadNotificationList(item?.id));
           dispatch(getShowNotificationList());
-          navigationRef.navigate("PortofolioDetail", { no_transaksi: item?.content?.data?.kode })
+          if (item?.content?.data?.jenis === 'pinpass') {
+            navigationRef.navigate("KeamananAkun")
+          }
+          else {
+
+            if (item?.content?.data?.kode) {
+              navigationRef.navigate("PortofolioDetail", { no_transaksi: item?.content?.data?.kode })
+            } else {
+              navigationRef.navigate("Beranda")
+            }
+          }
         }}
         style={{ borderRadius: 8, borderColor: '#2A8E54', borderWidth: 1 }}
         className={`py-2 px-5 mb-1 

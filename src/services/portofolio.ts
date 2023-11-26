@@ -26,7 +26,7 @@ export const getShowPortofolio = (params = `${API}/pengajuan`) => async (dispatc
     .catch(err => {
       Toast.show({
         type: 'error',
-        text1: 'Error',
+        text1: 'Perhatian',
         text2:
           err.response?.data?.message ?? 'Terjadi error, coba lagi nanti.',
       })
@@ -59,7 +59,7 @@ export const getPembatalanPortofolioDetail = (params: any, setShowModalBatal: an
       }
       Toast.show({
         type: 'error',
-        text1: 'Error',
+        text1: 'Perhatian',
         text2:
           err.response?.data ? JSON.stringify(err.response?.data) : err.response?.data?.message ?? 'Terjadi error, coba lagi nanti.',
       })
@@ -85,7 +85,7 @@ export const getPenarikanPortofolioDetail = (params: any, setShowModalBatal: any
       }
       Toast.show({
         type: 'error',
-        text1: 'Error',
+        text1: 'Perhatian',
         text2:
           err.response?.data ? JSON.stringify(err.response?.data) : err.response?.data?.message ?? 'Terjadi error, coba lagi nanti.',
       })
@@ -108,7 +108,7 @@ export const getShowPortofolioDetail = (params: any) => async (dispatch: RootDis
     .catch(err => {
       Toast.show({
         type: 'error',
-        text1: 'Error',
+        text1: 'Perhatian',
         text2:
           err.response?.data?.message ?? 'Terjadi error, coba lagi nanti.',
       })
@@ -137,7 +137,7 @@ export const getShowBuktiBagiHasilPortofolioDetail = (params: any) => async (dis
     .catch(err => {
       Toast.show({
         type: 'error',
-        text1: 'Error',
+        text1: 'Perhatian',
         text2:
           err.response?.data?.message ?? 'Terjadi error, coba lagi nanti.',
       })

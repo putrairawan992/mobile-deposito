@@ -8,6 +8,128 @@ import { setToken } from '../store/user';
 import { navigationRef } from '../navigation/RootNavigation';
 
 
+export const getCheckEmailUser = (params?: any, setMessageCheckEmail?: any, setPage?: any, phone?: any, setMessageCheckPhone?: any) => async (dispatch: RootDispatch) => {
+  let data;
+  axios
+    .post(`${API}/cekemail`, params, {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${await getStorage('token')}`,
+      },
+    })
+    .then(res => {
+      data = res.data;
+      dispatch(getCheckPhoneUser(phone)).then((checkPhone: any) => {
+        setMessageCheckEmail(undefined);
+        setMessageCheckPhone(undefined);
+        if (res?.data?.result === false && checkPhone?.result === false) {
+          setPage(1);
+          setMessageCheckEmail(undefined);
+          setMessageCheckPhone(undefined);
+        } else {
+          if (res?.data?.result) {
+            setMessageCheckEmail(res?.data?.message);
+          }
+          if (checkPhone?.result) {
+            setMessageCheckPhone(checkPhone?.message);
+          }
+        }
+      })
+
+    }).catch(err => {
+      Toast.show({
+        type: 'error',
+        text1: 'Perhatian',
+        text2:
+          err.response?.data?.message ?? 'Terjadi error, coba lagi nanti.',
+      })
+      data = err.response?.data
+    });
+  return data;
+};
+
+export const getCheckKtpAhliWaris = (params?: any, setMessageAhliWaris ?: any, setPage?: any) => async (dispatch: RootDispatch) => {
+  let data;
+  axios
+    .get(`${API}/cekktpwaris/${params}`, {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${await getStorage('token')}`,
+      },
+    })
+    .then(res => {
+      data = res.data;
+      if (!res?.data?.result) {
+        setPage(4);
+        setMessageAhliWaris (undefined);
+      } else {
+        setMessageAhliWaris(res.data?.message);
+      }
+    }).catch(err => {
+      Toast.show({
+        type: 'error',
+        text1: 'Perhatian',
+        text2:
+          err.response?.data?.message ?? 'Terjadi error, coba lagi nanti.',
+      })
+      data = err.response?.data
+    });
+  return data;
+};
+
+export const getCheckKtpUser = (params?: any, setMessageCheckKtp?: any, setPage?: any) => async (dispatch: RootDispatch) => {
+  let data;
+  axios
+    .get(`${API}/cekktp/${params}`, {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${await getStorage('token')}`,
+      },
+    })
+    .then(res => {
+      data = res.data;
+      if (!res?.data?.result) {
+        setPage(2);
+        setMessageCheckKtp(undefined);
+      } else {
+        setMessageCheckKtp(res.data?.message);
+      }
+    }).catch(err => {
+      Toast.show({
+        type: 'error',
+        text1: 'Perhatian',
+        text2:
+          err.response?.data?.message ?? 'Terjadi error, coba lagi nanti.',
+      })
+      data = err.response?.data
+    });
+  return data;
+};
+
+export const getCheckPhoneUser = (params?: any) => async (dispatch: RootDispatch) => {
+  let data;
+  await axios
+    .get(`${API}/cekphone/${params}`, {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${await getStorage('token')}`,
+      },
+    })
+    .then(res => {
+      data = res.data;
+    }).catch(err => {
+      Toast.show({
+        type: 'error',
+        text1: 'Perhatian',
+        text2:
+          err.response?.data?.message ?? 'Terjadi error, coba lagi nanti.',
+      })
+      data = err.response?.data
+    });
+  return data;
+};
+
+
 
 export const getFaqDashboard = (params?: any) => async (dispatch: RootDispatch) => {
   dispatch(setShowFaqDashboardLoading(true));
@@ -25,7 +147,7 @@ export const getFaqDashboard = (params?: any) => async (dispatch: RootDispatch) 
       dispatch(setShowFaqDashboardLoading(false));
       Toast.show({
         type: 'error',
-        text1: 'Error',
+        text1: 'Perhatian',
         text2:
           err.response?.data?.message ?? 'Terjadi error, coba lagi nanti.',
       })
@@ -43,7 +165,7 @@ export const getSplashDashboard = () => async (dispatch: RootDispatch) => {
       dispatch(setShowSplashListLoading(false));
       Toast.show({
         type: 'error',
-        text1: 'Error',
+        text1: 'Perhatian',
         text2:
           err.response?.data?.message ?? 'Terjadi error, coba lagi nanti.',
       })
@@ -74,7 +196,7 @@ export const getShowDashboard = () => async (dispatch: RootDispatch) => {
       if (err.response?.status !== 401) {
         Toast.show({
           type: 'error',
-          text1: 'Error',
+          text1: 'Perhatian',
           text2:
             err.response?.data?.message ?? 'Terjadi error, coba lagi nanti.',
         })
@@ -99,7 +221,7 @@ export const getSkDashboard = () => async (dispatch: RootDispatch) => {
     }).catch(err => {
       Toast.show({
         type: 'error',
-        text1: 'Error',
+        text1: 'Perhatian',
         text2:
           err.response?.data?.message ?? err.response?.data ?? 'Terjadi error, coba lagi nanti.',
       })
@@ -122,7 +244,7 @@ export const getShowBankList = () => async (dispatch: RootDispatch) => {
       dispatch(setShowBankListLoading(false));
       Toast.show({
         type: 'error',
-        text1: 'Error',
+        text1: 'Perhatian',
         text2:
           err.response?.data?.message ?? err.response?.data ?? 'Terjadi error, coba lagi nanti.',
       })
@@ -147,7 +269,7 @@ export const getShowBankListProduk = () => async (dispatch: RootDispatch) => {
       dispatch(setShowBankListLoadingProduct(false));
       Toast.show({
         type: 'error',
-        text1: 'Error',
+        text1: 'Perhatian',
         text2:
           err.response?.data?.message ?? err.response?.data ?? 'Terjadi error, coba lagi nanti.',
       })
@@ -172,7 +294,7 @@ export const postShowBankList = (payload: any, setShowModalSuccess: any) => asyn
       }
       Toast.show({
         type: 'error',
-        text1: 'Error',
+        text1: 'Perhatian',
         text2:
           err.response?.data?.message ?? 'Terjadi error, coba lagi nanti.',
       })
@@ -197,7 +319,7 @@ export const defaultBankShowList = (id: any) => async (dispatch: RootDispatch) =
     .catch(err => {
       Toast.show({
         type: 'error',
-        text1: 'Error',
+        text1: 'Perhatian',
         text2:
           err.response?.data?.message ?? 'Terjadi error, coba lagi nanti.',
       });
@@ -219,7 +341,7 @@ export const getBankDetailList = (id: any) => async (dispatch: RootDispatch) => 
     .catch(err => {
       Toast.show({
         type: 'error',
-        text1: 'Error',
+        text1: 'Perhatian',
         text2:
           err.response?.data?.message ?? 'Terjadi error, coba lagi nanti.',
       });
@@ -241,7 +363,7 @@ export const deleteBankDetailList = (id: any, setShowModalSuccess: any, payload:
     .catch(err => {
       Toast.show({
         type: 'error',
-        text1: 'Error',
+        text1: 'Perhatian',
         text2:
           err.response?.data?.message ?? 'Terjadi error, coba lagi nanti.',
       });

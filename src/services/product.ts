@@ -32,7 +32,7 @@ export const getShowPromo = () => async (dispatch: RootDispatch) => {
       }
       Toast.show({
         type: 'error',
-        text1: 'Error',
+        text1: 'Perhatian',
         text2:
           err.response?.data?.message ?? 'Terjadi error, coba lagi nanti.',
       })
@@ -57,7 +57,7 @@ export const getShowProductNasabah = (params?:any) => async (dispatch: RootDispa
     .catch(err => {
       Toast.show({
         type: 'error',
-        text1: 'Error',
+        text1: 'Perhatian',
         text2:
           err.response?.data?.message ?? 'Terjadi error, coba lagi nanti.',
       })
@@ -87,7 +87,7 @@ export const getShowProductNasabahDetail = (id: any) => async (dispatch: RootDis
     .catch(err => {
       Toast.show({
         type: 'error',
-        text1: 'Error',
+        text1: 'Perhatian',
         text2:
           err.response?.data?.message ?? 'Terjadi error, coba lagi nanti.',
       })
@@ -114,7 +114,7 @@ export const postAjukanDeposito =
         .then((res) => {
           Toast.show({
             type: 'success',
-            text1: 'Success!',
+            text1: 'Sukses',
             text2: res?.data?.message,
           });
           setLoadings(false);
@@ -130,7 +130,7 @@ export const postAjukanDeposito =
           setLoadings(false);
           Toast.show({
             type: 'error',
-            text1: 'Error',
+            text1: 'Perhatian',
             text2: err.response?.data?.errors?.amount ?? err.response?.data?.message ?? 'Terjadi error, coba lagi nanti.',
           });
           if (err?.response?.status === 401) {
@@ -157,7 +157,7 @@ export const estimasiAjukanDeposito =
         .then((res) => {
           Toast.show({
             type: 'success',
-            text1: 'Success!',
+            text1: 'Sukses',
             text2: res?.data?.message,
           });
           setData(res?.data?.data);
@@ -170,7 +170,7 @@ export const estimasiAjukanDeposito =
           setLoadings(false);
           Toast.show({
             type: 'error',
-            text1: 'Error',
+            text1: 'Perhatian',
             text2: err.response?.data?.errors?.amount ?? err.response?.data?.message ?? 'Terjadi error, coba lagi nanti.',
           });
           if (err?.response?.status === 401) {

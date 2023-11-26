@@ -46,7 +46,6 @@ export default function Splash() {
   const useNasabah = useCallback(async () => {
     const exitTime = await getExitTime();
     const currentTime = new Date().getTime();
-    console.log("useNasabah");
     if (exitTime && await getStorage("phone-email")) {
       const elapsedTime = (currentTime - exitTime) / 1000;
       console.log("exitTime && await getStorage(phone-email)", elapsedTime);
@@ -98,7 +97,6 @@ export default function Splash() {
       />
     );
   };
-  console.log("logoNasabah", logoNasabah);
 
   if (loadingShow) {
     return <DefaultView statusBarColor={colors.primaryLight}>
@@ -133,10 +131,10 @@ export default function Splash() {
           autoPlayInterval={5000}
           data={showSplashDashboard}
           onSnapToItem={index => setIndex(index)}
-          renderItem={({ item }) => (
+          renderItem={({ item }: { item: { image: string } }) => (
             <Image
               style={{ width: width, height: "100%" }}
-              source={{ uri: item.image }}
+              source={{ uri: item?.image }}
               resizeMode="contain"
             />
 
@@ -154,7 +152,7 @@ export default function Splash() {
           );
         })}
       </View>
-      <View style={{ bottom: -180 }} className="items-center absolute self-center">
+      <View style={{ bottom: 40 }} className="items-center absolute self-center">
         {checkLoginLoading || showSplashListLoading ?
           <ActivityIndicator size="large" /> :
           <Button
@@ -168,26 +166,17 @@ export default function Splash() {
           titleClassName="text-white font-inter-medium"
         />
         <Gap height={15} />
-        {logoNasabah && logoNasabah.length > 0 && <Carousel
-          loop
-          width={width}
-          autoPlay={false}
-          height={width / 1.3}
-          data={logoNasabah}
-          renderItem={({ item }) => (
-            <Image
-              className="w-[200] h-[50] self-center"
-              source={{ uri: item.image }}
-              resizeMode="contain"
-            />
-          )}
-        />}
+        <View className='flex-row content-center'>
+          {logoNasabah && logoNasabah?.length > 0 &&
+            logoNasabah?.map((list: any) => {
+              return <Image
+                className="w-[100] h-[50] self-center"
+                source={{ uri: list.image }}
+                resizeMode="contain"
+              />
+            })}
+        </View>
       </View>
-      {/* <Image
-            className="w-[200] h-[50] self-center"
-            source={images.splashFooter}
-            resizeMode="contain"
-          /> */}
     </LinearGradient>
   </DefaultView>
   );

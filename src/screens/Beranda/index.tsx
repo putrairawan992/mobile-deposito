@@ -19,7 +19,6 @@ import { colors } from '../../utils/colors';
 import Gap from '../../components/Gap';
 import LinearGradient from 'react-native-linear-gradient';
 import Carousel from 'react-native-reanimated-carousel';
-import CarouselSnap from 'react-native-snap-carousel';
 import Button from '../../components/Button';
 import { navigationRef } from '../../navigation/RootNavigation';
 import { useDispatch, useSelector } from 'react-redux';
@@ -27,13 +26,12 @@ import { getShowPromo } from '../../services/product';
 import { RootDispatch, RootState } from '../../store';
 import { getShowDashboard } from '../../services/dasbhoard';
 import { formatRupiah } from '../../utils/currency';
-import {  getDetailNasabah, getUserProfile } from '../../services/user';
-import { getStorage, } from '../../utils/storage';
-import { useFocusEffect } from '@react-navigation/native';
+import { checkLogin, getDetailNasabah, getUserProfile } from '../../services/user';
+import { addStorage, getExitTime, getStorage, saveExitTime, } from '../../utils/storage';
+import { useFocusEffect, useIsFocused } from '@react-navigation/native';
 import ModalAlert from '../../components/ModalAlert';
 import { ScrollView } from 'react-native-gesture-handler';
-import  { Pagination, PaginationProps } from 'react-native-swiper-flatlist';
-import {  WIDTH } from '../../utils/constant';
+import { WIDTH } from '../../utils/constant';
 import { getShowArtikelList } from '../../services/artikel';
 import moment from 'moment';
 import { getShowNotificationList } from '../../services/notification';
@@ -48,7 +46,7 @@ export default function Beranda() {
   const { showDashboard, showDashboardLoading } = useSelector(
     (state: RootState) => state.dashboardReducer,
   );
-  const { detailNasabah } = useSelector(
+  const { detailNasabah, checkLoginLoading } = useSelector(
     (state: RootState) => state.userReducer,
   );
   const { showArtikelListData } = useSelector(
@@ -61,6 +59,7 @@ export default function Beranda() {
   const [updateProfile, setUpdateProfile] = useState<boolean>(false);
   const [dtNasabah, setDtNasabah] = useState<any>();
   const [notifCount, setNotifCount] = useState<number>(0);
+  const [isShowAlertAuth, setIsShowAlertAuth] = useState<boolean>(false);
   const dispatch = useDispatch<RootDispatch>();
 
   useEffect(() => {
@@ -78,7 +77,38 @@ export default function Beranda() {
     return true;
   };
 
-  console.log("showNotificationList", showNotificationList?.data);
+
+  const handleExit = async () => {
+    await saveExitTime();
+  };
+
+
+  useEffect(() => {
+    const subscription = AppState.addEventListener('change', async nextAppState => {
+      if (nextAppState === 'background') {
+        await handleExit();
+      }
+    });
+    return () => {
+      subscription.remove();
+    };
+  }, [useIsFocused]);
+
+
+  const useNasabah = useCallback(async () => {
+    const exitTime = await getExitTime();
+    const currentTime = new Date().getTime();
+    if (exitTime && await getStorage("phone-email")) {
+      const elapsedTime = (currentTime - exitTime) / 1000;
+      if (elapsedTime > 30) {
+        setIsShowAlertAuth(true);
+      }
+    }
+  }, [useIsFocused]);
+
+  useFocusEffect(useCallback(() => {
+    useNasabah();
+  }, [useIsFocused]));
 
 
   useFocusEffect(
@@ -118,7 +148,7 @@ export default function Beranda() {
     }, [detailNasabah, showNotificationList]));
 
   return (
-    showDashboardLoading ? <ActivityIndicator size="large" style={{ position: 'absolute', top: 150, left: 0, right: 0 }} /> :
+    showDashboardLoading || checkLoginLoading ? <ActivityIndicator size="large" style={{ position: 'absolute', top: 150, left: 0, right: 0 }} /> :
       <DefaultView>
         <View className="flex-row items-center px-5 py-2 mb-2">
           <Image
@@ -227,7 +257,7 @@ export default function Beranda() {
                 data={showPromo}
                 // scrollAnimationDuration={5000}
                 onSnapToItem={index => setIndex(index)}
-                renderItem={({ item }) => (
+                renderItem={({ item }: { item: { image: string } }) => (
                   <View style={styles.child}>
                     <Image
                       style={{ width: WIDTH / 1.1, height: "100%" }}
@@ -392,6 +422,22 @@ export default function Beranda() {
 
           <Gap height={50} />
         </ScrollView>
+        <ModalAlert
+          show={isShowAlertAuth}
+          buttonOne={false}
+          type='warning'
+          hide={async () => {
+            setIsShowAlertAuth(false);
+            addStorage("detected-exitTime", "okeTrue");
+            dispatch(checkLogin(await getStorage("phone-email")))
+          }}
+          title={'Sesi Anda telah berakhir, silahkan login kembali'}
+          onConfirm={async () => {
+            setIsShowAlertAuth(false);
+            addStorage("detected-exitTime", "okeTrue");
+            dispatch(checkLogin(await getStorage("phone-email")))
+          }}
+        />
         <ModalAlert show={updateProfile}
           hide={() =>
             setUpdateProfile(false)

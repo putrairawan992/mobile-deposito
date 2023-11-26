@@ -38,7 +38,6 @@ export const checkLogin =
           dispatch(setCheckLogin(res?.data?.data));
           dispatch(setCheckLoginLoading(false));
           dispatch(setPhoneEmail(emailOrPhone));
-          addStorage('typeLogin', res?.data?.data === 'password' ? 'Password' : 'OTP');
           navigationRef.navigate(res?.data?.data === 'password' ? 'Password' : 'OTP', {
             emailOrPhone,
             isResetPassword: false
@@ -49,7 +48,7 @@ export const checkLogin =
 
           Toast.show({
             type: 'error',
-            text1: 'Error',
+            text1: 'Perhatian',
             text2:
               err.response?.data ?? err.response?.data?.message ?? 'Terjadi error, coba lagi nanti.',
           });
@@ -98,7 +97,7 @@ export const login =
           dispatch(setLoginLoading(false))
           Toast.show({
             type: 'error',
-            text1: 'Error',
+            text1: 'Perhatian',
             text2:
               err.response?.data?.message ?? err.response?.data ?? 'Terjadi error, coba lagi nanti.',
           });
@@ -116,13 +115,13 @@ export const getReqOtp = () => async (dispatch: RootDispatch) => {
     .then(res => {
       Toast.show({
         type: 'success',
-        text1: 'Success',
+        text1: 'Sukses',
         text2: 'Req OTP.',
       });
     })
     .catch(err => Toast.show({
       type: 'error',
-      text1: 'Error',
+      text1: 'Perhatian',
       text2:
         err.response?.data?.message ?? 'Terjadi error, coba lagi nanti.',
     }));
@@ -149,7 +148,7 @@ export const getDetailNasabah = () => async (dispatch: RootDispatch) => {
       if (err?.response?.status !== 401) {
         Toast.show({
           type: 'error',
-          text1: 'Error',
+          text1: 'Perhatian',
           text2:
             err.response?.data?.message ?? 'Terjadi error, coba lagi nanti.',
         })
@@ -180,7 +179,7 @@ export const getLogoNasabah = () => async (dispatch: RootDispatch) => {
       if (err?.response?.status !== 401) {
         Toast.show({
           type: 'error',
-          text1: 'Error',
+          text1: 'Perhatian',
           text2:
             err.response?.data?.message ?? 'Terjadi error, coba lagi nanti.',
         })
@@ -206,7 +205,7 @@ export const getUserProfile = () => async (dispatch: RootDispatch) => {
       if (err?.response?.status !== 401) {
         Toast.show({
           type: 'error',
-          text1: 'Error',
+          text1: 'Perhatian',
           text2:
             err.response?.data?.message ?? 'Terjadi error, coba lagi nanti.',
         })
@@ -249,7 +248,7 @@ export const updateNasabah =
           dispatch(setUpdateRegisterLoading(false));
           Toast.show({
             type: 'success',
-            text1: 'Success',
+            text1: 'Sukses',
             text2: 'update akun.',
           });
           setShowModalSuccess(true);
@@ -260,7 +259,7 @@ export const updateNasabah =
           dispatch(setUpdateRegisterLoading(false));
           Toast.show({
             type: 'error',
-            text1: 'Error',
+            text1: 'Perhatian',
             text2:
               JSON.stringify(err.response?.data?.message) ?? 'Terjadi error, coba lagi nanti.',
           });
@@ -289,7 +288,7 @@ export const uploadBuktiPengajuan =
         .then(() => {
           Toast.show({
             type: 'success',
-            text1: 'Success',
+            text1: 'Sukses',
             text2: 'Upload Bukti Berhasil',
           });
           navigationRef.navigate('Portofolio');
@@ -298,7 +297,7 @@ export const uploadBuktiPengajuan =
           if (err?.response?.status !== 401) {
             Toast.show({
               type: 'error',
-              text1: 'Error' + err?.response?.data?.message,
+              text1: 'Perhatian' + err?.response?.data?.message,
               text2:
                 JSON.stringify(err.response?.data) ?? 'Terjadi error, coba lagi nanti.',
             });
@@ -329,8 +328,8 @@ export const registerNasabah =
         .then((res) => {
           Toast.show({
             type: 'success',
-            text1: 'Success',
-            text2: 'mendaftarkan akun.',
+            text1: 'Sukses',
+            text2: 'Mendaftarkan akun',
           });
           if (store.getState().userReducer?.checkLogin === 'password') {
             navigationRef.navigate('MyTabs');
@@ -341,7 +340,7 @@ export const registerNasabah =
         .catch(err => {
           Toast.show({
             type: 'error',
-            text1: email,
+            text1: 'Gagal',
             text2: JSON.stringify(err.response?.data) ?? 'Terjadi error, coba lagi nanti.',
           });
         }).finally(() => dispatch(setRegisterLoading(false)));
@@ -386,7 +385,7 @@ export const registerPasswordPin =
           dispatch(setRegisterPasswordPinLoading(false));
           Toast.show({
             type: 'error',
-            text1: 'Error',
+            text1: 'Perhatian',
             text2:
               err.response?.data ?? err.response?.data?.message ?? 'Terjadi error, coba lagi nanti.',
           });
@@ -415,7 +414,7 @@ export const forgotPasswordPin =
         .catch(err => {
           Toast.show({
             type: 'error',
-            text1: 'Error',
+            text1: 'Perhatian',
             text2:
               err.response?.data?.message ?? 'Terjadi error, coba lagi nanti.',
           });

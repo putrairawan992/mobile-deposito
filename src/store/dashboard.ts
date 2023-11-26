@@ -14,7 +14,9 @@ interface InitialState {
     showSkDashboard: any,
     showSkDashboardLoading: boolean,
     showFaqDashboard: any,
-    showFaqDashboardLoading: boolean
+    showFaqDashboardLoading: boolean,
+    showDashboardCekEmail:any,
+    showDashboardCekEmailLoading: boolean,
 }
 
 const initialState: InitialState = {
@@ -30,7 +32,9 @@ const initialState: InitialState = {
     showSkDashboardLoading: false,
     showSkDashboard: null,
     showFaqDashboard: null,
-    showFaqDashboardLoading: false
+    showFaqDashboardLoading: false,
+    showDashboardCekEmail:null,
+    showDashboardCekEmailLoading: false,
 };
 
 export const dashboardSlice = createSlice({

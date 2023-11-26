@@ -26,7 +26,7 @@ export const getShowArtikelList = () => async (dispatch: RootDispatch) => {
             }
             Toast.show({
                 type: 'error',
-                text1: 'Error',
+                text1: 'Perhatian',
                 text2:
                     err.response?.data?.message ?? err.response?.data ?? 'Terjadi error, coba lagi nanti.',
             })
@@ -54,7 +54,7 @@ export const getShowArtikelDetaill = (id:any) => async (dispatch: RootDispatch) 
             }
             Toast.show({
                 type: 'error',
-                text1: 'Error',
+                text1: 'Perhatian',
                 text2:
                     err.response?.data?.message ?? err.response?.data ?? 'Terjadi error, coba lagi nanti.',
             })

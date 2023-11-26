@@ -161,7 +161,7 @@ export default function PortofolioDetail({ route }: RootStackScreenProps<'Portof
       if (result?.assets[0]?.fileSize as any > MAX_FILE_SIZE) {
         return Toast.show({
           type: 'error',
-          text1: 'Error',
+          text1: 'Perhatian',
           text2: 'Max Upload 500kb',
         });
       } else {
@@ -384,7 +384,7 @@ export default function PortofolioDetail({ route }: RootStackScreenProps<'Portof
                 onPress={() => onSave()}
                 activeOpacity={0.7}
                 className="self-center flex bg-primary px-3 py-2 rounded-full">
-                <DefaultText title="Submit Bukti Transfer" titleClassName="text-white" />
+                <DefaultText title="Simpan Bukti Transfer" titleClassName="text-white" />
               </TouchableOpacity>}
             <Gap height={10} />
             {isShowImageProsesPenarikan ?

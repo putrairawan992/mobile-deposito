@@ -25,7 +25,7 @@ export const getShowBankListData = (params?: any) => async (dispatch: RootDispat
             }
             Toast.show({
                 type: 'error',
-                text1: 'Error',
+                text1: 'Perhatian',
                 text2:
                     err.response?.data?.message ?? err.response?.data ?? 'Terjadi error, coba lagi nanti.',
             })

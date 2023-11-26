@@ -17,7 +17,7 @@ import { getDetailNasabah, updateNasabah } from '../../services/user';
 import { MAX_FILE_SIZE, SYARIAH_URL, penghasilanValidation, statusNikahValidation } from '../../utils/constant';
 import ModalStatusPernikahan from '../../components/ModalStatusPernikahan';
 import ModalPenghasilan from '../../components/ModalPenghasilan';
-import { Asset, launchImageLibrary } from 'react-native-image-picker';
+import { Asset, launchCamera, launchImageLibrary } from 'react-native-image-picker';
 import Toast from 'react-native-toast-message';
 import ModalImageSelfie from '../../components/ModalImage';
 import ModalImageAhliWaris from '../../components/ModalImage';
@@ -96,13 +96,18 @@ export default function DetailPribadiEdit({ route }: RootStackScreenProps<'Detai
     dispatch(updateNasabah(formdata, setShowModalSuccess));
   };
 
-  const onOpeGallery = async (index: number) => {
-    const result = await launchImageLibrary({ mediaType: 'photo' });
+  const onOpeGallery = async (index: number, type?: string) => {
+    let result;
+    if (type === 'selfie') {
+      result = await launchCamera({ mediaType: 'photo', maxHeight: 100, maxWidth: 100 });
+    } else {
+      result = await launchImageLibrary({ mediaType: 'photo' });
+    }
     if (result.assets) {
       if (result?.assets[0]?.fileSize as any > MAX_FILE_SIZE) {
         return Toast.show({
           type: 'error',
-          text1: 'Error',
+          text1: 'Perhatian',
           text2: 'Max Upload 500kb',
         });
       } else {
@@ -132,6 +137,7 @@ export default function DetailPribadiEdit({ route }: RootStackScreenProps<'Detai
               <TextInput
                 className="m-0 p-0 font-inter-regular"
                 value={ktp}
+                maxLength={16}
                 onChangeText={value => setKtp(value)}
                 keyboardType="number-pad"
               />
@@ -278,7 +284,7 @@ export default function DetailPribadiEdit({ route }: RootStackScreenProps<'Detai
               </TouchableOpacity> :
               <TouchableOpacity
                 className='border-[1px] border-primary rounded-md w-[200] px-2 py-2 flex-row items-center'
-                onPress={() => onOpeGallery(1)}>
+                onPress={() => onOpeGallery(1, "selfie")}>
                 <DefaultText
                   title={'Upload Image'}
                   titleClassName="m-0 p-0 font-inter-regular "
@@ -355,13 +361,13 @@ export default function DetailPribadiEdit({ route }: RootStackScreenProps<'Detai
             <DefaultText title="Setelah Edit, kamu akan merubah data diakun Deposito syariah, apakah kamu yakin ingin mengedit detail pribadi ini?" />
           </View>
           <Gap height={20} />
-          {updateRegisterLoading ? <ActivityIndicator /> : 
-          <TouchableOpacity
-            onPress={onSave}
-            activeOpacity={0.7}
-            className="bg-primary px-10 py-3 rounded-md self-center">
-            <DefaultText title="Simpan" titleClassName="text-white" />
-          </TouchableOpacity>}
+          {updateRegisterLoading ? <ActivityIndicator /> :
+            <TouchableOpacity
+              onPress={onSave}
+              activeOpacity={0.7}
+              className="bg-primary px-10 py-3 rounded-md self-center">
+              <DefaultText title="Simpan" titleClassName="text-white" />
+            </TouchableOpacity>}
         </View>
       </ScrollView>
 

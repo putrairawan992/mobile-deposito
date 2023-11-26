@@ -13,6 +13,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { checkLogin, getDetailNasabah, getReqOtp, registerPasswordPin } from '../../services/user';
 import { validatePassword, validatePasswordSekarang } from '../../utils/function';
 import { ActivityIndicator } from 'react-native';
+import Toast from 'react-native-toast-message';
 
 export default function GantiKataSandi() {
   const [showPasswordBaru, setShowPasswordBaru] = useState<boolean>(false);
@@ -53,7 +54,11 @@ export default function GantiKataSandi() {
       passwordBaru.trim().length === 0 ||
       passwordConfirm.trim().length === 0
     ) {
-      return showToast('Data belum lengkap');
+      return Toast.show({
+        type: 'error',
+        text1: 'Perhatian',
+        text2: 'Data belum lengkap',
+      });
     }
     if (!isValid) {
       return;
@@ -62,7 +67,18 @@ export default function GantiKataSandi() {
       return;
     }
     if (passwordBaru !== passwordConfirm) {
-      return showToast('Password tidak cocok');
+      return Toast.show({
+        type: 'error',
+        text1: 'Perhatian',
+        text2: 'Password tidak cocok',
+      });
+    }
+    if (otp.length < 6) {
+      return Toast.show({
+        type: 'error',
+        text1: 'Perhatian',
+        text2: 'Masukkan kode OTP',
+      });
     }
     dispatch(registerPasswordPin({ password: passwordConfirm, otp: otp }, 'Profile', false))
   };

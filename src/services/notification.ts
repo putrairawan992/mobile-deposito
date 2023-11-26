@@ -27,7 +27,7 @@ export const getShowNotificationList = () => async (dispatch: RootDispatch) => {
             }
             Toast.show({
                 type: 'error',
-                text1: 'Error',
+                text1: 'Perhatian',
                 text2:
                     err.response?.data?.message ?? err.response?.data ?? 'Terjadi error, coba lagi nanti.',
             })
@@ -55,7 +55,7 @@ export const getShowReadNotificationList = (id:any) => async (dispatch: RootDisp
             }
             Toast.show({
                 type: 'error',
-                text1: 'Error',
+                text1: 'Perhatian',
                 text2:
                     err.response?.data?.message ?? err.response?.data ?? 'Terjadi error, coba lagi nanti.',
             })

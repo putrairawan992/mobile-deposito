@@ -14,7 +14,8 @@ import { getShowProductNasabah } from '../../services/product';
 import { formatRupiah } from '../../utils/currency';
 import { useFocusEffect, useIsFocused } from '@react-navigation/native';
 import { checkLogin, getDetailNasabah } from '../../services/user';
-import { getExitTime, getStorage, saveExitTime } from '../../utils/storage';
+import { addStorage, getExitTime, getStorage, saveExitTime } from '../../utils/storage';
+import ModalAlert from '../../components/ModalAlert';
 
 const Item = (data: any) => {
   const noProduct = data?.data?.item?.no_produk;
@@ -124,8 +125,12 @@ export default function Produk() {
   const [hasilSetara, setHasilSetara] = useState<string | undefined>(undefined);
   const [tenor, setTenor] = useState<string | undefined>(undefined);
   const { showProduct, showProcutLoading } = useSelector((state: RootState) => state.productReducer);
+  const { checkLoginLoading } = useSelector(
+    (state: RootState) => state.userReducer,
+  );
   const [searchName, setSearchName] = useState<string | undefined>(undefined);
   const dispatch = useDispatch<RootDispatch>();
+  const [isShowAlertAuth, setIsShowAlertAuth] = useState<boolean>(false);
 
   useEffect(() => {
     dispatch(getDetailNasabah());
@@ -150,7 +155,45 @@ export default function Produk() {
     }, [dispatch, hasilSetara, tenor, searchName]),
   );
 
-  return (
+
+  const handleExit = async () => {
+    await saveExitTime();
+  };
+
+
+  useEffect(() => {
+    const subscription = AppState.addEventListener('change', async nextAppState => {
+      if (nextAppState === 'background') {
+        await handleExit();
+      }
+    });
+    return () => {
+      subscription.remove();
+    };
+  }, [useIsFocused]);
+
+
+
+
+  const useNasabah = useCallback(async () => {
+    const exitTime = await getExitTime();
+    const currentTime = new Date().getTime();
+    if (exitTime && await getStorage("phone-email")) {
+      const elapsedTime = (currentTime - exitTime) / 1000;
+      if (elapsedTime > 30) {
+        setIsShowAlertAuth(true);
+      }
+    }
+  }, [useIsFocused]);
+
+  useFocusEffect(useCallback(() => {
+    setTenor(undefined);
+    setHasilSetara(undefined);
+    useNasabah();
+  }, [useIsFocused]));
+
+
+  return ( checkLoginLoading ? <ActivityIndicator size="large" style={{ position: 'absolute', top: 150, left: 0, right: 0 }} /> :
     <DefaultView>
       <DefaultHeader title="Produk Deposito" />
       <View className="flex-row mx-3 p-1">
@@ -354,6 +397,22 @@ export default function Produk() {
           renderItem={e => <Item data={e} />}
           contentContainerStyle={styles.container}
         />}
+         <ModalAlert
+          show={isShowAlertAuth}
+          type='warning'
+          buttonOne={false}
+          hide={async () => {
+            setIsShowAlertAuth(false);
+            addStorage("detected-exitTime", "okeTrue");
+            dispatch(checkLogin(await getStorage("phone-email")))
+          }}
+          title={'Sesi Anda telah berakhir, silahkan login kembali'}
+          onConfirm={async () => {
+            setIsShowAlertAuth(false);
+            addStorage("detected-exitTime", "okeTrue");
+            dispatch(checkLogin(await getStorage("phone-email")))
+          }}
+        />
     </DefaultView>
   );
 }

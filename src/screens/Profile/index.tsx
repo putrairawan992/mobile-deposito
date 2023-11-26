@@ -1,5 +1,5 @@
-import { AppState, Linking, ScrollView, TouchableOpacity, View } from 'react-native';
-import React, { useCallback, useEffect } from 'react';
+import { ActivityIndicator, AppState, Linking, ScrollView, TouchableOpacity, View } from 'react-native';
+import React, { useCallback, useEffect, useState } from 'react';
 import DefaultView from '../../components/DefaultView';
 import DefaultText from '../../components/DefaultText';
 import DefaultHeader from '../../components/DefaultHeader';
@@ -9,33 +9,80 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { navigationRef } from '../../navigation/RootNavigation';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootDispatch, RootState } from '../../store';
-import { getDetailNasabah, logout } from '../../services/user';
+import { checkLogin, getDetailNasabah, logout } from '../../services/user';
+import { addStorage, getExitTime, getStorage, saveExitTime } from '../../utils/storage';
+import { useFocusEffect, useIsFocused } from '@react-navigation/native';
+import ModalAlert from '../../components/ModalAlert';
 
 export default function Profile() {
   const { detailNasabah } = useSelector(
     (state: RootState) => state.userReducer,
   );
   const dispatch = useDispatch<RootDispatch>();
-
+  const { checkLoginLoading } = useSelector(
+    (state: RootState) => state.userReducer,
+  );
+  const [isShowAlertAuth, setIsShowAlertAuth] = useState<boolean>(false);
 
   useEffect(() => {
     dispatch(getDetailNasabah());
-  }, [dispatch]);
+  }, [useIsFocused]);
 
-  function maskEmail(email: string): string {
-    const [username, domain] = email?.split('@');
-    const maskedUsername = username?.substring(0, 3) + '*'.repeat(username?.length - 3);
-    const maskedDomain = domain?.substring(0, 2) + '*'.repeat(domain?.length - 2);
-    return `${maskedUsername}@${maskedDomain}.com`;
+  function maskEmail(email: string) {
+    let skipFirstChars = 3;
+    let firstThreeChar = email?.slice(0, skipFirstChars);
+
+    let domainIndexStart = email?.lastIndexOf("@");
+    let maskedEmail = email?.slice(skipFirstChars, domainIndexStart)
+    maskedEmail = maskedEmail?.replace(/./g, '*')
+    let domain = email?.slice(domainIndexStart, email?.length);
+
+    return firstThreeChar.concat(maskedEmail).concat(domain);
   }
 
-  function maskPhoneNumber(phoneNumber: string): string {
-    const maskedNumber = phoneNumber.substring(0, 2) + '*'.repeat(phoneNumber.length - 6) + phoneNumber.substring(phoneNumber.length - 4);
-    return maskedNumber;
+  function maskPhoneNumber(phoneNumber: string) {
+    const maskedNumber = phoneNumber?.substring(0, 4);
+    return maskedNumber + '****' + phoneNumber?.substring(8, 20);
   }
 
 
-  return (
+  const useNasabah = useCallback(async () => {
+    const exitTime = await getExitTime();
+    const currentTime = new Date().getTime();
+    if (exitTime && await getStorage("phone-email")) {
+      const elapsedTime = (currentTime - exitTime) / 1000;
+      if (elapsedTime > 30) {
+       setIsShowAlertAuth(true);
+      }
+    }
+  }, [useIsFocused]);
+
+  useFocusEffect(useCallback(() => {
+    useNasabah();
+  }, [useIsFocused]));
+
+
+
+  const handleExit = async () => {
+    await saveExitTime();
+  };
+
+
+  useEffect(() => {
+    const subscription = AppState.addEventListener('change', async nextAppState => {
+      if (nextAppState === 'background') {
+        await handleExit();
+      }
+    });
+    return () => {
+      subscription.remove();
+    };
+  }, [useIsFocused]);
+
+
+
+
+  return (checkLoginLoading ? <ActivityIndicator size="large" style={{ position: 'absolute', top: 150, left: 0, right: 0 }} /> :
     <DefaultView>
       <DefaultHeader
         title="Profil"
@@ -58,10 +105,10 @@ export default function Profile() {
           />
           <Gap height={5} />
           <DefaultText
-            title={maskEmail(detailNasabah?.email)}
+            title={detailNasabah?.email && maskEmail(detailNasabah?.email)}
           />
           <Gap height={5} />
-          <DefaultText title={maskPhoneNumber(detailNasabah?.phone)} />
+          <DefaultText title={detailNasabah?.phone && maskPhoneNumber(detailNasabah?.phone)} />
         </View>
       </View>
 
@@ -166,6 +213,22 @@ export default function Profile() {
         </TouchableOpacity>
         <Gap height={30} />
       </ScrollView>
+      <ModalAlert
+        type='warning'
+        buttonOne={false}
+        show={isShowAlertAuth}
+        hide={async () => {
+          setIsShowAlertAuth(false);
+          addStorage("detected-exitTime", "okeTrue");
+          dispatch(checkLogin(await getStorage("phone-email")))
+        }}
+        title={'Sesi Anda telah berakhir, silahkan login kembali'}
+        onConfirm={async () => {
+          setIsShowAlertAuth(false);
+          addStorage("detected-exitTime", "okeTrue");
+          dispatch(checkLogin(await getStorage("phone-email")))
+        }}
+      />
     </DefaultView>
   );
 }

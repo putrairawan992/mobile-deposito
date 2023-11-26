@@ -87,7 +87,7 @@ export default function BuatPassword({
           {!isValid && (
             <View style={styles.errorContainer}>
               <Text style={styles.errorText}>
-                Password harus terdiri dari maximal 8 karakter, memiliki minimal 1 huruf kecil,
+                Password harus terdiri dari minimal 8 karakter, memiliki minimal 1 huruf kecil,
                 1 huruf besar, 1 angka, dan 1 tanda baca.
               </Text>
             </View>
@@ -115,12 +115,14 @@ export default function BuatPassword({
           />
         </View>
       </ScrollView>
-      {registerPasswordPinLoading ? <ActivityIndicator size={"large"} /> : <Button
-        title="Lanjut"
-        className="bg-primary mx-10 my-5"
-        titleClassName="text-white"
-        onPress={onLanjut}
-      />}
+      {registerPasswordPinLoading ? <ActivityIndicator size={"large"} /> :
+        <Button
+          disabled={!password || !confirmPassword}
+          title="Lanjut"
+          className="bg-primary mx-10 my-5"
+          titleClassName="text-white"
+          onPress={onLanjut}
+        />}
     </DefaultView>
   );
 }

@@ -17,6 +17,7 @@ import { showToast } from '../../utils/toast';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootDispatch, RootState } from '../../store';
 import { getReqOtp, registerPasswordPin } from '../../services/user';
+import Toast from 'react-native-toast-message';
 
 export default function GantiPIN() {
   const [showPINSekarang, setShowPINSekarang] = useState<boolean>(false);
@@ -53,16 +54,32 @@ export default function GantiPIN() {
       PINBaru.trim().length === 0 ||
       PINConfirm.trim().length === 0
     ) {
-      return showToast('Data belum lengkap');
+      return Toast.show({
+        type: 'error',
+        text1: 'Perhatian',
+        text2: 'Data belum lengkap',
+      });
     }
     if (PINBaru.length < 6 || PINConfirm.length < 6) {
-      return showToast('PIN 6 angka');
+      return Toast.show({
+        type: 'error',
+        text1: 'Perhatian',
+        text2: 'PIN 6 angka',
+      });
     }
     if (PINBaru !== PINConfirm) {
-      return showToast('PIN tidak cocok');
+      return Toast.show({
+        type: 'error',
+        text1: 'Perhatian',
+        text2: 'PIN tidak cocok',
+      });
     }
     if (otp.length < 6) {
-      return showToast('Masukkan OTP');
+      return Toast.show({
+        type: 'error',
+        text1: 'Perhatian',
+        text2: 'Masukkan kode OTP',
+      });
     }
     dispatch(registerPasswordPin({ otp: otp, pin: PINConfirm }, 'Profile', false))
   };
@@ -206,7 +223,7 @@ export default function GantiPIN() {
       </ScrollView>
 
       <View className="pb-10 pt-3">
-      {registerPasswordPinLoading ? <ActivityIndicator size={"large"}/>:   <TouchableOpacity
+        {registerPasswordPinLoading ? <ActivityIndicator size={"large"} /> : <TouchableOpacity
           onPress={onSave}
           activeOpacity={0.7}
           className="bg-primary px-10 py-3 rounded-full self-center">
