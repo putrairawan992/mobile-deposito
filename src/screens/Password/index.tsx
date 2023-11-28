@@ -65,12 +65,12 @@ export default function Password({ route }: RootStackScreenProps<'Password'>) {
           marginTop: WIDTH / 5
         }}>
           <DefaultText
-            title="Masukkan Password"
+            title="Masukkan Kata Sandi"
             titleClassName="font-inter-bold text-lg"
           />
           <Gap height={10} />
           <Input
-            title="Password kamu"
+            title="Kata Sandi kamu"
             titleClassName="text-left"
             textInputProps={{
               secureTextEntry: !showPassword,
@@ -96,7 +96,7 @@ export default function Password({ route }: RootStackScreenProps<'Password'>) {
             }
             className="border-b-[1px] border-b-blue-400 self-start">
             <DefaultText
-              title="Lupa Password ?"
+              title="Lupa Kata Sandi ?"
               titleClassName="text-blue-400"
             />
           </TouchableOpacity>

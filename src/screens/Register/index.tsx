@@ -16,7 +16,6 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { showToast } from '../../utils/toast';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import moment from 'moment';
-import { isEmail } from '../../utils/function';
 import ModalBank from '../../components/ModalBank';
 import { launchImageLibrary, Asset, launchCamera } from 'react-native-image-picker';
 import { useDispatch, useSelector } from 'react-redux';
@@ -30,7 +29,7 @@ import ModalImageSelfie from '../../components/ModalImage';
 import ModalImageAhliWaris from '../../components/ModalImage';
 import ModalImage from '../../components/ModalImage';
 import Toast from 'react-native-toast-message';
-import { getCheckEmailUser, getCheckKtpAhliWaris, getCheckKtpUser } from '../../services/dasbhoard';
+import { getCheckEmailUser, getCheckKtpUser } from '../../services/dasbhoard';
 
 export default function Register() {
   const { registerLoading, detailNasabah } = useSelector(
@@ -252,7 +251,7 @@ export default function Register() {
               }
 
               if (ktp?.trim()?.length !== 16) {
-                return showToast('No KTP tidak valid, 16 characters');
+                return showToast('No KTP tidak valid, 16 character');
               }
               dispatch(getCheckKtpUser(ktp, setMessageCheckKtp, setPage))
             }}
@@ -459,19 +458,16 @@ export default function Register() {
               !hubunganAhliWaris
             }
             titleClassName="text-white text-small"
-            onPress={() => {
-              if (
-                ahliWaris?.trim()?.length === 0 ||
-                ahliWarisKtp?.trim()?.length === 0 ||
-                ahliWarisPhone?.trim()?.length === 0 ||
-                hubunganAhliWaris?.trim()?.length === 0
-              ) {
-                return showToast('Data belum lengkap');
+            onPress={async () => {
+              if (ahliWarisKtp?.trim()?.length !== 16) {
+                return showToast('NIK KTP ahli waris tidak valid, 16 character');
               }
-              dispatch(getCheckKtpAhliWaris(ahliWarisKtp, setMessageAhliWaris, setPage))
-              // if (ahliWarisKtp.trim().length !== 16) {
-              //   return showToast('No KTP tidak valid');
-              // }
+              if (ktp !== ahliWarisKtp) {
+                setPage(4);
+                setMessageAhliWaris('');
+              } else {
+                setMessageAhliWaris('NIK KTP ahli waris tidak boleh sama dengan NIK KTP nasabah');
+              }
             }}
           />
         </View>
@@ -611,11 +607,11 @@ export default function Register() {
               className="border-[1px] border-neutral-400 p-1 flex-row items-center"
             >
               <DefaultText
-                title={fotoNasabah ? fotoNasabah.fileName?.slice(0, 30) + '...' : 'Upload File'}
+                title={fotoNasabah ? fotoNasabah.fileName?.slice(0, 30) + '...' : 'Ambil Foto'}
                 titleClassName="flex-1 text-xs mr-1"
                 titleProps={{ numberOfLines: 1 }}
               />
-              <Icon name="upload" onPress={() => onOpeGallery(1, "selfie")} size={22} />
+              <Icon name="camera" onPress={() => onOpeGallery(1, "selfie")} size={22} />
               <Gap width={25} />
               <Icon name="eye" onPress={() => setShowImageSelfieKtp(true)} size={22} />
               <Gap width={25} />

@@ -244,12 +244,12 @@ export const updateNasabah =
           },
         },
         )
-        .then(() => {
+        .then((res) => {
           dispatch(setUpdateRegisterLoading(false));
           Toast.show({
             type: 'success',
             text1: 'Sukses',
-            text2: 'update akun.',
+            text2: res?.data?.message,
           });
           setShowModalSuccess(true);
           dispatch(getDetailNasabah());

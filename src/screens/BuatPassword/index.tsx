@@ -31,7 +31,7 @@ export default function BuatPassword({
   const isShowDashboard = route.params?.isShowDashboard;
 
   const handleBackPress = (): boolean => {
-    ToastAndroid.show('Tidak Bisa Kembali Selesaikan Isi Password', ToastAndroid.SHORT);
+    ToastAndroid.show('Tidak Bisa Kembali Selesaikan Isi Kata Sandi', ToastAndroid.SHORT);
     return true;
   };
 
@@ -44,10 +44,10 @@ export default function BuatPassword({
 
   const onLanjut = () => {
     if (password.trim().length === 0 || confirmPassword.trim().length === 0) {
-      return showToast('Masukkan password');
+      return showToast('Masukkan Kata Sandi');
     }
     if (password !== confirmPassword) {
-      return showToast('Password tidak cocok');
+      return showToast('Kata Sandi tidak cocok');
     }
     if (!isValid) {
       return;
@@ -60,12 +60,12 @@ export default function BuatPassword({
       <ScrollView showsVerticalScrollIndicator={false}>
         <View className="px-5 py-3">
           <DefaultText
-            title="Buat Password"
+            title="Buat Kata Sandi"
             titleClassName="font-inter-bold text-lg"
           />
           <Gap height={10} />
           <Input
-            title="Buat Password kamu"
+            title="Buat Kata Sandi kamu"
             titleClassName="text-center"
             textInputProps={{
               secureTextEntry: !showPassword,
@@ -78,6 +78,7 @@ export default function BuatPassword({
                 <Icon name={showPassword ? 'eye-off' : 'eye'} size={20} />
               </TouchableOpacity>
             }
+            length={20}
             value={password}
             onChangeText={value => {
               setPassword(value);
@@ -87,7 +88,7 @@ export default function BuatPassword({
           {!isValid && (
             <View style={styles.errorContainer}>
               <Text style={styles.errorText}>
-                Password harus terdiri dari minimal 8 karakter, memiliki minimal 1 huruf kecil,
+                Kata Sandi harus terdiri dari minimal 8 karakter, memiliki minimal 1 huruf kecil,
                 1 huruf besar, 1 angka, dan 1 tanda baca.
               </Text>
             </View>
@@ -95,6 +96,7 @@ export default function BuatPassword({
           <Gap height={10} />
           <Input
             title="Konfirmasi password kamu"
+            length={20}
             titleClassName="text-center"
             textInputProps={{
               secureTextEntry: !showConfirmPassword,

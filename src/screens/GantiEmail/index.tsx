@@ -119,10 +119,10 @@ export default function GantiEmail() {
 
           <View className="bg-primary-light rounded-2xl px-5 py-3 flex-row items-center">
             <View className="flex-1">
-              <DefaultText
+              {/* <DefaultText
                 title="Masukkan PIN kamu"
                 titleClassName="font-inter-semibold text-neutral-500 text-xs"
-              />
+              /> */}
               <Gap height={5} />
               <TextInput
                 className="p-0 m-0 font-inter-bold"

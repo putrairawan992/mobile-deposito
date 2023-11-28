@@ -58,10 +58,12 @@ export const getCheckKtpAhliWaris = (params?: any, setMessageAhliWaris ?: any, s
       },
     })
     .then(res => {
+      console.log("getCheckKtpAhliWaris",res?.data);
+      
       data = res.data;
-      if (!res?.data?.result) {
+      if (res?.data?.result === false) {
         setPage(4);
-        setMessageAhliWaris (undefined);
+        setMessageAhliWaris(undefined);
       } else {
         setMessageAhliWaris(res.data?.message);
       }

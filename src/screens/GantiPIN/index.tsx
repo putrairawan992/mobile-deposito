@@ -167,7 +167,7 @@ export default function GantiPIN() {
             <View className="flex-1">
               <TextInput
                 className="p-0 m-0 font-inter-bold"
-                placeholder="OTP"
+                placeholder="Masukkan kode OTP"
                 maxLength={6}
                 keyboardType='numeric'
                 value={otp}
@@ -195,6 +195,8 @@ export default function GantiPIN() {
               />
             </TouchableOpacity>}
           </View>
+          <DefaultText titleClassName='ml-2 mt-1 text-gray-600' title='Klik Kirim OTP untuk mendapatkan kode OTP' />
+
           {/* <Gap height={15} />
           <View className="bg-primary-light rounded-2xl px-5 py-3 flex-row items-center">
             <View className="flex-1">

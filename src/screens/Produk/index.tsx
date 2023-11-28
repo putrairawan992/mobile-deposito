@@ -189,6 +189,8 @@ export default function Produk() {
   useFocusEffect(useCallback(() => {
     setTenor(undefined);
     setHasilSetara(undefined);
+    setShowHasilSetara(false);
+    setShowTenor(false);
     useNasabah();
   }, [useIsFocused]));
 

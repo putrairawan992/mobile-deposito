@@ -106,7 +106,7 @@ export default function Splash() {
         }}>
         <Image
           className="w-[180] h-[120] self-center"
-          source={images.splashLogo}
+          source={images.splashLogo2}
           resizeMode="contain"
         />
       </View>

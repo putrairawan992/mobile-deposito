@@ -10,10 +10,11 @@ import ModalAlert from '../../components/ModalAlert';
 import { showToast } from '../../utils/toast';
 import { RootDispatch, RootState } from '../../store';
 import { useDispatch, useSelector } from 'react-redux';
-import { checkLogin, getDetailNasabah, getReqOtp, registerPasswordPin } from '../../services/user';
+import { checkLogin, forgotPasswordPin, getDetailNasabah, getReqOtp, registerPasswordPin } from '../../services/user';
 import { validatePassword, validatePasswordSekarang } from '../../utils/function';
 import { ActivityIndicator } from 'react-native';
 import Toast from 'react-native-toast-message';
+import { getStorage } from '../../utils/storage';
 
 export default function GantiKataSandi() {
   const [showPasswordBaru, setShowPasswordBaru] = useState<boolean>(false);
@@ -70,7 +71,7 @@ export default function GantiKataSandi() {
       return Toast.show({
         type: 'error',
         text1: 'Perhatian',
-        text2: 'Password tidak cocok',
+        text2: 'Kata Sandi tidak cocok',
       });
     }
     if (otp.length < 6) {
@@ -91,10 +92,10 @@ export default function GantiKataSandi() {
         <View className="px-5 py-3">
           <View className="bg-primary-light rounded-2xl px-5 py-3 flex-row items-center">
             <View className="flex-1">
-              <DefaultText
+              {/* <DefaultText
                 title="Kata sandi sekarang"
                 titleClassName="font-inter-semibold text-neutral-500 text-xs"
-              />
+              /> */}
               <Gap height={5} />
               <TextInput
                 className="p-0 m-0 font-inter-bold"
@@ -114,11 +115,25 @@ export default function GantiKataSandi() {
               <Icon name={showPasswordSekarang ? 'eye-off' : 'eye'} size={24} />
             </TouchableOpacity>
           </View>
+          <Gap height={5} />
+          <TouchableOpacity
+            activeOpacity={0.7}
+            onPress={async () =>
+              dispatch(
+                forgotPasswordPin({ username: await getStorage("phone-email") }, await getStorage("phone-email")),
+              )
+            }
+            className="border-b-[1px] ml-2 border-b-blue-400 self-start">
+            <DefaultText
+              title="Lupa Kata Sandi ?"
+              titleClassName="text-blue-400"
+            />
+          </TouchableOpacity>
 
           {!isValidPassword && (
             <View style={styles.errorContainer}>
               <Text style={styles.errorText}>
-                Password lama salah
+                Kata Sandi lama salah
               </Text>
             </View>
           )}
@@ -129,6 +144,7 @@ export default function GantiKataSandi() {
               <TextInput
                 className="p-0 m-0 font-inter-bold"
                 placeholder="Kata sandi baru"
+                maxLength={20}
                 value={passwordBaru}
                 onChangeText={value => {
                   setPasswordBaru(value);
@@ -147,7 +163,7 @@ export default function GantiKataSandi() {
           {!isValid && (
             <View style={styles.errorContainer}>
               <Text style={styles.errorText}>
-                Password harus terdiri dari minimal 8 karakter, memiliki minimal 1 huruf kecil,
+                Kata Sandi harus terdiri dari minimal 8 karakter, memiliki minimal 1 huruf kecil,
                 1 huruf besar, 1 angka, dan 1 tanda baca.
               </Text>
             </View>
@@ -179,7 +195,7 @@ export default function GantiKataSandi() {
             <View className="flex-1">
               <TextInput
                 className="p-0 m-0 font-inter-bold"
-                placeholder="OTP"
+                placeholder="Masukkan kode OTP"
                 maxLength={6}
                 keyboardType='numeric'
                 value={otp}
