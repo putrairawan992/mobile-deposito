@@ -130,7 +130,9 @@ export default function Beranda() {
 
   const sumNotifications = (notifications: any[]): number => {
     return notifications?.reduce((total, notification) => {
-      return total + (notification?.notifikasi === '1' ? 1 : 0);
+      console.log("notification?.notifikasi",notification?.notifikasi);
+      
+      return total + (notification?.notifikasi !== '0' ? 1 : 0);
     }, 0);
   };
 
@@ -139,6 +141,7 @@ export default function Beranda() {
     dispatch(getShowNotificationList());
     dispatch(getDetailNasabah());
   }, [dispatch]))
+console.log("showNotificationList?.data",showNotificationList?.data);
 
   useFocusEffect(
     useCallback(() => {

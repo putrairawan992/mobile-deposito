@@ -60,7 +60,7 @@ export default function KeamananAkun() {
           </TouchableOpacity>
           <Gap height={15} />
           <TouchableOpacity
-            onPress={() => {}}
+            onPress={() => {navigationRef.navigate('ChangePhoneNumber')}}
             activeOpacity={0.7}
             className="bg-primary-light rounded-2xl px-5 py-3 flex-row items-center">
             <View className="flex-1">
@@ -74,7 +74,7 @@ export default function KeamananAkun() {
                 titleClassName="font-inter-bold"
               />
             </View>
-            {/* <Icon name="chevron-right" size={30} /> */}
+            <Icon name="chevron-right" size={30} />
           </TouchableOpacity>
           <Gap height={15} />
           <TouchableOpacity

@@ -47,7 +47,7 @@ export default function Password({ route }: RootStackScreenProps<'Password'>) {
 
   const onLanjut = () => {
     if (password.trim().length === 0) {
-      return showToast('Masukkan password');
+      return showToast('Masukkan kata sandi');
     }
     dispatch(login(emailOrPhone, password, false));
   };

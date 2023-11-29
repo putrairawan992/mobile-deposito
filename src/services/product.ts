@@ -23,19 +23,17 @@ export const getShowPromo = () => async (dispatch: RootDispatch) => {
       dispatch(showPromoLoading(false));
     })
     .catch(err => {
-      console.log("err", err);
-
       if (err?.response?.status === 401) {
         removeStorage('token');
         dispatch(setToken(null));
         navigationRef.navigate('Login');
       }
-      Toast.show({
-        type: 'error',
-        text1: 'Perhatian',
-        text2:
-          err.response?.data?.message ?? 'Terjadi error, coba lagi nanti.',
-      })
+      // Toast.show({
+      //   type: 'error',
+      //   text1: 'Perhatian',
+      //   text2:
+      //     err.response?.data?.message ?? 'Terjadi error, coba lagi nanti.',
+      // })
       dispatch(showPromoLoading(false));
     });
 

@@ -95,7 +95,7 @@ export default function BuatPassword({
           )}
           <Gap height={10} />
           <Input
-            title="Konfirmasi password kamu"
+            title="Konfirmasi kata sandi kamu"
             length={20}
             titleClassName="text-center"
             textInputProps={{

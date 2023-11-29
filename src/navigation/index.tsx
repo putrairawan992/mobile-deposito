@@ -40,6 +40,7 @@ import BuatPassword from '../screens/BuatPassword';
 import Password from '../screens/Password';
 import ListChatProduct from '../screens/Chat/ListChatProduct';
 import BlogDetail from '../screens/BlogDetail';
+import ChangePhoneNumber from '../screens/ChangePhoneNumber';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 const Tab = createBottomTabNavigator();
@@ -81,6 +82,7 @@ function StackNavigator() {
       <Stack.Screen component={FAQ} name="FAQ" />
       <Stack.Screen component={GantiPIN} name="GantiPIN" />
       <Stack.Screen component={GantiEmail} name="GantiEmail" />
+      <Stack.Screen component={ChangePhoneNumber} name="ChangePhoneNumber" />
       <Stack.Screen component={GantiKataSandi} name="GantiKataSandi" />
       <Stack.Screen component={Notifikasi} name="Notifikasi" />
       <Stack.Screen component={PIN} name="PIN" />

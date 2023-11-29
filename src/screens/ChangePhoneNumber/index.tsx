@@ -1,26 +1,26 @@
-import {ScrollView, TextInput, TouchableOpacity, View} from 'react-native';
-import React, {useEffect, useState} from 'react';
+import { ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import React, { useEffect, useState } from 'react';
 import DefaultView from '../../components/DefaultView';
 import DefaultText from '../../components/DefaultText';
 import DefaultHeader from '../../components/DefaultHeader';
-import {navigationRef} from '../../navigation/RootNavigation';
+import { navigationRef } from '../../navigation/RootNavigation';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import Gap from '../../components/Gap';
 import ModalAlert from '../../components/ModalAlert';
-import {showToast} from '../../utils/toast';
-import {isEmail} from '../../utils/function';
+import { showToast } from '../../utils/toast';
+import { isEmail } from '../../utils/function';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootDispatch, RootState } from '../../store';
-import { getDetailNasabah, updateNasabah } from '../../services/user';
+import { getDetailNasabah, updateNasabah, updateNasabahV2 } from '../../services/user';
 
-export default function GantiEmail() {
+export default function ChangePhoneNumber() {
   const { detailNasabah } = useSelector(
     (state: RootState) => state.userReducer,
   );
   const [showPin, setShowPin] = useState<boolean>(false);
   const [showModalSuccess, setShowModalSuccess] = useState<boolean>(false);
-  const [emailBaru, setEmailBaru] = useState<string>('');
-  const [emailConfirm, setEmailConfirm] = useState<string>('');
+  const [phoneBaru, setPhoneBaru] = useState<string>('');
+  const [phoneConfirm, setPhoneBaruConfirm] = useState<string>('');
   const [pin, setPin] = useState<string>('');
   const dispatch = useDispatch<RootDispatch>();
 
@@ -30,58 +30,49 @@ export default function GantiEmail() {
 
   const onSave = () => {
     if (
-      emailBaru.trim().length === 0 ||
-      emailConfirm.trim().length === 0
+      phoneBaru.trim().length === 0 ||
+      phoneConfirm.trim().length === 0
     ) {
       return showToast('Data belum lengkap');
     }
 
-    if (!isEmail(emailBaru)) {
-      return showToast('Email baru tidak valid');
-    }
-
-    if (!isEmail(emailConfirm)) {
-      return showToast('Konfirmasi email baru tidak valid');
-    }
-
-    if (emailBaru !== emailConfirm) {
-      return showToast('Email tidak cocok');
+    if (phoneBaru !== phoneConfirm) {
+      return showToast('No Telepon tidak cocok');
     }
 
     if (pin.trim().length < 6) {
       return showToast('Masukkan PIN anda');
     }
     let formdata = new FormData();
-    formdata.append('email', emailConfirm);
-    formdata.append('pin',pin);
+    formdata.append('phone', phoneConfirm);
+    formdata.append('pin', pin);
     dispatch(updateNasabah(formdata, setShowModalSuccess));
   };
 
   return (
     <DefaultView>
-      <DefaultHeader title="Ganti Email" />
+      <DefaultHeader title="Ganti Telepon Baru" />
       <ScrollView showsVerticalScrollIndicator={false}>
         <View className="px-5 py-3">
           <View className="bg-primary-light rounded-2xl px-5 py-3 flex-row items-center">
             <View className="flex-1">
               <DefaultText
-                title="Email sekarang"
+                title="Telepon sekarang"
                 titleClassName="font-inter-semibold text-neutral-500 text-xs"
               />
               <Gap height={5} />
-              <DefaultText  titleClassName="p-0 m-0 font-inter-bold" title={detailNasabah?.email} />
+              <DefaultText  titleClassName="p-0 m-0 font-inter-bold" title={detailNasabah?.phone} />
             </View>
           </View>
-
           <Gap height={15} />
 
           <View className="bg-primary-light rounded-2xl px-5 py-5 flex-row items-center">
             <View className="flex-1">
               <TextInput
                 className="p-0 m-0 font-inter-bold"
-                placeholder="Email baru"
-                value={emailBaru}
-                onChangeText={value => setEmailBaru(value)}
+                placeholder="Telepon baru"
+                value={phoneBaru}
+                onChangeText={value => setPhoneBaru(value)}
               />
             </View>
           </View>
@@ -92,9 +83,9 @@ export default function GantiEmail() {
             <View className="flex-1">
               <TextInput
                 className="p-0 m-0 font-inter-bold"
-                placeholder="Konfirmasi email baru"
-                value={emailConfirm}
-                onChangeText={value => setEmailConfirm(value)}
+                placeholder="Konfirmasi telepon baru"
+                value={phoneConfirm}
+                onChangeText={value => setPhoneBaruConfirm(value)}
               />
             </View>
           </View>
@@ -139,3 +130,18 @@ export default function GantiEmail() {
     </DefaultView>
   );
 }
+
+const styles = StyleSheet.create({
+  invalidInput: {
+    borderColor: 'red',
+  },
+  errorContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 5,
+  },
+  errorText: {
+    marginLeft: 5,
+    color: 'red',
+  },
+});

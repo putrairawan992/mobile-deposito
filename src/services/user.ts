@@ -116,7 +116,7 @@ export const getReqOtp = () => async (dispatch: RootDispatch) => {
       Toast.show({
         type: 'success',
         text1: 'Sukses',
-        text2: 'Req OTP.',
+        text2: 'Meminta OTP berhasil'
       });
     })
     .catch(err => Toast.show({
@@ -146,12 +146,12 @@ export const getDetailNasabah = () => async (dispatch: RootDispatch) => {
         // dispatch(logout())
       }
       if (err?.response?.status !== 401) {
-        Toast.show({
-          type: 'error',
-          text1: 'Perhatian',
-          text2:
-            err.response?.data?.message ?? 'Terjadi error, coba lagi nanti.',
-        })
+        // Toast.show({
+        //   type: 'error',
+        //   text1: 'Perhatian',
+        //   text2:
+        //     err.response?.data?.message ?? 'Terjadi error, coba lagi nanti.',
+        // })
       }
     }).finally(() => {
       dispatch(setDetailNasabahDetailLoading(false));
@@ -202,14 +202,14 @@ export const getUserProfile = () => async (dispatch: RootDispatch) => {
       data = res.data;
     })
     .catch(err => {
-      if (err?.response?.status !== 401) {
-        Toast.show({
-          type: 'error',
-          text1: 'Perhatian',
-          text2:
-            err.response?.data?.message ?? 'Terjadi error, coba lagi nanti.',
-        })
-      }
+      // if (err?.response?.status !== 401) {
+      //   Toast.show({
+      //     type: 'error',
+      //     text1: 'Perhatian',
+      //     text2:
+      //       err.response?.data?.message ?? 'Terjadi error, coba lagi nanti.',
+      //   })
+      // }
     });
   return data;
 };
@@ -260,8 +260,7 @@ export const updateNasabah =
           Toast.show({
             type: 'error',
             text1: 'Perhatian',
-            text2:
-              JSON.stringify(err.response?.data?.message) ?? 'Terjadi error, coba lagi nanti.',
+            text2: err.response?.data?.message ?? 'Terjadi error, coba lagi nanti.',
           });
         });
     };

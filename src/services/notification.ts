@@ -25,12 +25,12 @@ export const getShowNotificationList = () => async (dispatch: RootDispatch) => {
             if (err?.response?.status === 401) {
                 dispatch(logout())
             }
-            Toast.show({
-                type: 'error',
-                text1: 'Perhatian',
-                text2:
-                    err.response?.data?.message ?? err.response?.data ?? 'Terjadi error, coba lagi nanti.',
-            })
+            // Toast.show({
+            //     type: 'error',
+            //     text1: 'Perhatian',
+            //     text2:
+            //         err.response?.data?.message ?? err.response?.data ?? 'Terjadi error, coba lagi nanti.',
+            // })
         }).finally(() => {
             dispatch(setShowReadNotificationListLoading(false));
         })

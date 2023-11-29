@@ -196,12 +196,12 @@ export const getShowDashboard = () => async (dispatch: RootDispatch) => {
     })
     .catch(err => {
       if (err.response?.status !== 401) {
-        Toast.show({
-          type: 'error',
-          text1: 'Perhatian',
-          text2:
-            err.response?.data?.message ?? 'Terjadi error, coba lagi nanti.',
-        })
+        // Toast.show({
+        //   type: 'error',
+        //   text1: 'Perhatian',
+        //   text2:
+        //     err.response?.data?.message ?? 'Terjadi error, coba lagi nanti.',
+        // })
       }
       dispatch(setShowDashboardLoading(false));
     });

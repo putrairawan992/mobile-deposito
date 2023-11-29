@@ -223,7 +223,7 @@ export default function GantiKataSandi() {
               />
             </TouchableOpacity>}
           </View>
-
+          <DefaultText titleClassName='ml-2 mt-1 text-gray-600' title='Klik Kirim OTP untuk mendapatkan kode OTP' />
           <Gap height={15} />
 
           {/* <View className="bg-primary-light rounded-2xl px-5 py-3 flex-row items-center">
