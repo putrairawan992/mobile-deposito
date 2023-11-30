@@ -643,19 +643,19 @@ export default function Register() {
           </View>
         </ScrollView>
         <ModalImage
-          title='Preview Image KTP'
+          title='Lihat Foto KTP'
           hide={() => setShowImageKtp(false)}
           data={fotoKtp?.uri as string}
           show={showImageKtp}
           onConfirm={() => setShowImageKtp(false)} />
         <ModalImageSelfie
-          title='Preview Selfie KTP'
+          title='Lihat Selfie KTP'
           hide={() => setShowImageSelfieKtp(false)}
           data={fotoNasabah?.uri as string}
           show={showImageSelfieKtp}
           onConfirm={() => setShowImageSelfieKtp(false)} />
         <ModalImageAhliWaris
-          title='Preview KTP Ahli Waris'
+          title='Lihat KTP Ahli Waris'
           hide={() => setShowImageKtpAhliWaris(false)}
           data={fotoKtpAhliWaris?.uri as string}
           show={showImageKtpAhliWaris}

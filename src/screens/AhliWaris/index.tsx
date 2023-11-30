@@ -1,5 +1,5 @@
-import { ScrollView, TouchableOpacity, View } from 'react-native';
-import React, { useEffect } from 'react';
+import { Image, ScrollView, TouchableOpacity, View } from 'react-native';
+import React, { useEffect, useState } from 'react';
 import DefaultView from '../../components/DefaultView';
 import DefaultText from '../../components/DefaultText';
 import DefaultHeader from '../../components/DefaultHeader';
@@ -8,6 +8,8 @@ import { navigationRef } from '../../navigation/RootNavigation';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootDispatch, RootState } from '../../store';
 import { getDetailNasabah } from '../../services/user';
+import { SYARIAH_URL } from '../../utils/constant';
+import ModalImageAhliWaris from '../../components/ModalImage';
 
 export default function AhliWaris() {
   const { detailNasabah } = useSelector(
@@ -15,6 +17,7 @@ export default function AhliWaris() {
   );
   const dispatch = useDispatch<RootDispatch>();
 
+  const [showImageKtpAhliWaris, setShowImageKtpAhliWaris] = useState<boolean>(false);
   useEffect(() => {
     dispatch(getDetailNasabah())
   }, [dispatch])
@@ -36,6 +39,14 @@ export default function AhliWaris() {
             <View className="border-[1px] border-primary rounded-md w-[150] px-2 py-2">
               <DefaultText title={detailNasabah?.ktp_ahli_waris} />
             </View>
+          </View>
+
+          <Gap height={5} />
+          <View className="flex-row items-center">
+            <DefaultText title="Foto KTP Ahli Waris" titleClassName="flex-1" />
+            <TouchableOpacity onPress={() => setShowImageKtpAhliWaris(true)}  className="border-[1px] border-primary rounded-md w-[150] px-2 py-2">
+              {detailNasabah?.image_ktp_ahli_waris ? <Image source={{ uri: `${SYARIAH_URL}/${detailNasabah?.image_ktp_ahli_waris}` }} style={{ width: 133, height: 100 }} /> : <DefaultText title="-" titleClassName="text-black" />}
+            </TouchableOpacity>
           </View>
           <Gap height={5} />
           <View className="flex-row items-center">
@@ -68,6 +79,12 @@ export default function AhliWaris() {
           <DefaultText title="Edit" titleClassName="text-white" />
         </TouchableOpacity>
       </View>
+      <ModalImageAhliWaris
+        title='Lihat KTP Ahli Waris'
+        hide={() => setShowImageKtpAhliWaris(false)}
+        data={detailNasabah?.image_ktp_ahli_waris ? `${SYARIAH_URL}/${detailNasabah?.image_ktp_ahli_waris}` : null as any}
+        show={showImageKtpAhliWaris}
+        onConfirm={() => setShowImageKtpAhliWaris(false)} />
     </DefaultView>
   );
 }

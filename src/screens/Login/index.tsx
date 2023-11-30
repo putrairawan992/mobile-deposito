@@ -43,7 +43,7 @@ export default function Login() {
               <DefaultText title="Masuk" titleClassName="font-inter-bold text-xl" />
               <Gap height={10} />
               <DefaultText
-                title="Silahkan Masukan Nomor HP Anda"
+                title="Silahkan Masukkan Nomor HP Anda"
                 titleClassName=""
               />
               <Gap height={10} />

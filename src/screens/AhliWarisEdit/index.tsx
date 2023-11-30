@@ -1,26 +1,35 @@
-import {ScrollView, TextInput, TouchableOpacity, View} from 'react-native';
-import React, {useState} from 'react';
+import { Image, ScrollView, TextInput, TouchableOpacity, View } from 'react-native';
+import React, { useState } from 'react';
 import DefaultView from '../../components/DefaultView';
 import DefaultText from '../../components/DefaultText';
 import DefaultHeader from '../../components/DefaultHeader';
 import Gap from '../../components/Gap';
-import {navigationRef} from '../../navigation/RootNavigation';
+import { navigationRef } from '../../navigation/RootNavigation';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import ModalAlert from '../../components/ModalAlert';
-import {showToast} from '../../utils/toast';
+import { showToast } from '../../utils/toast';
 import { RootDispatch } from '../../store';
 import { useDispatch } from 'react-redux';
 import { updateNasabah } from '../../services/user';
 import { RootStackScreenProps } from '../../navigation/interface';
+import { Asset, launchCamera, launchImageLibrary } from 'react-native-image-picker';
+import Toast from 'react-native-toast-message';
+
+import ModalImageAhliWaris from '../../components/ModalImage';
+import { MAX_FILE_SIZE, SYARIAH_URL } from '../../utils/constant';
 
 export default function AhliWarisEdit({ route }: RootStackScreenProps<"AhliWarisEdit">) {
-  const detailNasabah =  route.params?.detailNasabah as any;
+  const detailNasabah = route.params?.detailNasabah as any;
   const [nama, setNama] = useState<string>(detailNasabah?.nama_ahli_waris);
   const [ktp, setKtp] = useState<string>(detailNasabah?.ktp_ahli_waris);
   const [phone, setPhone] = useState<string>(detailNasabah?.phone_ahli_waris);
   const [hubunganAhliWaris, setHubunganAhliWaris] = useState<string>(detailNasabah?.hub_ahli_waris);
   const [pin, setPin] = useState<string>('');
+  const [image_ktp_ahli_waris, setImage_ktp_ahli_waris] = useState<string | Asset>(detailNasabah?.image_ktp_ahli_waris ? `${SYARIAH_URL}/${detailNasabah?.image_ktp_ahli_waris}` : '') as any;
   const [showPin, setShowPin] = useState<boolean>(false);
+
+  const [showImageKtpAhliWaris, setShowImageKtpAhliWaris] = useState<boolean>(false);
+  const [fotoKtpAhliWaris, setFotoKtpAhliWaris] = useState<Asset | string>() as any;
   const [showModalSuccess, setShowModalSuccess] = useState<boolean>(false);
   const dispatch = useDispatch<RootDispatch>();
 
@@ -37,10 +46,41 @@ export default function AhliWarisEdit({ route }: RootStackScreenProps<"AhliWaris
     formdata.append('nama_ahli_waris', nama);
     formdata.append('ktp_ahli_waris', ktp);
     formdata.append('phone_ahli_waris', phone);
-    formdata.append('hub_ahli_waris',hubunganAhliWaris);
-    formdata.append('pin',pin);
-    
-    dispatch(updateNasabah(formdata,setShowModalSuccess));
+    formdata.append('hub_ahli_waris', hubunganAhliWaris);
+    formdata.append('pin', pin);
+
+    fotoKtpAhliWaris && formdata.append('image_ktp_ahli_waris', {
+      size: fotoKtpAhliWaris?.fileSize,
+      uri: fotoKtpAhliWaris?.uri,
+      name: fotoKtpAhliWaris?.fileName,
+      type: fotoKtpAhliWaris?.type,
+    } ?? '');
+
+    dispatch(updateNasabah(formdata, setShowModalSuccess));
+  };
+
+  const onOpeGallery = async (index: number, type?: string) => {
+    let result;
+    if (type === 'selfie') {
+      result = await launchCamera({ mediaType: 'photo', maxHeight: 100, maxWidth: 100 });
+    } else {
+      result = await launchImageLibrary({ mediaType: 'photo' });
+    }
+    if (result.assets) {
+      if (result?.assets[0]?.fileSize as any > MAX_FILE_SIZE) {
+        return Toast.show({
+          type: 'error',
+          text1: 'Perhatian',
+          text2: 'Max Upload 500kb',
+        });
+      } else {
+        if (index === 2) {
+          setImage_ktp_ahli_waris(result?.assets[0]?.uri);
+          setFotoKtpAhliWaris(result.assets[0]);
+        }
+      }
+    }
+
   };
 
   return (
@@ -70,6 +110,32 @@ export default function AhliWarisEdit({ route }: RootStackScreenProps<"AhliWaris
               />
             </View>
           </View>
+          <Gap height={5} />
+          <View className="flex-row items-center">
+            <DefaultText title="Foto KTP Ahli Waris" titleClassName="flex-1" />
+            {image_ktp_ahli_waris ?
+              <TouchableOpacity onPress={() => setShowImageKtpAhliWaris(true)}>
+                <View>
+                  <Image source={{ uri: image_ktp_ahli_waris }} style={{ height: 100, width: 130 }} />
+                </View>
+              </TouchableOpacity> :
+              <TouchableOpacity
+                className='border-[1px] border-primary rounded-md w-[150] px-2 py-2 flex-row items-center'
+                onPress={() => onOpeGallery(2)}>
+                <DefaultText
+                  title={'Upload Foto'}
+                  titleClassName="m-0 p-0 font-inter-regular "
+                  titleProps={{ numberOfLines: 1 }}
+                />
+
+                <Icon name="upload" style={{ marginLeft: 20 }} size={20} />
+              </TouchableOpacity>}
+
+            {image_ktp_ahli_waris && <Icon name="trash-can" onPress={() => {
+              setImage_ktp_ahli_waris(undefined);
+            }} size={20} />}
+          </View>
+
           <Gap height={5} />
           <View className="flex-row items-center">
             <DefaultText
@@ -143,6 +209,12 @@ export default function AhliWarisEdit({ route }: RootStackScreenProps<"AhliWaris
           </TouchableOpacity>
         </View>
       </ScrollView>
+      <ModalImageAhliWaris
+        title='Preview KTP Ahli Waris'
+        hide={() => setShowImageKtpAhliWaris(false)}
+        data={image_ktp_ahli_waris as any}
+        show={showImageKtpAhliWaris}
+        onConfirm={() => setShowImageKtpAhliWaris(false)} />
 
       <ModalAlert
         show={showModalSuccess}

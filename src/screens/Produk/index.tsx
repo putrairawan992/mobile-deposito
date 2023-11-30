@@ -16,6 +16,7 @@ import { useFocusEffect, useIsFocused } from '@react-navigation/native';
 import { checkLogin, getDetailNasabah } from '../../services/user';
 import { addStorage, getExitTime, getStorage, saveExitTime } from '../../utils/storage';
 import ModalAlert from '../../components/ModalAlert';
+import { EntryAnimation } from '../../utils/EntryAnimation';
 
 const Item = (data: any) => {
   const noProduct = data?.data?.item?.no_produk;
@@ -195,227 +196,227 @@ export default function Produk() {
   }, [useIsFocused]));
 
 
-  return ( checkLoginLoading ? <ActivityIndicator size="large" style={{ position: 'absolute', top: 150, left: 0, right: 0 }} /> :
-    <DefaultView>
-      <DefaultHeader title="Produk Deposito" />
-      <View className="flex-row mx-3 p-1">
-        <View className="flex-1">
-          <DefaultText title="Bagi Hasil Setara" />
-          <Gap height={2.5} />
-          <TouchableOpacity
-            activeOpacity={0.8}
-            className="bg-primary py-1 px-1 rounded-full flex-row items-center"
-            onPress={() => setShowHasilSetara(!showHasilSetara)}>
-            <DefaultText
-              title={`${hasilSetara || 'Hasil'}%/Tahun`}
-              titleClassName="text-white flex-1"
-            />
-            <Icon name="chevron-right" color={colors.white} size={20} />
-          </TouchableOpacity>
-          {showHasilSetara && (
-            <View className="bg-white border-[1px] border-primary p-1 rounded-md absolute top-[54] right-0 left-0 z-10">
-              <TouchableOpacity
-                activeOpacity={0.7}
-                onPress={() => {
-                  setHasilSetara(undefined);
-                  setShowHasilSetara(false);
-                }}>
-                <DefaultText
-                  title="Semua"
-                  titleClassName="text-neutral-400"
-                />
-              </TouchableOpacity>
-              <TouchableOpacity
-                activeOpacity={0.7}
-                onPress={() => {
-                  setHasilSetara('9');
-                  setShowHasilSetara(false);
-                }}>
-                <DefaultText
-                  title="9%"
-                  titleClassName="text-neutral-400"
-                />
-              </TouchableOpacity>
-              <Gap height={2} />
-              <TouchableOpacity
-                activeOpacity={0.7}
-                onPress={() => {
-                  setHasilSetara('8');
-                  setShowHasilSetara(false);
-                }}>
-                <DefaultText title="8%" titleClassName="text-neutral-400" />
-              </TouchableOpacity>
-              <Gap height={2} />
-              <TouchableOpacity
-                activeOpacity={0.7}
-                onPress={() => {
-                  setHasilSetara('7');
-                  setShowHasilSetara(false);
-                }}>
-                <DefaultText title="7%" titleClassName="text-neutral-400" />
-              </TouchableOpacity>
-              <Gap height={2} />
-              <TouchableOpacity
-                activeOpacity={0.7}
-                onPress={() => {
-                  setHasilSetara('6');
-                  setShowHasilSetara(false);
-                }}>
-                <DefaultText title="6%" titleClassName="text-neutral-400" />
-              </TouchableOpacity>
-              <Gap height={2} />
-              <TouchableOpacity
-                activeOpacity={0.7}
-                onPress={() => {
-                  setHasilSetara('5');
-                  setShowHasilSetara(false);
-                }}>
-                <DefaultText title="5%" titleClassName="text-neutral-400" />
-              </TouchableOpacity>
-              <Gap height={2} />
-              <TouchableOpacity
-                activeOpacity={0.7}
-                onPress={() => {
-                  setHasilSetara('4');
-                  setShowHasilSetara(false);
-                }}>
-                <DefaultText title="4%" titleClassName="text-neutral-400" />
-              </TouchableOpacity>
-              <Gap height={2} />
-              <TouchableOpacity
-                activeOpacity={0.7}
-                onPress={() => {
-                  setHasilSetara('3');
-                  setShowHasilSetara(false);
-                }}>
-                <DefaultText title="3%" titleClassName="text-neutral-400" />
-              </TouchableOpacity>
-            </View>
-          )}
-        </View>
-        <Gap width={50} />
-        <View className="flex-1">
-          <DefaultText title="Tenor" />
-          <Gap height={2.5} />
-          <TouchableOpacity
-            activeOpacity={0.8}
-            className="bg-primary py-1 px-1 rounded-full flex-row items-center"
-            onPress={() => setShowTenor(!showToner)}>
-            <DefaultText
-              title={`>= ${tenor || 'Tenor'} Bulan`}
-              titleClassName="text-white flex-1"
-            />
-            <Icon name="chevron-right" color={colors.white} size={20} />
-          </TouchableOpacity>
-          {showToner && (
-            <View className="bg-white border-[1px] border-primary p-1 rounded-md absolute top-[54] right-0 left-0 z-10">
-              <TouchableOpacity
-                activeOpacity={0.7}
-                onPress={() => {
-                  setTenor(undefined);
-                  setShowTenor(false);
-                }}>
-                <DefaultText
-                  title="Semua"
-                  titleClassName="text-neutral-400"
-                />
-              </TouchableOpacity>
-              <TouchableOpacity
-                activeOpacity={0.7}
-                onPress={() => {
-                  setTenor('3');
-                  setShowTenor(false);
-                }}>
-                <DefaultText
-                  title="3 Bulan"
-                  titleClassName="text-neutral-400"
-                />
-              </TouchableOpacity>
-              <Gap height={2} />
-              <TouchableOpacity
-                activeOpacity={0.7}
-                onPress={() => {
-                  setTenor('6');
-                  setShowTenor(false);
-                }}>
-                <DefaultText
-                  title="6 Bulan"
-                  titleClassName="text-neutral-400"
-                />
-              </TouchableOpacity>
-              <Gap height={2} />
-              <TouchableOpacity
-                activeOpacity={0.7}
-                onPress={() => {
-                  setTenor('12');
-                  setShowTenor(false);
-                }}>
-                <DefaultText
-                  title="12 Bulan"
-                  titleClassName="text-neutral-400"
-                />
-              </TouchableOpacity>
-              <Gap height={2} />
-              <TouchableOpacity
-                activeOpacity={0.7}
-                onPress={() => {
-                  setTenor('18');
-                  setShowTenor(false);
-                }}>
-                <DefaultText
-                  title="18 Bulan"
-                  titleClassName="text-neutral-400"
-                />
-              </TouchableOpacity>
-              <Gap height={2} />
-              <TouchableOpacity
-                activeOpacity={0.7}
-                onPress={() => {
-                  setTenor('24');
-                  setShowTenor(false);
-                }}>
-                <DefaultText
-                  title="24 Bulan"
-                  titleClassName="text-neutral-400"
-                />
-              </TouchableOpacity>
-            </View>
-          )}
-        </View>
+  return (<DefaultView>
+    <DefaultHeader title="Produk Deposito" />
+    <View className="flex-row mx-3 p-1">
+      <View className="flex-1">
+        <DefaultText title="Bagi Hasil Setara" />
+        <Gap height={2.5} />
+        <TouchableOpacity
+          activeOpacity={0.8}
+          className="bg-primary py-1 px-1 rounded-full flex-row items-center"
+          onPress={() => setShowHasilSetara(!showHasilSetara)}>
+          <DefaultText
+            title={`${hasilSetara || 'Hasil'}%/Tahun`}
+            titleClassName="text-white flex-1"
+          />
+          <Icon name="chevron-right" color={colors.white} size={20} />
+        </TouchableOpacity>
+        {showHasilSetara && (
+          <View className="bg-white border-[1px] border-primary p-1 rounded-md absolute top-[54] right-0 left-0 z-10">
+            <TouchableOpacity
+              activeOpacity={0.7}
+              onPress={() => {
+                setHasilSetara(undefined);
+                setShowHasilSetara(false);
+              }}>
+              <DefaultText
+                title="Semua"
+                titleClassName="text-neutral-400"
+              />
+            </TouchableOpacity>
+            <TouchableOpacity
+              activeOpacity={0.7}
+              onPress={() => {
+                setHasilSetara('9');
+                setShowHasilSetara(false);
+              }}>
+              <DefaultText
+                title="9%"
+                titleClassName="text-neutral-400"
+              />
+            </TouchableOpacity>
+            <Gap height={2} />
+            <TouchableOpacity
+              activeOpacity={0.7}
+              onPress={() => {
+                setHasilSetara('8');
+                setShowHasilSetara(false);
+              }}>
+              <DefaultText title="8%" titleClassName="text-neutral-400" />
+            </TouchableOpacity>
+            <Gap height={2} />
+            <TouchableOpacity
+              activeOpacity={0.7}
+              onPress={() => {
+                setHasilSetara('7');
+                setShowHasilSetara(false);
+              }}>
+              <DefaultText title="7%" titleClassName="text-neutral-400" />
+            </TouchableOpacity>
+            <Gap height={2} />
+            <TouchableOpacity
+              activeOpacity={0.7}
+              onPress={() => {
+                setHasilSetara('6');
+                setShowHasilSetara(false);
+              }}>
+              <DefaultText title="6%" titleClassName="text-neutral-400" />
+            </TouchableOpacity>
+            <Gap height={2} />
+            <TouchableOpacity
+              activeOpacity={0.7}
+              onPress={() => {
+                setHasilSetara('5');
+                setShowHasilSetara(false);
+              }}>
+              <DefaultText title="5%" titleClassName="text-neutral-400" />
+            </TouchableOpacity>
+            <Gap height={2} />
+            <TouchableOpacity
+              activeOpacity={0.7}
+              onPress={() => {
+                setHasilSetara('4');
+                setShowHasilSetara(false);
+              }}>
+              <DefaultText title="4%" titleClassName="text-neutral-400" />
+            </TouchableOpacity>
+            <Gap height={2} />
+            <TouchableOpacity
+              activeOpacity={0.7}
+              onPress={() => {
+                setHasilSetara('3');
+                setShowHasilSetara(false);
+              }}>
+              <DefaultText title="3%" titleClassName="text-neutral-400" />
+            </TouchableOpacity>
+          </View>
+        )}
       </View>
-      <View className="mx-3 p-1 mb-3">
-        <TextInput onChangeText={(e) => setSearchName(e)
-        } className="bg-gray-300 py-1 px-1 rounded-full items-center" placeholder='Cari Produk' />
+      <Gap width={50} />
+      <View className="flex-1">
+        <DefaultText title="Tenor" />
+        <Gap height={2.5} />
+        <TouchableOpacity
+          activeOpacity={0.8}
+          className="bg-primary py-1 px-1 rounded-full flex-row items-center"
+          onPress={() => setShowTenor(!showToner)}>
+          <DefaultText
+            title={`>= ${tenor || 'Tenor'} Bulan`}
+            titleClassName="text-white flex-1"
+          />
+          <Icon name="chevron-right" color={colors.white} size={20} />
+        </TouchableOpacity>
+        {showToner && (
+          <View className="bg-white border-[1px] border-primary p-1 rounded-md absolute top-[54] right-0 left-0 z-10">
+            <TouchableOpacity
+              activeOpacity={0.7}
+              onPress={() => {
+                setTenor(undefined);
+                setShowTenor(false);
+              }}>
+              <DefaultText
+                title="Semua"
+                titleClassName="text-neutral-400"
+              />
+            </TouchableOpacity>
+            <TouchableOpacity
+              activeOpacity={0.7}
+              onPress={() => {
+                setTenor('3');
+                setShowTenor(false);
+              }}>
+              <DefaultText
+                title="3 Bulan"
+                titleClassName="text-neutral-400"
+              />
+            </TouchableOpacity>
+            <Gap height={2} />
+            <TouchableOpacity
+              activeOpacity={0.7}
+              onPress={() => {
+                setTenor('6');
+                setShowTenor(false);
+              }}>
+              <DefaultText
+                title="6 Bulan"
+                titleClassName="text-neutral-400"
+              />
+            </TouchableOpacity>
+            <Gap height={2} />
+            <TouchableOpacity
+              activeOpacity={0.7}
+              onPress={() => {
+                setTenor('12');
+                setShowTenor(false);
+              }}>
+              <DefaultText
+                title="12 Bulan"
+                titleClassName="text-neutral-400"
+              />
+            </TouchableOpacity>
+            <Gap height={2} />
+            <TouchableOpacity
+              activeOpacity={0.7}
+              onPress={() => {
+                setTenor('18');
+                setShowTenor(false);
+              }}>
+              <DefaultText
+                title="18 Bulan"
+                titleClassName="text-neutral-400"
+              />
+            </TouchableOpacity>
+            <Gap height={2} />
+            <TouchableOpacity
+              activeOpacity={0.7}
+              onPress={() => {
+                setTenor('24');
+                setShowTenor(false);
+              }}>
+              <DefaultText
+                title="24 Bulan"
+                titleClassName="text-neutral-400"
+              />
+            </TouchableOpacity>
+          </View>
+        )}
       </View>
-      {showProcutLoading ?
-        <ActivityIndicator
-          style={{ position: 'absolute', top: 250, left: 0, right: 0 }}
-          size={'large'}
-        /> :
+    </View>
+    <View className="mx-3 p-1 mb-3">
+      <TextInput onChangeText={(e) => setSearchName(e)
+      } className="bg-gray-300 py-1 px-1 rounded-full items-center" placeholder='Cari Produk' />
+    </View>
+    {showProcutLoading ?
+      <ActivityIndicator
+        style={{ position: 'absolute', top: 250, left: 0, right: 0 }}
+        size={'large'}
+      /> :
+      <EntryAnimation index={0}>
         <FlatList
           data={showProduct}
           keyExtractor={(_, key) => key.toString()}
           showsVerticalScrollIndicator={false}
           renderItem={e => <Item data={e} />}
           contentContainerStyle={styles.container}
-        />}
-         <ModalAlert
-          show={isShowAlertAuth}
-          type='warning'
-          buttonOne={false}
-          hide={async () => {
-            setIsShowAlertAuth(false);
-            addStorage("detected-exitTime", "okeTrue");
-            dispatch(checkLogin(await getStorage("phone-email")))
-          }}
-          title={'Sesi Anda telah berakhir, silahkan login kembali'}
-          onConfirm={async () => {
-            setIsShowAlertAuth(false);
-            addStorage("detected-exitTime", "okeTrue");
-            dispatch(checkLogin(await getStorage("phone-email")))
-          }}
-        />
-    </DefaultView>
+        /></EntryAnimation>}
+    <ModalAlert
+      show={isShowAlertAuth}
+      type='warning'
+      buttonOne={false}
+      hide={async () => {
+        setIsShowAlertAuth(false);
+        addStorage("detected-exitTime", "okeTrue");
+        dispatch(checkLogin(await getStorage("phone-email")))
+      }}
+      title={'Sesi Anda telah berakhir, silahkan login kembali'}
+      onConfirm={async () => {
+        setIsShowAlertAuth(false);
+        addStorage("detected-exitTime", "okeTrue");
+        dispatch(checkLogin(await getStorage("phone-email")))
+      }}
+    />
+  </DefaultView>
   );
 }
 

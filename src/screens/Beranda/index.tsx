@@ -35,6 +35,7 @@ import { WIDTH } from '../../utils/constant';
 import { getShowArtikelList } from '../../services/artikel';
 import moment from 'moment';
 import { getShowNotificationList } from '../../services/notification';
+import { EntryAnimation } from '../../utils/EntryAnimation';
 
 
 export default function Beranda() {
@@ -130,8 +131,8 @@ export default function Beranda() {
 
   const sumNotifications = (notifications: any[]): number => {
     return notifications?.reduce((total, notification) => {
-      console.log("notification?.notifikasi",notification?.notifikasi);
-      
+      console.log("notification?.notifikasi", notification?.notifikasi);
+
       return total + (notification?.notifikasi !== '0' ? 1 : 0);
     }, 0);
   };
@@ -141,7 +142,7 @@ export default function Beranda() {
     dispatch(getShowNotificationList());
     dispatch(getDetailNasabah());
   }, [dispatch]))
-console.log("showNotificationList?.data",showNotificationList?.data);
+  console.log("showNotificationList?.data", showNotificationList?.data);
 
   useFocusEffect(
     useCallback(() => {
@@ -151,89 +152,90 @@ console.log("showNotificationList?.data",showNotificationList?.data);
     }, [detailNasabah, showNotificationList]));
 
   return (
-    showDashboardLoading || checkLoginLoading ? <ActivityIndicator size="large" style={{ position: 'absolute', top: 150, left: 0, right: 0 }} /> :
-      <DefaultView>
-        <View className="flex-row items-center px-5 py-2 mb-2">
-          <Image
-            className="w-[80] h-[40]"
-            source={images.logo}
-            resizeMode="contain"
-          />
-          <Gap classname="flex-1" />
+    <DefaultView>
+      <View className="flex-row items-center px-5 py-2 mb-2">
+        <Image
+          className="w-[80] h-[40]"
+          source={images.logo}
+          resizeMode="contain"
+        />
+        <Gap classname="flex-1" />
 
-          <TouchableOpacity
-            activeOpacity={0.7}
-            onPress={() => navigationRef.navigate('Notifikasi')}>
-            {notifCount > 0 && <View className='bg-red-500 absolute right-4 bottom-3 px-1 py-0.3 rounded-full'>
-              <Text className='text-white'>{notifCount}</Text>
-            </View>}
-            <Icon name="bell" size={24} color={'#2A8E54'} />
-          </TouchableOpacity>
-          <Gap width={10} />
-          <TouchableOpacity
-            activeOpacity={0.7}
-            onPress={() => redirectUrlChat()}>
-            <Icon name="message" size={24} color={'#2A8E54'} />
-          </TouchableOpacity>
-        </View>
-        <LinearGradient
-          className="mx-2 p-3 rounded-xl"
-          colors={[colors.primary, '#0F3746']}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 0 }}>
-          <DefaultText
-            title={`Selamat datang, ${dtNasabah?.nama}`}
-            titleClassName="text-white"
-          />
-          <Gap height={10} />
-          <View className="flex-row items-center">
-            <View className="bg-white p-3 rounded-lg flex-1 mr-2">
-              <Carousel
-                loop
-                width={width / 1.2}
-                {...{ vertical: true }}
-                height={50}
-                // autoPlay={true}
-                data={
-                  [{ val: showDashboard?.bagiHasil, label: "Bagi Hasil" },
-                  { val: showDashboard?.deposito, label: "Total Deposito" },
-                  { val: showDashboard?.portofolio, label: "Total Portofolio" }]}
-                // scrollAnimationDuration={1000}
-                onSnapToItem={index => setTopActive(index)}
-                renderItem={({ item, index }) => (
-                  <View>
-                    <DefaultText
-                      title={item.label}
-                      titleClassName="font-inter-medium"
-                    />
-                    <DefaultText
-                      title={formatRupiah(String(item.val), "Rp")}
-                      titleClassName="font-inter-bold text-xl"
-                    />
-                  </View>
-                )}
-              />
-            </View>
-            <Gap width={10} />
-            <View>
-              <View
-                className={`w-[3] h-[20]  rounded-full ${topActive === 0 ? 'bg-white' : 'bg-neutral-400'
-                  }`}
-              />
-              <Gap height={3} />
-              <View
-                className={`w-[3] h-[20]  rounded-full ${topActive === 1 ? 'bg-white' : 'bg-neutral-400'
-                  }`}
-              />
-              <Gap height={3} />
-              <View
-                className={`w-[3] h-[20]  rounded-full ${topActive === 2 ? 'bg-white' : 'bg-neutral-400'
-                  }`}
-              />
-            </View>
+        <TouchableOpacity
+          activeOpacity={0.7}
+          onPress={() => navigationRef.navigate('Notifikasi')}>
+          {notifCount > 0 && <View className='bg-red-500 absolute right-4 bottom-3 px-1 py-0.3 rounded-full'>
+            <Text className='text-white'>{notifCount}</Text>
+          </View>}
+          <Icon name="bell" size={24} color={'#2A8E54'} />
+        </TouchableOpacity>
+        <Gap width={10} />
+        <TouchableOpacity
+          activeOpacity={0.7}
+          onPress={() => redirectUrlChat()}>
+          <Icon name="message" size={24} color={'#2A8E54'} />
+        </TouchableOpacity>
+      </View>
+      <LinearGradient
+        className="mx-2 p-3 rounded-xl"
+        colors={[colors.primary, '#0F3746']}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 0 }}>
+        <DefaultText
+          title={`Selamat datang, ${dtNasabah?.nama}`}
+          titleClassName="text-white"
+        />
+        <Gap height={10} />
+        <View className="flex-row items-center">
+          <View className="bg-white p-3 rounded-lg flex-1 mr-2">
+            <Carousel
+              loop
+              width={width / 1.2}
+              {...{ vertical: true }}
+              height={50}
+              // autoPlay={true}
+              data={
+                [{ val: showDashboard?.bagiHasil, label: "Bagi Hasil" },
+                { val: showDashboard?.deposito, label: "Total Deposito" },
+                { val: showDashboard?.portofolio, label: "Total Portofolio" }]}
+              // scrollAnimationDuration={1000}
+              onSnapToItem={index => setTopActive(index)}
+              renderItem={({ item, index }) => (
+                <View>
+                  <DefaultText
+                    title={item.label}
+                    titleClassName="font-inter-medium"
+                  />
+                  <DefaultText
+                    title={formatRupiah(String(item.val), "Rp")}
+                    titleClassName="font-inter-bold text-xl"
+                  />
+                </View>
+              )}
+            />
           </View>
-        </LinearGradient>
-        <Gap height={20} />
+          <Gap width={10} />
+          <View>
+            <View
+              className={`w-[3] h-[20]  rounded-full ${topActive === 0 ? 'bg-white' : 'bg-neutral-400'
+                }`}
+            />
+            <Gap height={3} />
+            <View
+              className={`w-[3] h-[20]  rounded-full ${topActive === 1 ? 'bg-white' : 'bg-neutral-400'
+                }`}
+            />
+            <Gap height={3} />
+            <View
+              className={`w-[3] h-[20]  rounded-full ${topActive === 2 ? 'bg-white' : 'bg-neutral-400'
+                }`}
+            />
+          </View>
+        </View>
+      </LinearGradient>
+      <Gap height={20} />
+
+      <EntryAnimation index={0}>
         <ScrollView>
           <View className="flex-row items-center px-5">
             <DefaultText
@@ -425,33 +427,37 @@ console.log("showNotificationList?.data",showNotificationList?.data);
 
           <Gap height={50} />
         </ScrollView>
-        <ModalAlert
-          show={isShowAlertAuth}
-          buttonOne={false}
-          type='warning'
-          hide={async () => {
-            setIsShowAlertAuth(false);
-            addStorage("detected-exitTime", "okeTrue");
-            dispatch(checkLogin(await getStorage("phone-email")))
-          }}
-          title={'Sesi Anda telah berakhir, silahkan login kembali'}
-          onConfirm={async () => {
-            setIsShowAlertAuth(false);
-            addStorage("detected-exitTime", "okeTrue");
-            dispatch(checkLogin(await getStorage("phone-email")))
-          }}
-        />
-        <ModalAlert show={updateProfile}
-          hide={() =>
-            setUpdateProfile(false)
-          }
-          title='Lengkapi Data Profile'
-          onConfirm={() => {
-            setUpdateProfile(false);
-            navigationRef.navigate('DetailPribadi');
-          }}
-          type='warning' />
-      </DefaultView>
+      </EntryAnimation>
+      <ModalAlert
+        show={isShowAlertAuth}
+        buttonOne={false}
+        type='warning'
+        hide={async () => {
+          setIsShowAlertAuth(false);
+          addStorage("detected-exitTime", "okeTrue");
+          dispatch(checkLogin(await getStorage("phone-email")))
+        }}
+        title={'Sesi Anda telah berakhir, silahkan login kembali'}
+        onConfirm={async () => {
+          setIsShowAlertAuth(false);
+          addStorage("detected-exitTime", "okeTrue");
+          dispatch(checkLogin(await getStorage("phone-email")))
+        }}
+      />
+      <ModalAlert show={updateProfile}
+        hide={() =>
+          setUpdateProfile(false)
+        }
+        title='Lengkapi Data Profile'
+        onConfirm={() => {
+          setUpdateProfile(false);
+          navigationRef.navigate('DetailPribadi');
+        }}
+        type='warning' />
+    </DefaultView>
+
+
+
   );
 }
 const { width } = Dimensions.get('window');

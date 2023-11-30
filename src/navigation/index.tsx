@@ -49,12 +49,12 @@ const Tab = createBottomTabNavigator();
 function MyTabs() {
   return (
     <Tab.Navigator
-      screenOptions={{ headerShown: false }}
+      screenOptions={{  headerShown: false }}
       tabBar={props => BottomNavigator({ ...props })}>
       <Tab.Screen component={Beranda} name="Beranda" />
       <Tab.Screen component={Produk} name="Produk" />
       <Tab.Screen component={Portofolio} name="Portofolio" />
-      <Tab.Screen component={Profile} name="Profile" />
+      <Tab.Screen component={Profile} name="Profil" />
     </Tab.Navigator>
   );
 }

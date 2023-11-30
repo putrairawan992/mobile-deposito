@@ -96,7 +96,7 @@ export default function Password({ route }: RootStackScreenProps<'Password'>) {
             }
             className="border-b-[1px] border-b-blue-400 self-start">
             <DefaultText
-              title="Lupa Kata Sandi ?"
+              title="Anda lupa Kata Sandi ?"
               titleClassName="text-blue-400"
             />
           </TouchableOpacity>

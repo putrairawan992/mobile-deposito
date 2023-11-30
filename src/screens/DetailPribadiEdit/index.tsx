@@ -20,7 +20,6 @@ import ModalPenghasilan from '../../components/ModalPenghasilan';
 import { Asset, launchCamera, launchImageLibrary } from 'react-native-image-picker';
 import Toast from 'react-native-toast-message';
 import ModalImageSelfie from '../../components/ModalImage';
-import ModalImageAhliWaris from '../../components/ModalImage';
 import ModalImage from '../../components/ModalImage';
 
 export default function DetailPribadiEdit({ route }: RootStackScreenProps<'DetailPribadiEdit'>) {
@@ -42,15 +41,12 @@ export default function DetailPribadiEdit({ route }: RootStackScreenProps<'Detai
   const [showPenghasilan, setShowPenghasilan] = useState<boolean>(false);
   const [ktp_image, setKtp_image] = useState<string | Asset>(detailPribadi?.image_ktp ? `${SYARIAH_URL}/${detailPribadi?.image_ktp}` : '') as any;
   const [image_selfie, setImage_selfie] = useState<string | Asset>(detailPribadi?.image_selfie ? `${SYARIAH_URL}/${detailPribadi?.image_selfie}` : '') as any;
-  const [image_ktp_ahli_waris, setImage_ktp_ahli_waris] = useState<string | Asset>(detailPribadi?.image_ktp_ahli_waris ? `${SYARIAH_URL}/${detailPribadi?.image_ktp_ahli_waris}` : '') as any;
   const [fotoKtp, setFotoKtp] = useState<Asset | string>() as any;
   const [fotoNasabah, setFotoNasabah] = useState<Asset | string>() as any;
-  const [fotoKtpAhliWaris, setFotoKtpAhliWaris] = useState<Asset | string>() as any;
   const [showStatusPernikahan, setShowStatusPernikahan] =
     useState<boolean>(false);
   const [showImageKtp, setShowImageKtp] = useState<boolean>(false);
   const [showImageSelfieKtp, setShowImageSelfieKtp] = useState<boolean>(false);
-  const [showImageKtpAhliWaris, setShowImageKtpAhliWaris] = useState<boolean>(false);
   const dispatch = useDispatch<RootDispatch>();
   const { updateRegisterLoading } = useSelector(
     (state: RootState) => state.userReducer,
@@ -86,12 +82,6 @@ export default function DetailPribadiEdit({ route }: RootStackScreenProps<'Detai
       name: fotoNasabah?.fileName,
       type: fotoNasabah?.type,
     } ?? '');
-    fotoKtpAhliWaris && formdata.append('image_ktp_ahli_waris', {
-      size: fotoKtpAhliWaris?.fileSize,
-      uri: fotoKtpAhliWaris?.uri,
-      name: fotoKtpAhliWaris?.fileName,
-      type: fotoKtpAhliWaris?.type,
-    } ?? '');
     formdata.append('pin', pin);
     dispatch(updateNasabah(formdata, setShowModalSuccess));
   };
@@ -117,9 +107,6 @@ export default function DetailPribadiEdit({ route }: RootStackScreenProps<'Detai
         } else if (index === 1) {
           setFotoNasabah(result.assets[0]);
           setImage_selfie(result?.assets[0]?.uri);
-        } else if (index === 2) {
-          setImage_ktp_ahli_waris(result?.assets[0]?.uri);
-          setFotoKtpAhliWaris(result.assets[0]);
         }
       }
     }
@@ -260,7 +247,7 @@ export default function DetailPribadiEdit({ route }: RootStackScreenProps<'Detai
                 className='border-[1px] border-primary rounded-md w-[200] px-2 py-2 flex-row items-center'
                 onPress={() => onOpeGallery(0)}>
                 <DefaultText
-                  title={'Upload Image'}
+                  title={'Upload Foto'}
                   titleClassName="m-0 p-0 font-inter-regular "
                   titleProps={{ numberOfLines: 1 }}
                 />
@@ -286,12 +273,12 @@ export default function DetailPribadiEdit({ route }: RootStackScreenProps<'Detai
                 className='border-[1px] border-primary rounded-md w-[200] px-2 py-2 flex-row items-center'
                 onPress={() => onOpeGallery(1, "selfie")}>
                 <DefaultText
-                  title={'Upload Image'}
+                  title={'Ambil Foto'}
                   titleClassName="m-0 p-0 font-inter-regular "
                   titleProps={{ numberOfLines: 1 }}
                 />
 
-                <Icon name="upload" style={{ marginLeft: 50 }} size={20} />
+                <Icon name="camera" style={{ marginLeft: 50 }} size={20} />
               </TouchableOpacity>}
 
             {image_selfie && <Icon name="trash-can" onPress={() => {
@@ -299,32 +286,7 @@ export default function DetailPribadiEdit({ route }: RootStackScreenProps<'Detai
               setImage_selfie(undefined);
             }} size={20} />}
           </View>
-          <Gap height={5} />
-          <View className="flex-row items-center">
-            <DefaultText title="Foto KTP Ahli Waris" titleClassName="flex-1" />
-            {image_ktp_ahli_waris ?
-              <TouchableOpacity onPress={() => setShowImageKtpAhliWaris(true)}>
-                <View>
-                  <Image source={{ uri: image_ktp_ahli_waris }} style={{ height: 100, width: 180 }} />
-                </View>
-              </TouchableOpacity> :
-              <TouchableOpacity
-                className='border-[1px] border-primary rounded-md w-[200] px-2 py-2 flex-row items-center'
-                onPress={() => onOpeGallery(2)}>
-                <DefaultText
-                  title={'Upload Image'}
-                  titleClassName="m-0 p-0 font-inter-regular "
-                  titleProps={{ numberOfLines: 1 }}
-                />
-
-                <Icon name="upload" style={{ marginLeft: 50 }} size={20} />
-              </TouchableOpacity>}
-
-            {image_ktp_ahli_waris && <Icon name="trash-can" onPress={() => {
-              setFotoKtp(undefined);
-              setImage_ktp_ahli_waris(undefined);
-            }} size={20} />}
-          </View>
+      
 
           <Gap height={15} />
           <View className="bg-primary-light rounded-2xl px-5 py-3 flex-row items-center">
@@ -372,23 +334,17 @@ export default function DetailPribadiEdit({ route }: RootStackScreenProps<'Detai
       </ScrollView>
 
       <ModalImage
-        title='Preview Image KTP'
+        title='Lihat Foto KTP'
         hide={() => setShowImageKtp(false)}
         data={ktp_image as any}
         show={showImageKtp}
         onConfirm={() => setShowImageKtp(false)} />
       <ModalImageSelfie
-        title='Preview Selfie KTP'
+        title='Lihat Selfie KTP'
         hide={() => setShowImageSelfieKtp(false)}
         data={image_selfie as any}
         show={showImageSelfieKtp}
         onConfirm={() => setShowImageSelfieKtp(false)} />
-      <ModalImageAhliWaris
-        title='Preview KTP Ahli Waris'
-        hide={() => setShowImageKtpAhliWaris(false)}
-        data={image_ktp_ahli_waris as any}
-        show={showImageKtpAhliWaris}
-        onConfirm={() => setShowImageKtpAhliWaris(false)} />
 
       <ModalPenghasilan
         show={showPenghasilan}

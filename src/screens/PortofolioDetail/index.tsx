@@ -359,7 +359,7 @@ export default function PortofolioDetail({ route }: RootStackScreenProps<'Portof
                   className='border-[1px] border-primary mt-2 rounded-full self-center flex-row px-4 py-2'
                   onPress={() => onOpeGallery(0)}>
                   <DefaultText
-                    title={'Upload Image'}
+                    title={'Upload Foto'}
                     titleClassName="font-inter-regular "
                   />
                   <Icon name="upload" size={20} />

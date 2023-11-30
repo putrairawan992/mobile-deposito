@@ -125,7 +125,7 @@ export default function GantiKataSandi() {
             }
             className="border-b-[1px] ml-2 border-b-blue-400 self-start">
             <DefaultText
-              title="Lupa Kata Sandi ?"
+              title="Anda lupa Kata Sandi ?"
               titleClassName="text-blue-400"
             />
           </TouchableOpacity>
