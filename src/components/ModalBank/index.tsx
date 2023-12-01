@@ -60,7 +60,7 @@ export default function ModalBank({ show, hide, onConfirm }: ModalBankProps) {
               return <TouchableOpacity
                 activeOpacity={0.7}
                 className="p-1"
-                onPress={() => onConfirm(data?.nama)}>
+                onPress={() => onConfirm(data?.kode)}>
                   <View className="w-full h-[1px] bg-neutral-300 mb-3 mt-1" />
                   <View className='flex-row'>
                   <Text>{data?.nama}</Text>

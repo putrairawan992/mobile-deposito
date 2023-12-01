@@ -142,8 +142,7 @@ export default function Beranda() {
     dispatch(getShowNotificationList());
     dispatch(getDetailNasabah());
   }, [dispatch]))
-  console.log("showNotificationList?.data", showNotificationList?.data);
-
+ 
   useFocusEffect(
     useCallback(() => {
       const totalNotifications: number = sumNotifications(showNotificationList?.data);

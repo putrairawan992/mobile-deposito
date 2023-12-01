@@ -6,7 +6,25 @@ import { setShowBankDetail, setShowBankList, setShowBankListLoading, setShowBank
 import { addStorage, getStorage, removeStorage } from '../utils/storage';
 import { setToken } from '../store/user';
 import { navigationRef } from '../navigation/RootNavigation';
+import { getValidationBankListData } from './bank';
 
+export const socialMediaService = (setSocialMeida: any) => async (dispatch: RootDispatch) => {
+  axios.get(`${API}/socialmedia`, {
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  })
+    .then(res => {
+      setSocialMeida(res?.data);
+    }).catch(err => {
+      Toast.show({
+        type: 'error',
+        text1: 'Perhatian',
+        text2:
+          err.response?.data?.message ?? 'Terjadi error, coba lagi nanti.',
+      })
+    });
+}
 
 export const getCheckEmailUser = (params?: any, setMessageCheckEmail?: any, setPage?: any, phone?: any, setMessageCheckPhone?: any) => async (dispatch: RootDispatch) => {
   let data;
@@ -48,7 +66,7 @@ export const getCheckEmailUser = (params?: any, setMessageCheckEmail?: any, setP
   return data;
 };
 
-export const getCheckKtpAhliWaris = (params?: any, setMessageAhliWaris ?: any, setPage?: any) => async (dispatch: RootDispatch) => {
+export const getCheckKtpAhliWaris = (params?: any, setMessageAhliWaris?: any, setPage?: any) => async (dispatch: RootDispatch) => {
   let data;
   axios
     .get(`${API}/cekktpwaris/${params}`, {
@@ -58,8 +76,8 @@ export const getCheckKtpAhliWaris = (params?: any, setMessageAhliWaris ?: any, s
       },
     })
     .then(res => {
-      console.log("getCheckKtpAhliWaris",res?.data);
-      
+      console.log("getCheckKtpAhliWaris", res?.data);
+
       data = res.data;
       if (res?.data?.result === false) {
         setPage(4);
@@ -263,8 +281,6 @@ export const getShowBankListProduk = () => async (dispatch: RootDispatch) => {
       },
     })
     .then(res => {
-      console.log("ress==>", res?.data);
-
       dispatch(setShowBankListProduct(res?.data));
       dispatch(setShowBankListLoadingProduct(false));
     }).catch(err => {
@@ -298,7 +314,7 @@ export const postShowBankList = (payload: any, setShowModalSuccess: any) => asyn
         type: 'error',
         text1: 'Perhatian',
         text2:
-          err.response?.data?.message ?? 'Terjadi error, coba lagi nanti.',
+         err?.response?.data?.message ? err?.response?.data?.message :  err.response?.data ? err?.response?.data :  'Terjadi error, coba lagi nanti.',
       })
     });
 };

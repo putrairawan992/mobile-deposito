@@ -37,7 +37,7 @@ const TabItem = ({title, active, onPress, onLongPress}: TabItemInterface) => {
           size={22}
           color={active ? colors.primary : colors.black}
         />
-      ) : title === 'Profile' ? (
+      ) : title === 'Profil' ? (
         <MaterialCommunityIcons
           name={active ? 'account' : 'account-outline'}
           size={22}

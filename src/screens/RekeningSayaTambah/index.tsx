@@ -1,5 +1,5 @@
-import { ScrollView, TextInput, TouchableOpacity, View } from 'react-native';
-import React, { useState } from 'react';
+import { ActivityIndicator, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import React, { useEffect, useState } from 'react';
 import DefaultView from '../../components/DefaultView';
 import DefaultText from '../../components/DefaultText';
 import DefaultHeader from '../../components/DefaultHeader';
@@ -13,6 +13,7 @@ import { useDispatch } from 'react-redux';
 import { RootDispatch } from '../../store';
 import { getShowBankList, postShowBankList } from '../../services/dasbhoard';
 import ModalPemilikBank from '../../components/ModalPemilikBank';
+import { getValidationBankListData } from '../../services/bank';
 
 export default function RekeningSayaTambah() {
   const [showPin, setShowPin] = useState<boolean>(false);
@@ -24,7 +25,11 @@ export default function RekeningSayaTambah() {
   const [namaRekening, setNamaRekening] = useState<string>('');
   const [pemilikBank, setPemilikBank] = useState<string>('');
   const [pin, setPin] = useState<string>('');
+  const [validateBank, setValidateBank] = useState<any>();
+  const [isLoading, setIsLoading] = useState<any>(false);
   const dispatch = useDispatch<RootDispatch>();
+
+
 
   const onTambahBank = () => {
     if (namaBank.trim().length === 0 || rekening.trim().length === 0) {
@@ -35,24 +40,30 @@ export default function RekeningSayaTambah() {
       return showToast('Masukkan PIN kamu');
     }
     const payload = {
-      nama: namaBank,
+      nama: namaBank?.toLocaleUpperCase(),
       norek: rekening,
-      pin:pin,
-      default: 1,
+      pin: pin,
+      default: 0,
       code: 114,
-      jenis:pemilikBank,
-      atas_nama: namaRekening
+      jenis: pemilikBank,
+      atas_nama: validateBank?.name_rek
+    }
+    if (!validateBank?.name_rek) {
+      return showToast('Klik Cek Rekening Bank');
+    }
+    if (!validateBank?.success) {
+      return;
     }
     dispatch(postShowBankList(payload, setShowModalSuccess));
   };
 
-   const actionRekeningPemilik = (value:string) =>{
+  const actionRekeningPemilik = (value: string) => {
     let text;
     if (value === '1') {
       text = 'Nasabah'
     }
     if (value === '2') {
-      text='Ahli Waris Nasabah'
+      text = 'Ahli Waris Nasabah'
     }
     return text;
   }
@@ -70,7 +81,7 @@ export default function RekeningSayaTambah() {
                 editable={false}
                 className="p-0 m-0 font-inter-bold text-black"
                 placeholder="Nama Bank"
-                value={namaBank}
+                value={namaBank?.toUpperCase()}
                 onChangeText={value => setNamaBank(value)}
                 onPressIn={() => setShowBank(true)}
               />
@@ -93,16 +104,22 @@ export default function RekeningSayaTambah() {
 
           <Gap height={15} />
 
-          <View className="bg-green-200 rounded-lg px-3 py-3 flex-row items-center border-[1px] border-primary">
-            <View className="flex-1">
-              <TextInput
+          {validateBank?.success && validateBank?.name_rek && <View className="bg-green-200 rounded-lg px-3 py-3 flex-row items-center border-[1px] border-primary">
+              <DefaultText title={validateBank?.name_rek} titleClassName='p-0 m-0 font-inter-bold text-black' />
+              {/* <TextInput
                 className="p-0 m-0 font-inter-bold text-black"
                 placeholder="Atas Nama rekening bank"
                 value={namaRekening}
                 onChangeText={value => setNamaRekening(value)}
-              />
+              /> */}
+          </View>}
+          {!validateBank?.success && (
+            <View style={styles.errorContainer}>
+              <Text style={styles.errorText}>
+                {validateBank?.message}
+              </Text>
             </View>
-          </View>
+          )}
 
           <Gap height={15} />
 
@@ -120,6 +137,18 @@ export default function RekeningSayaTambah() {
               />
             </View>
           </TouchableOpacity>
+
+          {isLoading ? <ActivityIndicator size={"large"} /> :
+            <View className="pb-1 pt-3">
+              <TouchableOpacity
+                onPress={() => dispatch(getValidationBankListData(
+                  { "code_bank": namaBank.toLocaleLowerCase(), "no_rek": rekening },
+                  setValidateBank, setIsLoading))}
+                activeOpacity={0.7}
+                className="bg-primary px-10 py-3 rounded-full self-center">
+                <DefaultText title="Cek Rekening Bank" titleClassName="text-white" />
+              </TouchableOpacity>
+            </View>}
 
           <Gap height={20} />
 
@@ -148,7 +177,6 @@ export default function RekeningSayaTambah() {
             </TouchableOpacity>
           </View>
         </View>
-      </ScrollView>
 
       <View className="pb-10 pt-3">
         <TouchableOpacity
@@ -158,6 +186,7 @@ export default function RekeningSayaTambah() {
           <DefaultText title="Tambah Bank" titleClassName="text-white" />
         </TouchableOpacity>
       </View>
+      </ScrollView>
 
       <ModalAlert
         show={showModalSuccess}
@@ -190,3 +219,18 @@ export default function RekeningSayaTambah() {
     </DefaultView>
   );
 }
+
+const styles = StyleSheet.create({
+  invalidInput: {
+    borderColor: 'red',
+  },
+  errorContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flexWrap: "wrap",
+    marginBottom: 5
+  },
+  errorText: {
+    color: 'red',
+  },
+});

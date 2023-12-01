@@ -30,6 +30,7 @@ import ModalImageAhliWaris from '../../components/ModalImage';
 import ModalImage from '../../components/ModalImage';
 import Toast from 'react-native-toast-message';
 import { getCheckEmailUser, getCheckKtpUser } from '../../services/dasbhoard';
+import { getValidationBankListData } from '../../services/bank';
 
 export default function Register() {
   const { registerLoading, detailNasabah } = useSelector(
@@ -72,6 +73,8 @@ export default function Register() {
   const [fotoKtp, setFotoKtp] = useState<Asset>();
   const [fotoNasabah, setFotoNasabah] = useState<Asset>();
   const [fotoKtpAhliWaris, setFotoKtpAhliWaris] = useState<Asset>();
+  const [validateBank, setValidateBank] = useState<any>();
+  const [isLoading, setIsLoading] = useState<boolean>();
   const dispatch = useDispatch<RootDispatch>();
 
   useEffect(() => {
@@ -81,7 +84,6 @@ export default function Register() {
   function convertToLowerCase(inputString: string): string {
     return inputString?.toLowerCase();
   }
-
 
   const actionSubmitRegister = () => {
     let formdata = new FormData();
@@ -101,9 +103,9 @@ export default function Register() {
     formdata.append('ktp_ahli_waris', ahliWarisKtp);
     formdata.append('phone_ahli_waris', ahliWarisPhone);
     formdata.append('hub_ahli_waris', hubunganAhliWaris);
-    formdata.append('nama_bank', bank);
+    formdata.append('nama_bank', bank?.toUpperCase());
     formdata.append('norek', rekening);
-    formdata.append('atas_nama', namaRekening);
+    formdata.append('atas_nama', validateBank?.name_rek);
     formdata.append('image_ktp', {
       size: fotoKtp?.fileSize,
       uri: fotoKtp?.uri,
@@ -122,6 +124,13 @@ export default function Register() {
       name: fotoKtpAhliWaris?.fileName,
       type: fotoKtpAhliWaris?.type,
     } ?? '');
+    if (!validateBank?.name_rek) {
+      return Toast.show({
+        type: 'error',
+        text1: 'Perhatian',
+        text2: 'Rekening Bank Belum di Input',
+      });
+    }
     dispatch(registerNasabah(formdata, email));
   };
 
@@ -216,47 +225,48 @@ export default function Register() {
               onPress={() => setShowStatusPernikahan(true)}
             />
           </View>
-        </ScrollView>
-        <View className='flex-row items-center justify-center mb-5'>
-          <Button
-            title="Kembali"
-            py='px-4'
-            className="bg-primary mr-4 my-5"
-            titleClassName="text-white text-small"
-            onPress={() => {
-              setPage(0);
-            }}
-          />
-          <Button
-            title="Lanjut"
-            py='px-7'
-            className="bg-primary mr-4 my-5"
-            disabled={
-              !ktp ||
-              !tempatLahir ||
-              !ibu ||
-              !statusNikah ||
-              !tanggalLahir
-            }
-            titleClassName="text-white text-small"
-            onPress={() => {
-              if (
-                ktp?.trim()?.length === 0 ||
-                tempatLahir?.trim()?.length === 0 ||
-                !tanggalLahir ||
-                ibu?.trim()?.length === 0 ||
-                statusNikah?.trim()?.length === 0
-              ) {
-                return showToast('Data belum lengkap');
-              }
 
-              if (ktp?.trim()?.length !== 16) {
-                return showToast('No KTP tidak valid, 16 character');
+          <View className='flex-row items-center justify-center mb-5'>
+            <Button
+              title="Kembali"
+              py='px-4'
+              className="bg-primary mr-4 my-5"
+              titleClassName="text-white text-small"
+              onPress={() => {
+                setPage(0);
+              }}
+            />
+            <Button
+              title="Lanjut"
+              py='px-7'
+              className="bg-primary mr-4 my-5"
+              disabled={
+                !ktp ||
+                !tempatLahir ||
+                !ibu ||
+                !statusNikah ||
+                !tanggalLahir
               }
-              dispatch(getCheckKtpUser(ktp, setMessageCheckKtp, setPage))
-            }}
-          />
-        </View>
+              titleClassName="text-white text-small"
+              onPress={() => {
+                if (
+                  ktp?.trim()?.length === 0 ||
+                  tempatLahir?.trim()?.length === 0 ||
+                  !tanggalLahir ||
+                  ibu?.trim()?.length === 0 ||
+                  statusNikah?.trim()?.length === 0
+                ) {
+                  return showToast('Data belum lengkap');
+                }
+
+                if (ktp?.trim()?.length !== 16) {
+                  return showToast('No KTP tidak valid, 16 character');
+                }
+                dispatch(getCheckKtpUser(ktp, setMessageCheckKtp, setPage))
+              }}
+            />
+          </View>
+        </ScrollView>
         <ModalStatusPernikahan
           show={showStatusPernikahan}
           hide={() => setShowStatusPernikahan(false)}
@@ -325,43 +335,43 @@ export default function Register() {
               isConditional={true}
               ComponentRight={<DefaultText title="*" titleClassName='text-red-600 ml-2' />}
             />
+          </View>
 
+          <View className='flex-row items-center items-center justify-center mb-5'>
+            <Button
+              title="Kembali"
+              py='px-4'
+              className="bg-primary mr-4 my-5"
+              titleClassName="text-white text-small"
+              onPress={() => {
+                setPage(1);
+              }}
+            />
+            <Button
+              title="Lanjut"
+              disabled={
+                !perusahaan ||
+                !profesi ||
+                !alamatPerusahaan ||
+                !penghasilan
+              }
+              py='px-7'
+              className="bg-primary mr-4 my-5"
+              titleClassName="text-white text-small"
+              onPress={() => {
+                if (
+                  perusahaan?.trim()?.length === 0 ||
+                  profesi?.trim()?.length === 0 ||
+                  penghasilan?.trim()?.length === 0 ||
+                  alamatPerusahaan?.trim()?.length === 0
+                ) {
+                  return showToast('Data belum lengkap');
+                }
+                setPage(3);
+              }}
+            />
           </View>
         </ScrollView>
-        <View className='flex-row items-center items-center justify-center mb-5'>
-          <Button
-            title="Kembali"
-            py='px-4'
-            className="bg-primary mr-4 my-5"
-            titleClassName="text-white text-small"
-            onPress={() => {
-              setPage(1);
-            }}
-          />
-          <Button
-            title="Lanjut"
-            disabled={
-              !perusahaan ||
-              !profesi ||
-              !alamatPerusahaan ||
-              !penghasilan
-            }
-            py='px-7'
-            className="bg-primary mr-4 my-5"
-            titleClassName="text-white text-small"
-            onPress={() => {
-              if (
-                perusahaan?.trim()?.length === 0 ||
-                profesi?.trim()?.length === 0 ||
-                penghasilan?.trim()?.length === 0 ||
-                alamatPerusahaan?.trim()?.length === 0
-              ) {
-                return showToast('Data belum lengkap');
-              }
-              setPage(3);
-            }}
-          />
-        </View>
 
         <ModalPenghasilan
           show={showPenghasilan}
@@ -436,41 +446,41 @@ export default function Register() {
             />
 
           </View>
+          <View className='flex-row items-center justify-center mb-5'>
+            <Button
+              title="Kembali"
+              py='px-4'
+              className="bg-primary mr-4 my-5"
+              titleClassName="text-white text-small"
+              onPress={() => {
+                setPage(2);
+              }}
+            />
+            <Button
+              title="Lanjut"
+              py='px-7'
+              className="bg-primary mr-4 my-5"
+              disabled={
+                !ahliWaris ||
+                !ahliWarisKtp ||
+                !ahliWarisPhone ||
+                !hubunganAhliWaris
+              }
+              titleClassName="text-white text-small"
+              onPress={async () => {
+                if (ahliWarisKtp?.trim()?.length !== 16) {
+                  return showToast('NIK KTP ahli waris tidak valid, 16 character');
+                }
+                if (ktp !== ahliWarisKtp) {
+                  setPage(4);
+                  setMessageAhliWaris('');
+                } else {
+                  setMessageAhliWaris('NIK KTP ahli waris tidak boleh sama dengan NIK KTP nasabah');
+                }
+              }}
+            />
+          </View>
         </ScrollView>
-        <View className='flex-row items-center justify-center mb-5'>
-          <Button
-            title="Kembali"
-            py='px-4'
-            className="bg-primary mr-4 my-5"
-            titleClassName="text-white text-small"
-            onPress={() => {
-              setPage(2);
-            }}
-          />
-          <Button
-            title="Lanjut"
-            py='px-7'
-            className="bg-primary mr-4 my-5"
-            disabled={
-              !ahliWaris ||
-              !ahliWarisKtp ||
-              !ahliWarisPhone ||
-              !hubunganAhliWaris
-            }
-            titleClassName="text-white text-small"
-            onPress={async () => {
-              if (ahliWarisKtp?.trim()?.length !== 16) {
-                return showToast('NIK KTP ahli waris tidak valid, 16 character');
-              }
-              if (ktp !== ahliWarisKtp) {
-                setPage(4);
-                setMessageAhliWaris('');
-              } else {
-                setMessageAhliWaris('NIK KTP ahli waris tidak boleh sama dengan NIK KTP nasabah');
-              }
-            }}
-          />
-        </View>
       </DefaultView>
     );
   }
@@ -489,7 +499,7 @@ export default function Register() {
             <Gap height={10} />
             <Input
               title="Nama Bank"
-              value={bank}
+              value={bank?.toUpperCase()}
               isConditional={true}
               ComponentRight={<DefaultText title="*" titleClassName='text-red-600 ml-2' />}
               onPress={() => setShowBank(true)}
@@ -508,47 +518,61 @@ export default function Register() {
             />
 
             <Gap height={10} />
-            <Input
-              isConditional={true}
-              ComponentRight={<DefaultText title="*" titleClassName='text-red-600 ml-2' />}
-              title="Nama Rekening"
-              value={namaRekening}
-              onChangeText={value => setNamaRekening(value)}
-            />
 
+            {validateBank?.success && validateBank?.name_rek &&
+              <DefaultText title={validateBank?.name_rek} titleClassName='border-b-[1px] border-b-black py-2 font-inter m-0 p-0 flex-1 text-black' />
+            }
           </View>
+          {!validateBank?.success && (
+            <View style={styles.errorContainer}>
+              <Text style={styles.errorText}>
+                {validateBank?.message}
+              </Text>
+            </View>
+          )}
+          {isLoading ? <ActivityIndicator size={"large"}/>:<View className='flex-row items-center justify-center mb-5'>
+            <Button
+              title="Kembali"
+              py='px-4'
+              className="bg-primary mr-4 my-5"
+              titleClassName="text-white text-small"
+              onPress={() => {
+                setPage(3);
+              }}
+            />
+            <Button
+              title="Lanjut"
+              py='px-7'
+              disabled={
+                !bank ||
+                !rekening}
+              className="bg-primary mr-4 my-5"
+              titleClassName="text-white text-small"
+              onPress={() => {
+                dispatch(getValidationBankListData({
+                  "code_bank":
+                    bank.toLocaleLowerCase(),
+                  "no_rek": rekening
+                }, setValidateBank, () => { }))
+                if (!validateBank?.success) {
+                  return;
+                } else {
+                  if (
+                    bank?.trim()?.length === 0 ||
+                    rekening?.trim()?.length === 0 ||
+                    namaRekening?.trim()?.length === 0
+                  ) {
+                    return showToast('Data belum lengkap');
+                  }
+                  setTimeout(() => {
+                    setPage(5);
+                  }, 2500)
+                }
+              }}
+            />
+          </View>}
+
         </ScrollView>
-        <View className='flex-row items-center justify-center mb-5'>
-          <Button
-            title="Kembali"
-            py='px-4'
-            className="bg-primary mr-4 my-5"
-            titleClassName="text-white text-small"
-            onPress={() => {
-              setPage(3);
-            }}
-          />
-          <Button
-            title="Lanjut"
-            py='px-7'
-            disabled={
-              !bank ||
-              !rekening ||
-              !namaRekening}
-            className="bg-primary mr-4 my-5"
-            titleClassName="text-white text-small"
-            onPress={() => {
-              if (
-                bank?.trim()?.length === 0 ||
-                rekening?.trim()?.length === 0 ||
-                namaRekening?.trim()?.length === 0
-              ) {
-                return showToast('Data belum lengkap');
-              }
-              setPage(5);
-            }}
-          />
-        </View>
         <ModalBank
           show={showBank}
           hide={() => setShowBank(false)}
@@ -751,7 +775,7 @@ export default function Register() {
             onChangeText={value => setAlamat(value)}
           />
         </View>
-      </ScrollView>
+
       <Button
         title="Lanjut"
         className={`bg-primary mx-10 my-5`}
@@ -780,6 +804,7 @@ export default function Register() {
           addStorage('dataPageZero', { nama, email, phone, alamat });
         }}
       />
+      </ScrollView>
     </DefaultView>
   );
 }
@@ -792,7 +817,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     flexWrap: "wrap",
-    marginBottom: 5
+    marginBottom: 5,
+    marginLeft: 20,
   },
   errorText: {
     color: 'red',

@@ -13,8 +13,6 @@ import { checkLogin, getDetailNasabah, logout } from '../../services/user';
 import { addStorage, getExitTime, getStorage, saveExitTime } from '../../utils/storage';
 import { useFocusEffect, useIsFocused } from '@react-navigation/native';
 import ModalAlert from '../../components/ModalAlert';
-import { EntryAnimation } from '../../utils/EntryAnimation';
-import * as Animatable from 'react-native-animatable';
 export default function Profile() {
   const { detailNasabah } = useSelector(
     (state: RootState) => state.userReducer,
@@ -32,12 +30,10 @@ export default function Profile() {
   function maskEmail(email: string) {
     let skipFirstChars = 3;
     let firstThreeChar = email?.slice(0, skipFirstChars);
-
     let domainIndexStart = email?.lastIndexOf("@");
     let maskedEmail = email?.slice(skipFirstChars, domainIndexStart)
     maskedEmail = maskedEmail?.replace(/./g, '*')
     let domain = email?.slice(domainIndexStart, email?.length);
-
     return firstThreeChar.concat(maskedEmail).concat(domain);
   }
 
@@ -93,7 +89,6 @@ export default function Profile() {
           titleClassName="text-black"
           iconColor={colors.black}
         />
-        <EntryAnimation index={0}>
           <View className="pb-3 ml-4 flex-row items-center">
             {/* <Image
             source={{
@@ -116,8 +111,6 @@ export default function Profile() {
               <DefaultText title={detailNasabah?.phone && maskPhoneNumber(detailNasabah?.phone)} />
             </View>
           </View>
-
-        </EntryAnimation>
         <ScrollView showsVerticalScrollIndicator={false}>
           <View className="bg-neutral-300  px-3 py-1">
             <DefaultText title="Akun Saya" titleClassName="ml-4 font-inter-bold" />
