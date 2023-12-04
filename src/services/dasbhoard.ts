@@ -262,12 +262,12 @@ export const getShowBankList = () => async (dispatch: RootDispatch) => {
       dispatch(setShowBankListLoading(false));
     }).catch(err => {
       dispatch(setShowBankListLoading(false));
-      Toast.show({
-        type: 'error',
-        text1: 'Perhatian',
-        text2:
-          err.response?.data?.message ?? err.response?.data ?? 'Terjadi error, coba lagi nanti.',
-      })
+      // Toast.show({
+      //   type: 'error',
+      //   text1: 'Perhatian',
+      //   text2:
+      //     err.response?.data ?? 'Terjadi error, coba lagi nanti.',
+      // })
     })
 };
 
@@ -285,12 +285,12 @@ export const getShowBankListProduk = () => async (dispatch: RootDispatch) => {
       dispatch(setShowBankListLoadingProduct(false));
     }).catch(err => {
       dispatch(setShowBankListLoadingProduct(false));
-      Toast.show({
-        type: 'error',
-        text1: 'Perhatian',
-        text2:
-          err.response?.data?.message ?? err.response?.data ?? 'Terjadi error, coba lagi nanti.',
-      })
+      // Toast.show({
+      //   type: 'error',
+      //   text1: 'Perhatian',
+      //   text2:
+      //     err.response?.data ?? 'Terjadi error, coba lagi nanti.',
+      // })
     })
 };
 

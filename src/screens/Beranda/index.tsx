@@ -132,12 +132,19 @@ export default function Beranda() {
     }, 0);
   };
 
+  useEffect(() => {
+    const intervalId = setInterval(() => {  //assign interval to a variable to clear it.
+      dispatch(getShowNotificationList());
+      dispatch(getShowNotificationChat(setNotificationChatCount));
+    }, 3000)
+    return () => clearInterval(intervalId); //This is important
+
+  }, [notificationChatCount, showNotificationList])
+
   useFocusEffect(useCallback(() => {
     dispatch(getShowDashboard());
-    dispatch(getShowNotificationList());
-    dispatch(getShowNotificationChat(setNotificationChatCount));
     dispatch(getDetailNasabah());
-  }, [dispatch,useIsFocused]));
+  }, [dispatch]));
 
   useFocusEffect(
     useCallback(() => {
@@ -159,7 +166,7 @@ export default function Beranda() {
         <TouchableOpacity
           activeOpacity={0.7}
           onPress={() => navigationRef.navigate('Notifikasi')}>
-          {notifCount > 0 && <View className='bg-red-500 absolute right-4 bottom-3 px-1 py-0.3 rounded-full'>
+          {notifCount > 0 && <View className='bg-red-500 absolute left-4 bottom-5 px-1 py-0.3 rounded-full'>
             <Text className='text-white'>{notifCount}</Text>
           </View>}
           <Icon name="bell" size={24} color={'#2A8E54'} />
@@ -168,7 +175,7 @@ export default function Beranda() {
         <TouchableOpacity
           activeOpacity={0.7}
           onPress={() => redirectUrlChat()}>
-          {notificationChatCount?.count > 0 && <View className='bg-red-500 absolute left-4 bottom-4 px-1 py-0.3 rounded-full'>
+          {notificationChatCount?.count > 0 && <View className='bg-red-500 absolute left-5 bottom-5 px-1 py-0.3 rounded-full'>
             <Text className='text-white'>{notificationChatCount?.count}</Text>
           </View>}
           <Icon name="message" size={24} color={'#2A8E54'} />
