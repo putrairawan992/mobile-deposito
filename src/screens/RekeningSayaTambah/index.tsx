@@ -13,14 +13,15 @@ import { useDispatch } from 'react-redux';
 import { RootDispatch } from '../../store';
 import { getShowBankList, postShowBankList } from '../../services/dasbhoard';
 import ModalPemilikBank from '../../components/ModalPemilikBank';
-import { getValidationBankListData } from '../../services/bank';
+import { getValidationBankListData, submitValidationBank } from '../../services/bank';
+import { getStorage } from '../../utils/storage';
 
 export default function RekeningSayaTambah() {
   const [showPin, setShowPin] = useState<boolean>(false);
   const [showModalSuccess, setShowModalSuccess] = useState<boolean>(false);
   const [showBank, setShowBank] = useState<boolean>(false);
   const [showBankPemilik, setShowBankPemilik] = useState<boolean>(false);
-  const [namaBank, setNamaBank] = useState<string>('');
+  const [namaBank, setNamaBank] = useState<any>();
   const [rekening, setRekening] = useState<string>('');
   const [namaRekening, setNamaRekening] = useState<string>('');
   const [pemilikBank, setPemilikBank] = useState<string>('');
@@ -32,7 +33,7 @@ export default function RekeningSayaTambah() {
 
 
   const onTambahBank = () => {
-    if (namaBank.trim().length === 0 || rekening.trim().length === 0) {
+    if (namaBank?.kode?.trim().length === 0 || rekening.trim().length === 0) {
       return showToast('Data belum lengkap');
     }
 
@@ -40,7 +41,7 @@ export default function RekeningSayaTambah() {
       return showToast('Masukkan PIN kamu');
     }
     const payload = {
-      nama: namaBank?.toLocaleUpperCase(),
+      nama: namaBank?.nama?.toLowerCase(),
       norek: rekening,
       pin: pin,
       default: 0,
@@ -81,7 +82,7 @@ export default function RekeningSayaTambah() {
                 editable={false}
                 className="p-0 m-0 font-inter-bold text-black"
                 placeholder="Nama Bank"
-                value={namaBank?.toUpperCase()}
+                value={namaBank?.nama?.toUpperCase()}
                 onChangeText={value => setNamaBank(value)}
                 onPressIn={() => setShowBank(true)}
               />
@@ -105,8 +106,8 @@ export default function RekeningSayaTambah() {
           <Gap height={15} />
 
           {validateBank?.success && validateBank?.name_rek && <View className="bg-green-200 rounded-lg px-3 py-3 flex-row items-center border-[1px] border-primary">
-              <DefaultText title={validateBank?.name_rek} titleClassName='p-0 m-0 font-inter-bold text-black' />
-              {/* <TextInput
+            <DefaultText title={validateBank?.name_rek} titleClassName='p-0 m-0 font-inter-bold text-black' />
+            {/* <TextInput
                 className="p-0 m-0 font-inter-bold text-black"
                 placeholder="Atas Nama rekening bank"
                 value={namaRekening}
@@ -141,9 +142,12 @@ export default function RekeningSayaTambah() {
           {isLoading ? <ActivityIndicator size={"large"} /> :
             <View className="pb-1 pt-3">
               <TouchableOpacity
-                onPress={() => dispatch(getValidationBankListData(
-                  { "code_bank": namaBank.toLocaleLowerCase(), "no_rek": rekening },
-                  setValidateBank, setIsLoading))}
+                onPress={async () => 
+                  dispatch(
+                    getValidationBankListData(
+                      { "code_bank": namaBank?.kode?.toLocaleLowerCase(), "no_rek": rekening },
+                      setValidateBank, setIsLoading)
+                  )}
                 activeOpacity={0.7}
                 className="bg-primary px-10 py-3 rounded-full self-center">
                 <DefaultText title="Cek Rekening Bank" titleClassName="text-white" />
@@ -178,14 +182,14 @@ export default function RekeningSayaTambah() {
           </View>
         </View>
 
-      <View className="pb-10 pt-3">
-        <TouchableOpacity
-          onPress={onTambahBank}
-          activeOpacity={0.7}
-          className="bg-primary px-10 py-3 rounded-full self-center">
-          <DefaultText title="Tambah Bank" titleClassName="text-white" />
-        </TouchableOpacity>
-      </View>
+        <View className="pb-10 pt-3">
+          <TouchableOpacity
+            onPress={onTambahBank}
+            activeOpacity={0.7}
+            className="bg-primary px-10 py-3 rounded-full self-center">
+            <DefaultText title="Tambah Bank" titleClassName="text-white" />
+          </TouchableOpacity>
+        </View>
       </ScrollView>
 
       <ModalAlert

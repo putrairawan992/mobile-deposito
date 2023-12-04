@@ -16,7 +16,6 @@ import { useFocusEffect, useIsFocused } from '@react-navigation/native';
 import { checkLogin, getDetailNasabah } from '../../services/user';
 import { addStorage, getExitTime, getStorage, saveExitTime } from '../../utils/storage';
 import ModalAlert from '../../components/ModalAlert';
-import { EntryAnimation } from '../../utils/EntryAnimation';
 
 const Item = (data: any) => {
   const noProduct = data?.data?.item?.no_produk;
@@ -392,14 +391,13 @@ export default function Produk() {
         style={{ position: 'absolute', top: 250, left: 0, right: 0 }}
         size={'large'}
       /> :
-      <EntryAnimation index={0}>
         <FlatList
           data={showProduct}
           keyExtractor={(_, key) => key.toString()}
           showsVerticalScrollIndicator={false}
           renderItem={e => <Item data={e} />}
           contentContainerStyle={styles.container}
-        /></EntryAnimation>}
+        />}
     <ModalAlert
       show={isShowAlertAuth}
       type='warning'

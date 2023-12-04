@@ -36,6 +36,19 @@ export const getShowNotificationList = () => async (dispatch: RootDispatch) => {
         })
 };
 
+export const getShowNotificationChat = (setChatNotifState?:any) => async (dispatch: RootDispatch) => {
+    axios
+        .get(`${API}/chat`, {
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${await getStorage('token')}`,
+            },
+        })
+        .then(res => {
+            dispatch(setChatNotifState(res.data));
+        })
+};
+
 export const getShowReadNotificationList = (id:any) => async (dispatch: RootDispatch) => {
     dispatch(setShowReadNotificationListLoading(true));
     axios

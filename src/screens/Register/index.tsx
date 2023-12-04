@@ -54,7 +54,7 @@ export default function Register() {
   const [ahliWarisKtp, setAhliWarisKtp] = useState<string>(detailNasabah?.ktp_ahli_waris);
   const [ahliWarisPhone, setAhliWarisPhone] = useState<string>(detailNasabah?.phone_ahli_waris);
   const [hubunganAhliWaris, setHubunganAhliWaris] = useState<string>(detailNasabah?.hub_ahli_waris);
-  const [bank, setBank] = useState<string>(detailNasabah?.nama_bank);
+  const [bank, setBank] = useState<any>(detailNasabah?.nama_bank);
   const [rekening, setRekening] = useState<string>(detailNasabah?.norek);
   const [namaRekening, setNamaRekening] = useState<string>(detailNasabah?.atas_nama);
   const [messageCheckEmail, setMessageCheckEmail] = useState<string>('');
@@ -103,7 +103,7 @@ export default function Register() {
     formdata.append('ktp_ahli_waris', ahliWarisKtp);
     formdata.append('phone_ahli_waris', ahliWarisPhone);
     formdata.append('hub_ahli_waris', hubunganAhliWaris);
-    formdata.append('nama_bank', bank?.toUpperCase());
+    formdata.append('nama_bank', bank?.nama?.toUpperCase());
     formdata.append('norek', rekening);
     formdata.append('atas_nama', validateBank?.name_rek);
     formdata.append('image_ktp', {
@@ -499,7 +499,7 @@ export default function Register() {
             <Gap height={10} />
             <Input
               title="Nama Bank"
-              value={bank?.toUpperCase()}
+              value={bank?.nama?.toUpperCase()}
               isConditional={true}
               ComponentRight={<DefaultText title="*" titleClassName='text-red-600 ml-2' />}
               onPress={() => setShowBank(true)}
@@ -544,21 +544,21 @@ export default function Register() {
               title="Lanjut"
               py='px-7'
               disabled={
-                !bank ||
+                !bank?.nama ||
                 !rekening}
               className="bg-primary mr-4 my-5"
               titleClassName="text-white text-small"
               onPress={() => {
                 dispatch(getValidationBankListData({
                   "code_bank":
-                    bank.toLocaleLowerCase(),
+                    bank?.kode?.toLocaleLowerCase(),
                   "no_rek": rekening
                 }, setValidateBank, () => { }))
                 if (!validateBank?.success) {
                   return;
                 } else {
                   if (
-                    bank?.trim()?.length === 0 ||
+                    bank?.nama?.trim()?.length === 0 ||
                     rekening?.trim()?.length === 0 ||
                     namaRekening?.trim()?.length === 0
                   ) {

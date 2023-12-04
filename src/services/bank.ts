@@ -2,7 +2,7 @@ import axios from 'axios';
 import { RootDispatch } from '../store';
 import { API } from '../utils/constant';
 import Toast from 'react-native-toast-message';
-import { addStorage, getStorage } from '../utils/storage';
+import { addStorage, getStorage, removeStorage } from '../utils/storage';
 import { setShowBankListData, setShowBankListDataLoading } from '../store/bank';
 import { logout } from './user';
 import { postShowBankList } from './dasbhoard';
@@ -52,7 +52,6 @@ export const getValidationBankListData = (params: any, setDataBank: any, setIsLo
             }, 500);
         }).catch(err => {
             console.log("error", err);
-            
             setIsLoading(false);
             Toast.show({
                 type: 'error',
@@ -75,13 +74,14 @@ export const submitValidationBank = (params: any, setDataBank: any, setIsLoading
         .then(resBank => {
             setDataBank(resBank?.data);
             setIsLoading(false);
-            if (resBank?.data?.success) {
-                Toast.show({
-                    type: 'success',
-                    text1: 'Perhatian',
-                    text2: resBank?.data?.message,
-                })
-            }
+            // if (resBank?.data?.success) {
+            //     Toast.show({
+            //         type: 'success',
+            //         text1: 'Perhatian',
+            //         text2: resBank?.data?.message,
+            //     })
+            // }
+            removeStorage("bank_validate_token");
         }).catch(async err => {
             setIsLoading(false);
             console.log("errorsubmit", err.response?.data, params);
