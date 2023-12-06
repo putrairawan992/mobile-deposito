@@ -15,18 +15,20 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
 import SwiperFlatList, { Pagination, PaginationProps } from 'react-native-swiper-flatlist';
 import { useFocusEffect } from '@react-navigation/native';
 import { addStorage, getExitTime, getStorage } from '../../utils/storage';
-import { checkLogin, getDetailNasabah } from '../../services/user';
+import { checkLogin, getDetailNasabah, getLogoNasabah } from '../../services/user';
 import { WIDTH } from '../../utils/constant';
+import Carousel from 'react-native-reanimated-carousel';
 
 export default function Splash() {
   const { width } = useWindowDimensions();
   const dispatch = useDispatch<RootDispatch>();
-  const { showSplashDashboard } = useSelector(
+  const { showSplashDashboard, showSplashListLoading } = useSelector(
     (state: RootState) => state.dashboardReducer,
   );
-  const { checkLoginLoading } = useSelector(
+  const { checkLoginLoading, logoNasabah } = useSelector(
     (state: RootState) => state.userReducer,
   );
+  const [index, setIndex] = React.useState<number>(0);
   const [loadingShow, setLoadingShow] = useState<boolean>(true);
   const { detailNasabah, detailNasabahDetailLoading } = useSelector(
     (state: RootState) => state.userReducer,
@@ -44,7 +46,6 @@ export default function Splash() {
   const useNasabah = useCallback(async () => {
     const exitTime = await getExitTime();
     const currentTime = new Date().getTime();
-    console.log("useNasabah");
     if (exitTime && await getStorage("phone-email")) {
       const elapsedTime = (currentTime - exitTime) / 1000;
       console.log("exitTime && await getStorage(phone-email)", elapsedTime);
@@ -80,8 +81,9 @@ export default function Splash() {
   }, [loadingShow]);
 
   useEffect(() => {
+    dispatch(getLogoNasabah())
     dispatch(getSplashDashboard());
-  }, [])
+  }, [dispatch])
 
   const CustomPagination = (props: JSX.IntrinsicAttributes & PaginationProps) => {
     return (
@@ -104,7 +106,7 @@ export default function Splash() {
         }}>
         <Image
           className="w-[180] h-[120] self-center"
-          source={images.splashLogo}
+          source={images.splashLogo2}
           resizeMode="contain"
         />
       </View>
@@ -115,39 +117,44 @@ export default function Splash() {
     <LinearGradient
       className="flex-1"
       colors={[colors.primaryLight, colors.primary]}>
-      <Gap height={15} />
       <Image
         className="w-[180] h-[120] self-center"
         source={images.splashLogo}
         resizeMode="contain"
       />
       {showSplashDashboard && showSplashDashboard?.length > 0 &&
-        <SwiperFlatList
-          autoplay
-          autoplayDelay={5}
-          autoplayLoop
-          showPagination
-          PaginationComponent={CustomPagination}
+        <Carousel
+          loop
+          width={width}
+          height={width / 1.3}
+          autoPlay={true}
+          autoPlayInterval={5000}
           data={showSplashDashboard}
-          renderItem={({ item }) => (
-            <View className='items-center' style={{ height: WIDTH / 1.4, width: WIDTH, padding: 15 }}>
-              <Image
-                style={{ width: width, height: WIDTH / 1.3 }}
-                source={{ uri: item.image }}
-                resizeMode="contain"
-              />
-              {/* <Gap height={20} />
-              <DefaultText
-                title={item?.deskripsi?.length > 100 ? item?.deskripsi?.slice(0, 100) + '...' : item?.deskripsi}
-                titleClassName="text-center flex flex-wrap font-inter-semibold text-md"
-              /> */}
+          onSnapToItem={index => setIndex(index)}
+          renderItem={({ item }: { item: { image: string } }) => (
+            <Image
+              style={{ width: width, height: "100%" }}
+              source={{ uri: item?.image }}
+              resizeMode="contain"
+            />
 
-            </View>
           )}
-        />}
-      <Gap height={20} />
-      <View className="items-center absolute bottom-7 self-center">
-        {checkLoginLoading || loadingShow ? <ActivityIndicator /> :
+        />
+      }
+      <Gap height={10} />
+      <View className="flex-row justify-center">
+        {(showSplashDashboard && showSplashDashboard?.length > 0) && showSplashDashboard.map((item: any, key: any) => {
+          return (
+            <View
+              key={key}
+              className={`w-[15] h-[3] rounded-full mx-1 ${key === index ? 'bg-white' : 'bg-neutral-400'}`}
+            />
+          );
+        })}
+      </View>
+      <View style={{ bottom: 40 }} className="items-center absolute self-center">
+        {checkLoginLoading || showSplashListLoading ?
+          <ActivityIndicator size="large" /> :
           <Button
             title="Masuk"
             onPress={() => navigationRef.navigate('Login')}
@@ -159,11 +166,16 @@ export default function Splash() {
           titleClassName="text-white font-inter-medium"
         />
         <Gap height={15} />
-        <Image
-          className="w-[200] h-[50] self-center"
-          source={images.splashFooter}
-          resizeMode="contain"
-        />
+        <View className='flex-row content-center'>
+          {logoNasabah && logoNasabah?.length > 0 &&
+            logoNasabah?.map((list: any) => {
+              return <Image
+                className="w-[100] h-[50] self-center"
+                source={{ uri: list.image }}
+                resizeMode="contain"
+              />
+            })}
+        </View>
       </View>
     </LinearGradient>
   </DefaultView>

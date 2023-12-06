@@ -4,20 +4,21 @@ import { API } from '../utils/constant';
 import Toast from 'react-native-toast-message';
 import { getStorage } from '../utils/storage';
 import { logout } from './user';
-import { setShowArtikelDetailData, setShowArtikelDetailDataLoading, setShowArtikelListData, setShowArtikelListDataLoading } from '../store/artikel';
+import { setShowNotificationList, setShowReadNotificationList, setShowReadNotificationListLoading } from '../store/notification';
+import { navigationRef } from '../navigation/RootNavigation';
 
 
-export const getShowArtikelList = () => async (dispatch: RootDispatch) => {
-    dispatch(setShowArtikelListDataLoading(true));
+export const getShowNotificationList = () => async (dispatch: RootDispatch) => {
+    dispatch(setShowReadNotificationListLoading(true));
     axios
-        .get(`${API}/artikel`, {
+        .get(`${API}/notif`, {
             headers: {
                 'Content-Type': 'application/json',
                 Authorization: `Bearer ${await getStorage('token')}`,
             },
         })
         .then(res => {
-            dispatch(setShowArtikelListData(res.data));
+            dispatch(setShowNotificationList(res.data));
         }).catch(err => {
             console.log("error", err);
 
@@ -31,21 +32,34 @@ export const getShowArtikelList = () => async (dispatch: RootDispatch) => {
             //         err.response?.data?.message ?? err.response?.data ?? 'Terjadi error, coba lagi nanti.',
             // })
         }).finally(() => {
-            setShowArtikelListDataLoading(false);
+            dispatch(setShowReadNotificationListLoading(false));
         })
 };
 
-export const getShowArtikelDetaill = (id:any) => async (dispatch: RootDispatch) => {
-    dispatch(setShowArtikelDetailDataLoading(true));
+export const getShowNotificationChat = (setChatNotifState?:any) => async (dispatch: RootDispatch) => {
     axios
-        .get(`${API}/artikel/${id}`, {
+        .get(`${API}/chat`, {
             headers: {
                 'Content-Type': 'application/json',
                 Authorization: `Bearer ${await getStorage('token')}`,
             },
         })
         .then(res => {
-            dispatch(setShowArtikelDetailData(res.data));
+            dispatch(setChatNotifState(res.data));
+        })
+};
+
+export const getShowReadNotificationList = (id:any) => async (dispatch: RootDispatch) => {
+    dispatch(setShowReadNotificationListLoading(true));
+    axios
+        .get(`${API}/notif/${id}`, {
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${await getStorage('token')}`,
+            },
+        })
+        .then(res => {
+            dispatch(setShowReadNotificationList(res.data));
         }).catch(err => {
             console.log("error", err);
 
@@ -59,7 +73,7 @@ export const getShowArtikelDetaill = (id:any) => async (dispatch: RootDispatch) 
                     err.response?.data?.message ?? err.response?.data ?? 'Terjadi error, coba lagi nanti.',
             })
         }).finally(() => {
-            dispatch(setShowArtikelDetailDataLoading(false));
+            dispatch(setShowReadNotificationListLoading(false));
         })
 };
 

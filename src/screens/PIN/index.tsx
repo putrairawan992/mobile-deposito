@@ -220,6 +220,7 @@ export default function PIN() {
       </View>
       {registerPasswordPinLoading ? <ActivityIndicator size={"large"} /> : <Button
         title="Lanjut"
+        disabled={pin?.length < 6}
         className="bg-primary mx-3 mb-7 self-center"
         titleClassName="text-white"
         onPress={onLanjut}

@@ -7,6 +7,7 @@ export type RootStackParamList = {
     emailOrPhone: string;
     isResetPassword?: boolean;
   };
+  ChangePhoneNumber:undefined;
   Password: {
     emailOrPhone: string;
     isResetPassword?: boolean;

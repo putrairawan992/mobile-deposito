@@ -8,6 +8,7 @@ import {
   setDetailNasabahDetailLoading,
   setForgotLoading,
   setLoginLoading,
+  setLogoNasabah,
   setPhoneEmail,
   setRegisterLoading,
   setRegisterPasswordPinLoading,
@@ -37,7 +38,6 @@ export const checkLogin =
           dispatch(setCheckLogin(res?.data?.data));
           dispatch(setCheckLoginLoading(false));
           dispatch(setPhoneEmail(emailOrPhone));
-          addStorage('typeLogin', res?.data?.data === 'password' ? 'Password' : 'OTP');
           navigationRef.navigate(res?.data?.data === 'password' ? 'Password' : 'OTP', {
             emailOrPhone,
             isResetPassword: false
@@ -48,7 +48,7 @@ export const checkLogin =
 
           Toast.show({
             type: 'error',
-            text1: 'Error',
+            text1: 'Perhatian',
             text2:
               err.response?.data ?? err.response?.data?.message ?? 'Terjadi error, coba lagi nanti.',
           });
@@ -72,6 +72,7 @@ export const login =
           addStorage('token', res?.data?.token);
           setItem("token-expired", res?.data?.token, 2);
           addStorage('phone-email', emailOrPhone);
+          addStorage('passwordSekarang', password);
           removeStorage('@exitTime');
           removeStorage('detected-exitTime');
           dispatch(setToken(res?.data?.token));
@@ -79,7 +80,7 @@ export const login =
           dispatch(getShowDashboard()).then((showDash: any) => {
             dispatch(getDetailNasabah()).then((detailNash: any) => {
               if (!showDash?.statuses['5'].status && detailNash?.idUserNasabah) {
-                addStorage("resetPass","passReset")
+                addStorage("resetPass", "passReset")
                 navigationRef.navigate("BuatPassword", { isShowDashboard: true });
               } else if (showDash?.statuses['5'].status && detailNash?.idUserNasabah) {
                 navigationRef.navigate("MyTabs");
@@ -96,7 +97,7 @@ export const login =
           dispatch(setLoginLoading(false))
           Toast.show({
             type: 'error',
-            text1: 'Error',
+            text1: 'Perhatian',
             text2:
               err.response?.data?.message ?? err.response?.data ?? 'Terjadi error, coba lagi nanti.',
           });
@@ -114,13 +115,13 @@ export const getReqOtp = () => async (dispatch: RootDispatch) => {
     .then(res => {
       Toast.show({
         type: 'success',
-        text1: 'Success',
-        text2: 'Req OTP.',
+        text1: 'Sukses',
+        text2: 'Meminta OTP berhasil'
       });
     })
     .catch(err => Toast.show({
       type: 'error',
-      text1: 'Error',
+      text1: 'Perhatian',
       text2:
         err.response?.data?.message ?? 'Terjadi error, coba lagi nanti.',
     }));
@@ -145,16 +146,45 @@ export const getDetailNasabah = () => async (dispatch: RootDispatch) => {
         // dispatch(logout())
       }
       if (err?.response?.status !== 401) {
-        Toast.show({
-          type: 'error',
-          text1: 'Error',
-          text2:
-            err.response?.data?.message ?? 'Terjadi error, coba lagi nanti.',
-        })
+        // Toast.show({
+        //   type: 'error',
+        //   text1: 'Perhatian',
+        //   text2:
+        //     err.response?.data?.message ?? 'Terjadi error, coba lagi nanti.',
+        // })
       }
     }).finally(() => {
       dispatch(setDetailNasabahDetailLoading(false));
     });
+  return data;
+};
+
+export const getLogoNasabah = () => async (dispatch: RootDispatch) => {
+  let data;
+  await axios
+    .get(`${API}/logo`, {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${await getStorage('token')}`,
+      },
+    })
+    .then(res => {
+      dispatch(setLogoNasabah(res?.data?.data))
+      data = res?.data?.data[0]
+    })
+    .catch(err => {
+      if (err?.response?.status === 401) {
+        // dispatch(logout())
+      }
+      if (err?.response?.status !== 401) {
+        Toast.show({
+          type: 'error',
+          text1: 'Perhatian',
+          text2:
+            err.response?.data?.message ?? 'Terjadi error, coba lagi nanti.',
+        })
+      }
+    })
   return data;
 };
 
@@ -172,14 +202,14 @@ export const getUserProfile = () => async (dispatch: RootDispatch) => {
       data = res.data;
     })
     .catch(err => {
-      if (err?.response?.status !== 401) {
-        Toast.show({
-          type: 'error',
-          text1: 'Error',
-          text2:
-            err.response?.data?.message ?? 'Terjadi error, coba lagi nanti.',
-        })
-      }
+      // if (err?.response?.status !== 401) {
+      //   Toast.show({
+      //     type: 'error',
+      //     text1: 'Perhatian',
+      //     text2:
+      //       err.response?.data?.message ?? 'Terjadi error, coba lagi nanti.',
+      //   })
+      // }
     });
   return data;
 };
@@ -214,12 +244,12 @@ export const updateNasabah =
           },
         },
         )
-        .then(() => {
+        .then((res) => {
           dispatch(setUpdateRegisterLoading(false));
           Toast.show({
             type: 'success',
-            text1: 'Success',
-            text2: 'update akun.',
+            text1: 'Sukses',
+            text2: res?.data?.message,
           });
           setShowModalSuccess(true);
           dispatch(getDetailNasabah());
@@ -229,9 +259,8 @@ export const updateNasabah =
           dispatch(setUpdateRegisterLoading(false));
           Toast.show({
             type: 'error',
-            text1: 'Error',
-            text2:
-              JSON.stringify(err.response?.data?.message) ?? 'Terjadi error, coba lagi nanti.',
+            text1: 'Perhatian',
+            text2: err.response?.data?.message ?? 'Terjadi error, coba lagi nanti.',
           });
         });
     };
@@ -258,7 +287,7 @@ export const uploadBuktiPengajuan =
         .then(() => {
           Toast.show({
             type: 'success',
-            text1: 'Success',
+            text1: 'Sukses',
             text2: 'Upload Bukti Berhasil',
           });
           navigationRef.navigate('Portofolio');
@@ -267,7 +296,7 @@ export const uploadBuktiPengajuan =
           if (err?.response?.status !== 401) {
             Toast.show({
               type: 'error',
-              text1: 'Error' + err?.response?.data?.message,
+              text1: 'Perhatian' + err?.response?.data?.message,
               text2:
                 JSON.stringify(err.response?.data) ?? 'Terjadi error, coba lagi nanti.',
             });
@@ -298,8 +327,8 @@ export const registerNasabah =
         .then((res) => {
           Toast.show({
             type: 'success',
-            text1: 'Success',
-            text2: 'mendaftarkan akun.',
+            text1: 'Sukses',
+            text2: 'Mendaftarkan akun',
           });
           if (store.getState().userReducer?.checkLogin === 'password') {
             navigationRef.navigate('MyTabs');
@@ -310,7 +339,7 @@ export const registerNasabah =
         .catch(err => {
           Toast.show({
             type: 'error',
-            text1: email,
+            text1: 'Gagal',
             text2: JSON.stringify(err.response?.data) ?? 'Terjadi error, coba lagi nanti.',
           });
         }).finally(() => dispatch(setRegisterLoading(false)));
@@ -335,24 +364,27 @@ export const registerPasswordPin =
           Toast.show({
             type: 'success',
             text1: 'Sukses',
-            text2: res?.data ?? `Berhasil Membuat ${route === 'PIN' ? 'PIN' : 'Password'}`,
+            text2: res?.data,
           });
+          addStorage("passwordSekarang", payload?.password);
           dispatch(setRegisterPasswordPinLoading(false));
           if (route === 'MyTabs') {
             dispatch(getDetailNasabah());
             dispatch(getUserProfile());
           }
           if (isShowDashboard) {
-            navigationRef.navigate("MyTabs");
+            setTimeout(() => navigationRef.navigate("MyTabs"), 2000);
           } else {
-            navigationRef.navigate(route as any);
+            setTimeout(() => navigationRef.navigate(route as any), 2000);
           }
         })
         .catch(err => {
+          console.log("error===>", err.response);
+
           dispatch(setRegisterPasswordPinLoading(false));
           Toast.show({
             type: 'error',
-            text1: 'Error',
+            text1: 'Perhatian',
             text2:
               err.response?.data ?? err.response?.data?.message ?? 'Terjadi error, coba lagi nanti.',
           });
@@ -381,7 +413,7 @@ export const forgotPasswordPin =
         .catch(err => {
           Toast.show({
             type: 'error',
-            text1: 'Error',
+            text1: 'Perhatian',
             text2:
               err.response?.data?.message ?? 'Terjadi error, coba lagi nanti.',
           });

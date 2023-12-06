@@ -14,7 +14,6 @@ import { getDetailNasabah } from '../../services/user';
 import { getSkDashboard } from '../../services/dasbhoard';
 import { setItem } from '../../utils/storage';
 import RenderHTML from 'react-native-render-html';
-import { useWindowDimensions } from 'react-native';
 
 export default function SyaratKetentuan() {
   const [agree, setAgree] = useState<boolean>(false);
@@ -41,11 +40,8 @@ export default function SyaratKetentuan() {
     setItem('skIsTrue', 'oke',1000);
     navigationRef.navigate((dtNasabah?.idUserNasabah == "" || dtNasabah?.idUserNasabah == null) ? 'Register' : 'MyTabs');
   };
-
-  const { width } = useWindowDimensions();
-  const regex = /(<([^>]+)>)/;
   const source = {
-    html: showSkDashboard?.data[0]?.syarat?.replace(regex, '')
+    html: showSkDashboard?.data[0]?.syarat
   };
   return (
     <DefaultView
@@ -75,7 +71,7 @@ export default function SyaratKetentuan() {
             <ActivityIndicator size={"large"} style={{ position: 'absolute', top: 22, left: 0, right: 0, zIndex: 10 }} /> :
             <ScrollView style={{ flex: 1 }}>
               <View>
-                <RenderHTML contentWidth={width} source={source} />
+                <RenderHTML source={source} />
               </View>
             </ScrollView>
           }

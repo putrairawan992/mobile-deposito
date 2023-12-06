@@ -8,9 +8,8 @@ import { navigationRef } from '../../navigation/RootNavigation';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootDispatch, RootState } from '../../store';
 import { getDetailNasabah } from '../../services/user';
-import { penghasilanValidation, statusNikahValidation } from '../../utils/constant';
+import { SYARIAH_URL, penghasilanValidation, statusNikahValidation } from '../../utils/constant';
 import ModalImageSelfie from '../../components/ModalImage';
-import ModalImageAhliWaris from '../../components/ModalImage';
 import ModalImage from '../../components/ModalImage';
 
 
@@ -21,7 +20,6 @@ export default function DetailPribadi() {
   const dispatch = useDispatch<RootDispatch>();
   const [showImageKtp, setShowImageKtp] = useState<boolean>(false);
   const [showImageSelfieKtp, setShowImageSelfieKtp] = useState<boolean>(false);
-  const [showImageKtpAhliWaris, setShowImageKtpAhliWaris] = useState<boolean>(false);
 
   useEffect(() => {
     dispatch(getDetailNasabah())
@@ -105,24 +103,16 @@ export default function DetailPribadi() {
           <View className="flex-row items-center">
             <DefaultText title="Foto KTP" titleClassName="flex-1" />
             <TouchableOpacity onPress={() => setShowImageKtp(true)}   className="border-[1px] border-primary rounded-md w-[160] px-2 py-2">
-              {detailNasabah?.image_ktp ? <Image source={{ uri: `https://dev.depositosyariah.id/${detailNasabah?.image_ktp}` }} style={{ width: 150, height: 100 }} /> : <DefaultText title="-" titleClassName="text-black" />}
+              {detailNasabah?.image_ktp ? <Image source={{ uri: `${SYARIAH_URL}/${detailNasabah?.image_ktp}` }} style={{ width: 150, height: 100 }} /> : <DefaultText title="-" titleClassName="text-black" />}
             </TouchableOpacity>
           </View>
           <Gap height={5} />
           <View className="flex-row items-center">
             <DefaultText title="Foto Selfie" titleClassName="flex-1" />
             <TouchableOpacity onPress={() => setShowImageSelfieKtp(true)}  className="border-[1px] border-primary rounded-md w-[160] px-2 py-2">
-              {detailNasabah?.image_selfie ? <Image source={{ uri: `https://dev.depositosyariah.id/${detailNasabah?.image_selfie}` }} style={{ width: 150, height: 100 }} /> : <DefaultText title="-" titleClassName="text-black" />}
+              {detailNasabah?.image_selfie ? <Image source={{ uri: `${SYARIAH_URL}/${detailNasabah?.image_selfie}` }} style={{ width: 150, height: 100 }} /> : <DefaultText title="-" titleClassName="text-black" />}
             </TouchableOpacity>
           </View>
-          <Gap height={5} />
-          <View className="flex-row items-center">
-            <DefaultText title="Foto KTP Ahli Waris" titleClassName="flex-1" />
-            <TouchableOpacity onPress={() => setShowImageKtpAhliWaris(true)}  className="border-[1px] border-primary rounded-md w-[160] px-2 py-2">
-              {detailNasabah?.image_ktp_ahli_waris ? <Image source={{ uri: `https://dev.depositosyariah.id/${detailNasabah?.image_ktp_ahli_waris}` }} style={{ width: 150, height: 100 }} /> : <DefaultText title="-" titleClassName="text-black" />}
-            </TouchableOpacity>
-          </View>
-          <Gap height={5} />
         </View>
       </ScrollView>
 
@@ -135,23 +125,18 @@ export default function DetailPribadi() {
         </TouchableOpacity>
       </View>
       <ModalImage
-        title='Preview Image KTP'
+        title='Lihat Foto KTP'
         hide={() => setShowImageKtp(false)}
-        data={detailNasabah?.image_ktp ? `https://dev.depositosyariah.id/${detailNasabah?.image_ktp}` : null as any}
+        data={detailNasabah?.image_ktp ? `${SYARIAH_URL}/${detailNasabah?.image_ktp}` : null as any}
         show={showImageKtp}
         onConfirm={() => setShowImageKtp(false)} />
       <ModalImageSelfie
-        title='Preview Selfie KTP'
+        title='Lihat Selfie KTP'
         hide={() => setShowImageSelfieKtp(false)}
-        data={detailNasabah?.image_selfie ? `https://dev.depositosyariah.id/${detailNasabah?.image_selfie}` : null as any}
+        data={detailNasabah?.image_selfie ? `${SYARIAH_URL}/${detailNasabah?.image_selfie}` : null as any}
         show={showImageSelfieKtp}
         onConfirm={() => setShowImageSelfieKtp(false)} />
-      <ModalImageAhliWaris
-        title='Preview KTP Ahli Waris'
-        hide={() => setShowImageKtpAhliWaris(false)}
-        data={detailNasabah?.image_ktp_ahli_waris ? `https://dev.depositosyariah.id/${detailNasabah?.image_ktp_ahli_waris}` : null as any}
-        show={showImageKtpAhliWaris}
-        onConfirm={() => setShowImageKtpAhliWaris(false)} />
+
     </DefaultView>
   );
 }

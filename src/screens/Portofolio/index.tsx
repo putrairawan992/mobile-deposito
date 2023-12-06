@@ -20,7 +20,10 @@ import { RootDispatch, RootState } from '../../store';
 import { getShowPortofolio } from '../../services/portofolio';
 import { formatRupiah } from '../../utils/currency';
 import { API, capitalizeFirstLetter } from '../../utils/constant';
-import { useFocusEffect } from '@react-navigation/native';
+import { useFocusEffect, useIsFocused } from '@react-navigation/native';
+import { addStorage, getExitTime, getStorage, saveExitTime } from '../../utils/storage';
+import { checkLogin } from '../../services/user';
+import ModalAlert from '../../components/ModalAlert';
 
 const Item = ({ item }: any) => {
   const bgVal = () => {
@@ -138,9 +141,14 @@ export default function Portofolio() {
     'Lunas',
     'Batal',
   ]);
+
+  const [isShowAlertAuth, setIsShowAlertAuth] = useState<boolean>(false);
   const [activeTab, setActiveTab] = useState<string>('Semua');
   const { showPortofolio, showPortofolioLoading } = useSelector((state: RootState) => state.portofolioReducer);
   const dispatch = useDispatch<RootDispatch>();
+  const { checkLoginLoading } = useSelector(
+    (state: RootState) => state.userReducer,
+  );
 
   useFocusEffect(useCallback(() => {
     dispatch(getShowPortofolio(`${API}/pengajuan`));
@@ -168,7 +176,43 @@ export default function Portofolio() {
     dispatch(getShowPortofolio(params));
   }, [dispatch, activeTab]);
 
-  return (
+
+  const useNasabah = useCallback(async () => {
+    const exitTime = await getExitTime();
+    const currentTime = new Date().getTime();
+    if (exitTime && await getStorage("phone-email")) {
+      const elapsedTime = (currentTime - exitTime) / 1000;
+      if (elapsedTime > 30) {
+        setIsShowAlertAuth(true);
+      }
+    }
+  }, [useIsFocused]);
+
+  useFocusEffect(useCallback(() => {
+    useNasabah();
+  }, [useIsFocused]));
+
+
+  const handleExit = async () => {
+    await saveExitTime();
+  };
+
+
+  useEffect(() => {
+    const subscription = AppState.addEventListener('change', async nextAppState => {
+      if (nextAppState === 'background') {
+        await handleExit();
+      }
+    });
+    return () => {
+      subscription.remove();
+    };
+  }, [useIsFocused]);
+
+
+
+
+  return (checkLoginLoading ? <ActivityIndicator size="large" style={{ position: 'absolute', top: 150, left: 0, right: 0 }} /> :
     <DefaultView>
       <DefaultHeader title="Portofolio" />
       <View>
@@ -204,7 +248,24 @@ export default function Portofolio() {
             showsVerticalScrollIndicator={false}
             renderItem={({ item }) => <Item item={item} />}
             contentContainerStyle={styles.container}
-          /> : <DefaultText titleClassName='text-black mt-20 font-inter-semibold self-center' title={"Belum Memiliki Portofolio"} />}
+          /> :
+          <DefaultText titleClassName='text-black mt-20 font-inter-semibold self-center' title={"Belum Memiliki Portofolio"} />}
+      <ModalAlert
+        show={isShowAlertAuth}
+        type='warning'
+        buttonOne={false}
+        hide={async () => {
+          setIsShowAlertAuth(false);
+          addStorage("detected-exitTime", "okeTrue");
+          dispatch(checkLogin(await getStorage("phone-email")))
+        }}
+        title={'Sesi Anda telah berakhir, silahkan login kembali'}
+        onConfirm={async () => {
+          setIsShowAlertAuth(false);
+          addStorage("detected-exitTime", "okeTrue");
+          dispatch(checkLogin(await getStorage("phone-email")))
+        }}
+      />
     </DefaultView>
   );
 }

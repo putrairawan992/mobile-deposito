@@ -62,27 +62,32 @@ export default function RekeningSaya({ route }: RootStackScreenProps<'RekeningSa
     dispatch(getShowBankList())
     dispatch(getShowBankListProduk())
   }
+console.log("showBankListProduct===>",showBankListProduct , "showBankList===>",showBankList);
 
   return (
     <DefaultView>
       <DefaultHeader title="Rekening Saya" />
-      {showBankListLoading || showBankListLoadingProduct ? <ActivityIndicator size={"large"} /> : <FlatList
-        data={paramsIsBank ? showBankListProduct : showBankList}
-        keyExtractor={(_, key) => key.toString()}
-        showsVerticalScrollIndicator={false}
-        renderItem={({ index, item }) => (
-          <Item item={item} onPress={actionDefaultBankShowList} />
-        )}
-        contentContainerStyle={styles.container}
-      />}
+      {showBankListLoading || showBankListLoadingProduct ?
+        <ActivityIndicator size={"large"} /> :
+        paramsIsBank &&  showBankListProduct?.length > 0 ||!paramsIsBank && showBankList?.length > 0 ?
+          <FlatList
+            data={paramsIsBank ? showBankListProduct : showBankList}
+            keyExtractor={(_, key) => key.toString()}
+            showsVerticalScrollIndicator={false}
+            renderItem={({ index, item }) => (
+              <Item item={item} onPress={actionDefaultBankShowList} />
+            )}
+            contentContainerStyle={styles.container}
+          /> : <DefaultText title={"Data Rekening saya belum ada"} titleClassName='text-black self-center mt-12 mb-10' />}
 
       <View className="pb-10 pt-3">
-      {showBankListLoading || showBankListLoadingProduct  ? null :  <TouchableOpacity
-          onPress={() => navigationRef.navigate('RekeningSayaTambah')}
-          activeOpacity={0.7}
-          className="bg-primary px-10 py-3 rounded-full self-center">
-          <DefaultText title="Tambah Akun Bank" titleClassName="text-white" />
-        </TouchableOpacity>}
+        {showBankListLoading || showBankListLoadingProduct ? null :
+          <TouchableOpacity
+            onPress={() => navigationRef.navigate('RekeningSayaTambah')}
+            activeOpacity={0.7}
+            className="bg-primary px-10 py-3 rounded-full self-center">
+            <DefaultText title="Tambah Akun Bank" titleClassName="text-white" />
+          </TouchableOpacity>}
       </View>
     </DefaultView>
   );

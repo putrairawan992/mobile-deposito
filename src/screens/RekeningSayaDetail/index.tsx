@@ -95,9 +95,7 @@ export default function RekeningSayaDetail({ route }: RootStackScreenProps<'Reke
             </>
           )}
         </View>
-      </ScrollView>
-
-      <View className="pb-10 pt-3">
+        <View className="pb-10 pt-3">
         <TouchableOpacity
           onPress={() => {
             if (isDelete) {
@@ -111,6 +109,9 @@ export default function RekeningSayaDetail({ route }: RootStackScreenProps<'Reke
           <DefaultText title="Hapus akun bank" titleClassName="text-white" />
         </TouchableOpacity>
       </View>
+      </ScrollView>
+
+  
 
       <ModalAlert
         show={showModalSuccess}

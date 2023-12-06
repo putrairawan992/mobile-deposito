@@ -1,6 +1,6 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import React, { useCallback, useEffect, useState } from 'react';
+import React from 'react';
 import { RootStackParamList } from './interface';
 import Login from '../screens/Login';
 import Splash from '../screens/Splash';
@@ -38,15 +38,9 @@ import SemuaPromo from '../screens/SemuaPromo';
 import BottomNavigator from '../components/BottomNavigator';
 import BuatPassword from '../screens/BuatPassword';
 import Password from '../screens/Password';
-import { getExitTime, getStorage, removeStorage, saveExitTime } from '../utils/storage';
-import { AppState } from 'react-native';
 import ListChatProduct from '../screens/Chat/ListChatProduct';
-import { useFocusEffect, useIsFocused } from '@react-navigation/native';
-import { navigationRef } from './RootNavigation';
-import { checkLogin, getDetailNasabah } from '../services/user';
-import { useDispatch, useSelector } from 'react-redux';
-import { RootDispatch, RootState } from '../store';
 import BlogDetail from '../screens/BlogDetail';
+import ChangePhoneNumber from '../screens/ChangePhoneNumber';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 const Tab = createBottomTabNavigator();
@@ -55,44 +49,17 @@ const Tab = createBottomTabNavigator();
 function MyTabs() {
   return (
     <Tab.Navigator
-      screenOptions={{ headerShown: false }}
+      screenOptions={{  headerShown: false }}
       tabBar={props => BottomNavigator({ ...props })}>
       <Tab.Screen component={Beranda} name="Beranda" />
       <Tab.Screen component={Produk} name="Produk" />
       <Tab.Screen component={Portofolio} name="Portofolio" />
-      <Tab.Screen component={Profile} name="Profile" />
+      <Tab.Screen component={Profile} name="Profil" />
     </Tab.Navigator>
   );
 }
 
 function StackNavigator() {
-  const [loading, setLoading] = useState<boolean>(true);
-
-
-  useEffect(() => {
-    setTimeout(() => {
-      setLoading(false);
-    }, 1888)
-  }, []);
-
-
-  const handleExit = async () => {
-    await saveExitTime();
-  };
-
-
-  useEffect(() => {
-    const subscription = AppState.addEventListener('change', async nextAppState => {
-      if (nextAppState === 'background') {
-        await handleExit();
-      }
-    });
-    return () => {
-      subscription.remove();
-    };
-  }, [useIsFocused]);
-
-
   return (
     <Stack.Navigator
       initialRouteName={"Splash"}
@@ -115,6 +82,7 @@ function StackNavigator() {
       <Stack.Screen component={FAQ} name="FAQ" />
       <Stack.Screen component={GantiPIN} name="GantiPIN" />
       <Stack.Screen component={GantiEmail} name="GantiEmail" />
+      <Stack.Screen component={ChangePhoneNumber} name="ChangePhoneNumber" />
       <Stack.Screen component={GantiKataSandi} name="GantiKataSandi" />
       <Stack.Screen component={Notifikasi} name="Notifikasi" />
       <Stack.Screen component={PIN} name="PIN" />

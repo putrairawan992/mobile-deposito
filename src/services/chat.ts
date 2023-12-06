@@ -26,7 +26,7 @@ export const getChatListKeluhan = (params?: any) => async (dispatch: RootDispatc
             }
             Toast.show({
                 type: 'error',
-                text1: 'Error',
+                text1: 'Perhatian',
                 text2:
                     err.response?.data?.message ?? err.response?.data ?? 'Terjadi error, coba lagi nanti.',
             })
@@ -52,7 +52,7 @@ export const getChatListDetailKeluhan = (params?: any) => async (dispatch: RootD
             }
             Toast.show({
                 type: 'error',
-                text1: 'Error',
+                text1: 'Perhatian',
                 text2:
                     err.response?.data?.message ?? err.response?.data ?? 'Terjadi error, coba lagi nanti.',
             })
@@ -76,7 +76,7 @@ export const postChatListDetailKeluhan = (params?: any) => async (dispatch: Root
             }
             Toast.show({
                 type: 'error',
-                text1: 'Error',
+                text1: 'Perhatian',
                 text2:
                     err.response?.data?.message ?? err.response?.data ?? 'Terjadi error, coba lagi nanti.',
             })
@@ -104,7 +104,7 @@ export const getChatJenisListKeluhan = () => async (dispatch: RootDispatch) => {
             }
             Toast.show({
                 type: 'error',
-                text1: 'Error',
+                text1: 'Perhatian',
                 text2:
                     err.response?.data?.message ?? err.response?.data ?? 'Terjadi error, coba lagi nanti.',
             })

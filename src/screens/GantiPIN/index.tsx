@@ -1,4 +1,5 @@
 import {
+  ActivityIndicator,
   ScrollView,
   TextInput,
   TouchableOpacity,
@@ -13,9 +14,10 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import Gap from '../../components/Gap';
 import ModalAlert from '../../components/ModalAlert';
 import { showToast } from '../../utils/toast';
-import { useDispatch } from 'react-redux';
-import { RootDispatch } from '../../store';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootDispatch, RootState } from '../../store';
 import { getReqOtp, registerPasswordPin } from '../../services/user';
+import Toast from 'react-native-toast-message';
 
 export default function GantiPIN() {
   const [showPINSekarang, setShowPINSekarang] = useState<boolean>(false);
@@ -28,6 +30,9 @@ export default function GantiPIN() {
   const [otp, setOtp] = useState<string>('');
   const [timer, setTimer] = useState<number>(0);
   const dispatch = useDispatch<RootDispatch>();
+  const { registerPasswordPinLoading } = useSelector(
+    (state: RootState) => state.userReducer,
+  );
 
   useEffect(() => {
     if (timer > 0) {
@@ -49,16 +54,32 @@ export default function GantiPIN() {
       PINBaru.trim().length === 0 ||
       PINConfirm.trim().length === 0
     ) {
-      return showToast('Data belum lengkap');
+      return Toast.show({
+        type: 'error',
+        text1: 'Perhatian',
+        text2: 'Data belum lengkap',
+      });
     }
     if (PINBaru.length < 6 || PINConfirm.length < 6) {
-      return showToast('PIN 6 angka');
+      return Toast.show({
+        type: 'error',
+        text1: 'Perhatian',
+        text2: 'PIN 6 angka',
+      });
     }
     if (PINBaru !== PINConfirm) {
-      return showToast('PIN tidak cocok');
+      return Toast.show({
+        type: 'error',
+        text1: 'Perhatian',
+        text2: 'PIN tidak cocok',
+      });
     }
     if (otp.length < 6) {
-      return showToast('Masukkan OTP');
+      return Toast.show({
+        type: 'error',
+        text1: 'Perhatian',
+        text2: 'Masukkan kode OTP',
+      });
     }
     dispatch(registerPasswordPin({ otp: otp, pin: PINConfirm }, 'Profile', false))
   };
@@ -67,8 +88,6 @@ export default function GantiPIN() {
     setTimer(60);
     dispatch(getReqOtp());
   }
-
-
 
   return (
     <DefaultView>
@@ -148,7 +167,7 @@ export default function GantiPIN() {
             <View className="flex-1">
               <TextInput
                 className="p-0 m-0 font-inter-bold"
-                placeholder="OTP"
+                placeholder="Masukkan kode OTP"
                 maxLength={6}
                 keyboardType='numeric'
                 value={otp}
@@ -176,6 +195,8 @@ export default function GantiPIN() {
               />
             </TouchableOpacity>}
           </View>
+          <DefaultText titleClassName='ml-2 mt-1 text-gray-600' title='Klik Kirim OTP untuk mendapatkan kode OTP' />
+
           {/* <Gap height={15} />
           <View className="bg-primary-light rounded-2xl px-5 py-3 flex-row items-center">
             <View className="flex-1">
@@ -204,12 +225,12 @@ export default function GantiPIN() {
       </ScrollView>
 
       <View className="pb-10 pt-3">
-        <TouchableOpacity
+        {registerPasswordPinLoading ? <ActivityIndicator size={"large"} /> : <TouchableOpacity
           onPress={onSave}
           activeOpacity={0.7}
           className="bg-primary px-10 py-3 rounded-full self-center">
           <DefaultText title="SIMPAN" titleClassName="text-white" />
-        </TouchableOpacity>
+        </TouchableOpacity>}
       </View>
 
 

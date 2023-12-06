@@ -13,7 +13,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { RootDispatch, RootState } from '../../store';
 import { getPembatalanPortofolioDetail, getPenarikanPortofolioDetail, getShowBuktiBagiHasilPortofolioDetail, getShowPortofolioDetail } from '../../services/portofolio';
 import { formatRupiah } from '../../utils/currency';
-import { MAX_FILE_SIZE, capitalizeFirstLetter } from '../../utils/constant';
+import { MAX_FILE_SIZE, SYARIAH_URL, capitalizeFirstLetter } from '../../utils/constant';
 import { Asset, launchImageLibrary } from 'react-native-image-picker';
 import Toast from 'react-native-toast-message';
 import ModalImage from '../../components/ModalImage';
@@ -30,7 +30,7 @@ export default function PortofolioDetail({ route }: RootStackScreenProps<'Portof
   const [isShowImageProsesPenarikan, setShowImageProsesPenarikan] = useState<boolean>(false);
   const [buktiTF, setBuktiTF] = useState<Asset | string>() as any;
   const { showPortofolioDetail, showBuktiHasilPortofolioLoadingDetail, showButktiHasilPortofolioDetail, showPortofolioLoadingDetail } = useSelector((state: RootState) => state.portofolioReducer);
-  const [upload_bukti_tf, setUpload_Bukti_Tf] = useState<string | Asset>(showPortofolioDetail?.data?.buktiTF ? `https://dev.depositosyariah.id/${showPortofolioDetail?.data?.buktiTF?.image}` : '') as any;
+  const [upload_bukti_tf, setUpload_Bukti_Tf] = useState<string | Asset>(showPortofolioDetail?.data?.buktiTF ? `${SYARIAH_URL}/${showPortofolioDetail?.data?.buktiTF?.image}` : '') as any;
   const dispatch = useDispatch<RootDispatch>();
   const dummyStatus = [
     { "message": "Pengajuan Deposito", "status": true },
@@ -52,16 +52,16 @@ export default function PortofolioDetail({ route }: RootStackScreenProps<'Portof
   }, [no_transaksi]);
 
   useEffect(() =>
-  navigation.addListener('beforeRemove', (e) => {
+    navigation.addListener('beforeRemove', (e) => {
       e.preventDefault();
       return navigation.navigate("Portofolio");
-  }),
-  [navigation]
-);
+    }),
+    [navigation]
+  );
 
   useEffect(() => {
     dispatch(getShowBuktiBagiHasilPortofolioDetail(showPortofolioDetail?.data?.bagiHasil?.data?.no_transaksi));
-    setUpload_Bukti_Tf(showPortofolioDetail?.data?.buktiTF?.image ? `https://dev.depositosyariah.id/${showPortofolioDetail?.data?.buktiTF?.image}` : null)
+    setUpload_Bukti_Tf(showPortofolioDetail?.data?.buktiTF?.image ? `${SYARIAH_URL}/${showPortofolioDetail?.data?.buktiTF?.image}` : null)
   }, [showPortofolioDetail])
 
   console.log("showButktiHasilPortofolioDetail", showButktiHasilPortofolioDetail);
@@ -161,7 +161,7 @@ export default function PortofolioDetail({ route }: RootStackScreenProps<'Portof
       if (result?.assets[0]?.fileSize as any > MAX_FILE_SIZE) {
         return Toast.show({
           type: 'error',
-          text1: 'Error',
+          text1: 'Perhatian',
           text2: 'Max Upload 500kb',
         });
       } else {
@@ -225,7 +225,7 @@ export default function PortofolioDetail({ route }: RootStackScreenProps<'Portof
     }
     return { status: status };
   };
-  
+
   const statusTransaksi = () => {
     let status;
     showPortofolioDetail?.data?.periode?.forEach((per: any) => {
@@ -240,7 +240,9 @@ export default function PortofolioDetail({ route }: RootStackScreenProps<'Portof
     <DefaultView>
       <DefaultHeader backButton={() => navigationRef.navigate('Portofolio')} title="Detail Portofolio" />
       <ScrollView showsVerticalScrollIndicator={false}>
-        {showPortofolioLoadingDetail ? <ActivityIndicator
+        {showPortofolioLoadingDetail ? 
+        <ActivityIndicator 
+        style={{ position: 'absolute', top: 150, left: 0, right: 0 }}
           size={'large'} /> :
           <View className="px-8">
             <Gap height={15} />
@@ -357,7 +359,7 @@ export default function PortofolioDetail({ route }: RootStackScreenProps<'Portof
                   className='border-[1px] border-primary mt-2 rounded-full self-center flex-row px-4 py-2'
                   onPress={() => onOpeGallery(0)}>
                   <DefaultText
-                    title={'Upload Image'}
+                    title={'Upload Foto'}
                     titleClassName="font-inter-regular "
                   />
                   <Icon name="upload" size={20} />
@@ -382,7 +384,7 @@ export default function PortofolioDetail({ route }: RootStackScreenProps<'Portof
                 onPress={() => onSave()}
                 activeOpacity={0.7}
                 className="self-center flex bg-primary px-3 py-2 rounded-full">
-                <DefaultText title="Submit Bukti Transfer" titleClassName="text-white" />
+                <DefaultText title="Simpan Bukti Transfer" titleClassName="text-white" />
               </TouchableOpacity>}
             <Gap height={10} />
             {isShowImageProsesPenarikan ?
@@ -424,7 +426,7 @@ export default function PortofolioDetail({ route }: RootStackScreenProps<'Portof
                 {showButktiHasilPortofolioDetail?.data?.image &&
                   <View className="flex-row items-center">
                     <DefaultText title="Lihat Bukti Transfer" titleClassName="flex-1" />
-                    <Image source={{ uri: `https://dev.depositosyariah.id/${showButktiHasilPortofolioDetail?.data?.image}` }}
+                    <Image source={{ uri: `${SYARIAH_URL}/${showButktiHasilPortofolioDetail?.data?.image}` }}
                       style={{ height: 100, width: 130 }} />
                     <Gap width={20} />
                     <Icon name="eye" onPress={() => setShowImageUploadLunas(true)} size={22} />
@@ -492,7 +494,7 @@ export default function PortofolioDetail({ route }: RootStackScreenProps<'Portof
       <ModalImagelunas
         title={'Preview Image Bukti Transfer '}
         hide={() => setShowImageUploadLunas(false)}
-        data={`https://dev.depositosyariah.id/${showButktiHasilPortofolioDetail?.data?.image}`}
+        data={`${SYARIAH_URL}/${showButktiHasilPortofolioDetail?.data?.image}`}
         show={showImageUploadLunas}
         onConfirm={() => setShowImageUploadLunas(false)} />
       <ModalImage
