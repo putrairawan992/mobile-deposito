@@ -7,7 +7,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import DefaultView from '../../components/DefaultView';
 import DefaultText from '../../components/DefaultText';
 import DefaultHeader from '../../components/DefaultHeader';
@@ -20,7 +20,7 @@ import { RootDispatch, RootState } from '../../store';
 import { getShowPortofolio } from '../../services/portofolio';
 import { formatRupiah } from '../../utils/currency';
 import { API, capitalizeFirstLetter } from '../../utils/constant';
-import { useFocusEffect, useIsFocused } from '@react-navigation/native';
+import { useFocusEffect, useIsFocused, useNavigation } from '@react-navigation/native';
 import { addStorage, getExitTime, getStorage, saveExitTime } from '../../utils/storage';
 import { checkLogin } from '../../services/user';
 import ModalAlert from '../../components/ModalAlert';
@@ -149,10 +149,14 @@ export default function Portofolio() {
   const { checkLoginLoading } = useSelector(
     (state: RootState) => state.userReducer,
   );
+  const navigation = useNavigation();
+  const isFocused = useMemo(() => navigation.isFocused(), []);
 
   useFocusEffect(useCallback(() => {
-    dispatch(getShowPortofolio(`${API}/pengajuan`));
-  }, [dispatch]));
+    if (isFocused) {
+      dispatch(getShowPortofolio(`${API}/pengajuan`));
+    }
+  }, [isFocused]));
 
   useEffect(() => {
     let params = `${API}/pengajuan`;
@@ -174,7 +178,7 @@ export default function Portofolio() {
         break;
     }
     dispatch(getShowPortofolio(params));
-  }, [dispatch, activeTab]);
+  }, [activeTab]);
 
 
   const useNasabah = useCallback(async () => {

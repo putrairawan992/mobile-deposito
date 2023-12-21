@@ -518,10 +518,14 @@ export default function Register() {
             />
 
             <Gap height={10} />
-
             {validateBank?.success && validateBank?.name_rek &&
-              <DefaultText title={validateBank?.name_rek} titleClassName='border-b-[1px] border-b-black py-2 font-inter m-0 p-0 flex-1 text-black' />
-            }
+              <View className='border-b-[1px] border-b-black py-2'>
+                <DefaultText
+                  title="Nama Rekening"
+                  titleClassName={`mb-1 text-black font-inter-medium`}
+                />
+                <DefaultText title={validateBank?.name_rek} titleClassName='font-inter text-black' />
+              </View>}
           </View>
           {!validateBank?.success && (
             <View style={styles.errorContainer}>
@@ -530,7 +534,7 @@ export default function Register() {
               </Text>
             </View>
           )}
-          {isLoading ? <ActivityIndicator size={"large"}/>:<View className='flex-row items-center justify-center mb-5'>
+          {isLoading ? <ActivityIndicator size={"large"} /> : <View className='flex-row items-center justify-center mb-5'>
             <Button
               title="Kembali"
               py='px-4'
@@ -776,34 +780,34 @@ export default function Register() {
           />
         </View>
 
-      <Button
-        title="Lanjut"
-        className={`bg-primary mx-10 my-5`}
-        titleClassName="text-white"
-        disabled={
-          !nama ||
-          !email ||
-          !phone ||
-          !alamat
-        }
-        onPress={async () => {
-          dispatch(getCheckEmailUser({ email }, setMessageCheckEmail, setPage, phone, setMessageCheckPhone))
-          // if (
-          //   nama?.trim()?.length === 0 ||
-          //   email?.trim()?.length === 0 ||
-          //   phone?.trim()?.length === 0 ||
-          //   alamat?.trim()?.length === 0
-          // ) {
-          //   return showToast('Data belum lengkap');
-          // }
+        <Button
+          title="Lanjut"
+          className={`bg-primary mx-10 my-5`}
+          titleClassName="text-white"
+          disabled={
+            !nama ||
+            !email ||
+            !phone ||
+            !alamat
+          }
+          onPress={async () => {
+            dispatch(getCheckEmailUser({ email }, setMessageCheckEmail, setPage, phone, setMessageCheckPhone))
+            // if (
+            //   nama?.trim()?.length === 0 ||
+            //   email?.trim()?.length === 0 ||
+            //   phone?.trim()?.length === 0 ||
+            //   alamat?.trim()?.length === 0
+            // ) {
+            //   return showToast('Data belum lengkap');
+            // }
 
-          // if (!isEmail(email)) {
-          //   return showToast('Email tidak valid');
-          // }
-          addStorage('pageRegister', 1);
-          addStorage('dataPageZero', { nama, email, phone, alamat });
-        }}
-      />
+            // if (!isEmail(email)) {
+            //   return showToast('Email tidak valid');
+            // }
+            addStorage('pageRegister', 1);
+            addStorage('dataPageZero', { nama, email, phone, alamat });
+          }}
+        />
       </ScrollView>
     </DefaultView>
   );

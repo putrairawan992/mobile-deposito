@@ -82,7 +82,7 @@ export default function AjukanDeposito({ route }: RootStackScreenProps<"AjukanDe
   return (
     <DefaultView>
       <DefaultHeader title="Ajukan Deposito" />
-      <ScrollView showsVerticalScrollIndicator={false}>
+      <ScrollView style={{padding:15}} showsVerticalScrollIndicator={false}>
         <View className="px-5">
           <Gap height={15} />
           <DefaultText
@@ -242,6 +242,7 @@ export default function AjukanDeposito({ route }: RootStackScreenProps<"AjukanDe
             className="self-center bg-primary px-5 py-2 rounded-full">
             <DefaultText title="Submit" titleClassName="text-white" />
           </TouchableOpacity>
+          <Gap height={30} />
         </View>
       </ScrollView>
 

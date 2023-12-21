@@ -1,5 +1,5 @@
 import { ActivityIndicator, AppState, FlatList, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import DefaultView from '../../components/DefaultView';
 import DefaultText from '../../components/DefaultText';
 import DefaultHeader from '../../components/DefaultHeader';
@@ -12,7 +12,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { RootDispatch, RootState } from '../../store';
 import { getShowProductNasabah } from '../../services/product';
 import { formatRupiah } from '../../utils/currency';
-import { useFocusEffect, useIsFocused } from '@react-navigation/native';
+import { useFocusEffect, useIsFocused, useNavigation } from '@react-navigation/native';
 import { checkLogin, getDetailNasabah } from '../../services/user';
 import { addStorage, getExitTime, getStorage, saveExitTime } from '../../utils/storage';
 import ModalAlert from '../../components/ModalAlert';
@@ -125,41 +125,37 @@ export default function Produk() {
   const [hasilSetara, setHasilSetara] = useState<string | undefined>(undefined);
   const [tenor, setTenor] = useState<string | undefined>(undefined);
   const { showProduct, showProcutLoading } = useSelector((state: RootState) => state.productReducer);
-  const { checkLoginLoading } = useSelector(
-    (state: RootState) => state.userReducer,
-  );
   const [searchName, setSearchName] = useState<string | undefined>(undefined);
   const dispatch = useDispatch<RootDispatch>();
   const [isShowAlertAuth, setIsShowAlertAuth] = useState<boolean>(false);
+  const navigation = useNavigation()
+  const isFocused = useMemo(() => navigation.isFocused(), []);
+
+
+  // useFocusEffect(useCallback(() => {
+  //   dispatch(getDetailNasabah());
+  //   dispatch(getShowProductNasabah());
+  // }, []));
 
   useEffect(() => {
-    dispatch(getDetailNasabah());
-    dispatch(getShowProductNasabah());
-  }, [dispatch]);
-
-  useFocusEffect(
-    useCallback(() => {
-      let queryParams = '';
-      if (searchName || hasilSetara || tenor) {
-        const queryNya = {
-          string: searchName || undefined,
-          bagi_hasil: hasilSetara || undefined,
-          tenor: tenor || undefined,
-        } as any
-        queryParams = Object.keys(queryNya)
-          .filter(key => queryNya[key])
-          .map(key => encodeURIComponent(key) + '=' + encodeURIComponent(queryNya[key]))
-          .join('&');
-      }
-      dispatch(getShowProductNasabah(queryParams));
-    }, [dispatch, hasilSetara, tenor, searchName]),
-  );
-
+    let queryParams = '';
+    if (searchName || hasilSetara || tenor) {
+      const queryNya = {
+        string: searchName || undefined,
+        bagi_hasil: hasilSetara || undefined,
+        tenor: tenor || undefined,
+      } as any
+      queryParams = Object.keys(queryNya)
+        .filter(key => queryNya[key])
+        .map(key => encodeURIComponent(key) + '=' + encodeURIComponent(queryNya[key]))
+        .join('&');
+    }
+    dispatch(getShowProductNasabah(queryParams));
+  }, [hasilSetara, tenor, searchName]);
 
   const handleExit = async () => {
     await saveExitTime();
   };
-
 
   useEffect(() => {
     const subscription = AppState.addEventListener('change', async nextAppState => {
@@ -171,9 +167,6 @@ export default function Produk() {
       subscription.remove();
     };
   }, [useIsFocused]);
-
-
-
 
   const useNasabah = useCallback(async () => {
     const exitTime = await getExitTime();
@@ -192,7 +185,7 @@ export default function Produk() {
     setShowHasilSetara(false);
     setShowTenor(false);
     useNasabah();
-  }, [useIsFocused]));
+  }, [isFocused]));
 
 
   return (<DefaultView>
@@ -391,13 +384,13 @@ export default function Produk() {
         style={{ position: 'absolute', top: 250, left: 0, right: 0 }}
         size={'large'}
       /> :
-        <FlatList
-          data={showProduct}
-          keyExtractor={(_, key) => key.toString()}
-          showsVerticalScrollIndicator={false}
-          renderItem={e => <Item data={e} />}
-          contentContainerStyle={styles.container}
-        />}
+      <FlatList
+        data={showProduct}
+        keyExtractor={(_, key) => key.toString()}
+        showsVerticalScrollIndicator={false}
+        renderItem={e => <Item data={e} />}
+        contentContainerStyle={styles.container}
+      />}
     <ModalAlert
       show={isShowAlertAuth}
       type='warning'

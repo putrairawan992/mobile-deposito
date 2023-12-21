@@ -65,7 +65,7 @@ export default function BuatPassword({
           />
           <Gap height={10} />
           <Input
-            title="Buat Kata Sandi kamu"
+            title="Buat Kata Sandi anda"
             titleClassName="text-center"
             textInputProps={{
               secureTextEntry: !showPassword,
@@ -95,7 +95,7 @@ export default function BuatPassword({
           )}
           <Gap height={10} />
           <Input
-            title="Konfirmasi kata sandi kamu"
+            title="Konfirmasi kata sandi anda"
             length={20}
             titleClassName="text-center"
             textInputProps={{

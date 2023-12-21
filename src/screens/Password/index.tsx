@@ -70,7 +70,7 @@ export default function Password({ route }: RootStackScreenProps<'Password'>) {
           />
           <Gap height={10} />
           <Input
-            title="Kata Sandi kamu"
+            title="Kata Sandi anda"
             titleClassName="text-left"
             textInputProps={{
               secureTextEntry: !showPassword,

@@ -86,7 +86,9 @@ export const login =
                 navigationRef.navigate("MyTabs");
                 removeStorage("resetPass");
               } else {
-                navigationRef.navigate("SplashLogin")
+                if (!detailNash?.idUserNasabah) {
+                  navigationRef.navigate("SplashLogin");
+                }
               }
               dispatch(setLoginLoading(false))
             });

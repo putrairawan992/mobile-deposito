@@ -1,5 +1,5 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { BottomTabNavigationOptions, createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import React from 'react';
 import { RootStackParamList } from './interface';
 import Login from '../screens/Login';
@@ -41,6 +41,7 @@ import Password from '../screens/Password';
 import ListChatProduct from '../screens/Chat/ListChatProduct';
 import BlogDetail from '../screens/BlogDetail';
 import ChangePhoneNumber from '../screens/ChangePhoneNumber';
+import Animated, { FadeInLeft, FadeInRight, Layout } from 'react-native-reanimated';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 const Tab = createBottomTabNavigator();
@@ -49,9 +50,18 @@ const Tab = createBottomTabNavigator();
 function MyTabs() {
   return (
     <Tab.Navigator
-      screenOptions={{  headerShown: false }}
-      tabBar={props => BottomNavigator({ ...props })}>
-      <Tab.Screen component={Beranda} name="Beranda" />
+      screenOptions={{ headerShown: false }}
+      tabBar={props => <Animated.View
+        entering={FadeInLeft}
+        exiting={FadeInRight}
+      >
+        {BottomNavigator({ ...props })}
+      </Animated.View>}>
+      <Tab.Screen  options={{
+          presentation: 'fullScreenModal',
+          animationTypeForReplace: 'push',
+          animation: 'slide_from_right',
+        }} component={Beranda} name="Beranda" />
       <Tab.Screen component={Produk} name="Produk" />
       <Tab.Screen component={Portofolio} name="Portofolio" />
       <Tab.Screen component={Profile} name="Profil" />
