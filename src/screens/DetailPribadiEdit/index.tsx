@@ -48,9 +48,10 @@ export default function DetailPribadiEdit({ route }: RootStackScreenProps<'Detai
   const [showImageKtp, setShowImageKtp] = useState<boolean>(false);
   const [showImageSelfieKtp, setShowImageSelfieKtp] = useState<boolean>(false);
   const dispatch = useDispatch<RootDispatch>();
-  const { updateRegisterLoading } = useSelector(
+  const { updateRegisterLoading,token } = useSelector(
     (state: RootState) => state.userReducer,
   );
+console.log("token",token);
 
   const onSave = () => {
     if (ktp.trim().length !== 16) {
@@ -89,7 +90,7 @@ export default function DetailPribadiEdit({ route }: RootStackScreenProps<'Detai
   const onOpeGallery = async (index: number, type?: string) => {
     let result;
     if (type === 'selfie') {
-      result = await launchCamera({ mediaType: 'photo', maxHeight: 100, maxWidth: 100 });
+      result = await launchCamera({ mediaType: 'photo', maxHeight: 800, maxWidth: 1100 });
     } else {
       result = await launchImageLibrary({ mediaType: 'photo' });
     }

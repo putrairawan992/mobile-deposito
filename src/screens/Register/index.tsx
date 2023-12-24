@@ -137,7 +137,7 @@ export default function Register() {
   const onOpeGallery = async (index: number, type?: string) => {
     let result;
     if (type === 'selfie') {
-      result = await launchCamera({ mediaType: 'photo', maxHeight: 100, maxWidth: 100 });
+      result = await launchCamera({ mediaType: 'photo', maxHeight: 800, maxWidth: 1100 });
     } else {
       result = await launchImageLibrary({ mediaType: 'photo' });
     }

@@ -35,9 +35,9 @@ export default function AhliWarisEdit({ route }: RootStackScreenProps<"AhliWaris
 
   const onSave = () => {
 
-    if (ktp.trim().length !== 16) {
-      return showToast('No KTP tidak valid, 16 Angka');
-    }
+    // if (ktp.trim().length !== 16) {
+    //   return showToast('No KTP tidak valid, 16 Angka');
+    // }
 
     if (pin.trim().length < 6) {
       return showToast('Masukkan PIN kamu');
@@ -105,6 +105,7 @@ export default function AhliWarisEdit({ route }: RootStackScreenProps<"AhliWaris
               <TextInput
                 className="m-0 p-0 font-inter-regular"
                 value={ktp}
+                maxLength={16}
                 onChangeText={value => setKtp(value)}
                 keyboardType="number-pad"
               />

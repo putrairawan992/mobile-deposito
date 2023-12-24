@@ -7,6 +7,7 @@ import Gap from '../../components/Gap';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootDispatch, RootState } from '../../store';
 import { getShowPromo } from '../../services/product';
+import { navigationRef } from '../../navigation/RootNavigation';
 
 export default function SemuaPromo() {
   const { showPromo } = useSelector(
@@ -29,8 +30,10 @@ export default function SemuaPromo() {
         showsVerticalScrollIndicator={false}
         renderItem={({ item, index }) => {
           return (
-            <View
-              className="mx-3 flex-row border-[1px] border-primary rounded-xl p-2 my-2">
+            <TouchableOpacity
+              onPress={() => navigationRef.navigate("PromoDetail", { data: item })}
+              style={{borderRadius: 8, borderColor: '#2A8E54', borderWidth: 1}}
+              className="mx-3 flex-row p-2 my-2">
               <Image
                 source={{ uri: item?.image }}
                 resizeMode="cover"
@@ -38,22 +41,10 @@ export default function SemuaPromo() {
               />
               <Gap width={10} />
               <View className="flex-1">
-                {item?.deskripsi?.length > 300 ?
-                  (index === indexes && showMore) ?
-                    <>
-                      <DefaultText title={item?.deskripsi} />
-                      <TouchableOpacity onPress={() => { setShowMore(false); setIndexes(index) }}>
-                        <DefaultText title="Tutup Semua" titleClassName="text-xs underline text-blue-600" />
-                      </TouchableOpacity>
-                    </> :
-                    <>
-                      <DefaultText title={item?.deskripsi?.slice(0, 100) + '...'} />
-                      <TouchableOpacity onPress={() => { setShowMore(true); setIndexes(index) }}>
-                        <DefaultText title="Lihat Semua" titleClassName="text-xs underline text-blue-600" />
-                      </TouchableOpacity>
-                    </> :
-                  <DefaultText title={item?.deskripsi} />
-                }
+                <DefaultText title={item?.deskripsi?.slice(0, 20) + '...'} />
+                <TouchableOpacity onPress={() => navigationRef.navigate("PromoDetail", { data: item })}>
+                  <DefaultText title="Lihat Semua" titleClassName="text-xs underline text-blue-600" />
+                </TouchableOpacity>
                 <Gap height={5} />
                 <DefaultText
                   title={`deposito by ${item?.namaMitra}`}
@@ -61,7 +52,7 @@ export default function SemuaPromo() {
                 />
                 <DefaultText title={item?.end_date} titleClassName="text-xs" />
               </View>
-            </View>
+            </TouchableOpacity>
           );
         }}
       />

@@ -66,7 +66,7 @@ export default function Notifikasi() {
   return (
     <DefaultView>
       <DefaultHeader title="Pemberitahuan Terbaru" />
-      {showNotificationListLoading || showReadNotificationListLoading ?
+      {showNotificationListLoading ?
         <ActivityIndicator size="large"
           style={{ position: "absolute", top: 250, left: 0, right: 0 }} /> :
         showNotificationList?.data?.length > 0 ?

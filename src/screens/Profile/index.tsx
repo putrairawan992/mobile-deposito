@@ -25,11 +25,11 @@ export default function Profile() {
   const navigation = useNavigation();
   const isFocused = useMemo(() => navigation.isFocused(), []);
 
-  useEffect(() => {
+  useFocusEffect(useCallback(() => {
     if (isFocused) {
       dispatch(getDetailNasabah());
     }
-  }, [isFocused]);
+  }, [isFocused]));
 
   function maskEmail(email: string) {
     let skipFirstChars = 3;

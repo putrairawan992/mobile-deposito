@@ -13,7 +13,7 @@ import {
   View,
   useWindowDimensions,
 } from 'react-native';
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import DefaultView from '../../components/DefaultView';
 import DefaultText from '../../components/DefaultText';
 import { images } from '../../utils/images';
@@ -29,12 +29,12 @@ import { getShowPromo } from '../../services/product';
 import { RootDispatch, RootState } from '../../store';
 import { getShowDashboard } from '../../services/dasbhoard';
 import { formatRupiah } from '../../utils/currency';
-import { checkLogin, getDetailNasabah, getUserProfile } from '../../services/user';
+import { checkLogin, getUserProfile } from '../../services/user';
 import { addStorage, getExitTime, getStorage, saveExitTime, } from '../../utils/storage';
 import { useFocusEffect, useIsFocused, useNavigation } from '@react-navigation/native';
 import ModalAlert from '../../components/ModalAlert';
 import { ScrollView } from 'react-native-gesture-handler';
-import { SYARIAH_URL, WIDTH } from '../../utils/constant';
+import { WIDTH } from '../../utils/constant';
 import { getShowArtikelList } from '../../services/artikel';
 import moment from 'moment';
 import { getShowNotificationChat, getShowNotificationList } from '../../services/notification';
@@ -48,7 +48,7 @@ export default function Beranda() {
   const { showDashboard } = useSelector(
     (state: RootState) => state.dashboardReducer,
   );
-  const { detailNasabah,token } = useSelector(
+  const { detailNasabah, token } = useSelector(
     (state: RootState) => state.userReducer,
   );
   const { showArtikelListData } = useSelector(
@@ -261,13 +261,13 @@ export default function Beranda() {
               // scrollAnimationDuration={5000}
               onSnapToItem={index => setIndex(index)}
               renderItem={({ item }: { item: { image: string } }) => (
-                <View style={styles.child}>
+                <TouchableOpacity onPress={() => navigationRef.navigate("PromoDetail", { data: item })} style={styles.child}>
                   <Image
                     style={{ width: WIDTH / 1.1, height: "100%" }}
                     source={{ uri: item?.image }}
                     resizeMode="contain"
                   />
-                </View>
+                </TouchableOpacity>
               )}
             />
             {/* <CarouselSnap
