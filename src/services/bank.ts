@@ -3,10 +3,35 @@ import { RootDispatch } from '../store';
 import { API } from '../utils/constant';
 import Toast from 'react-native-toast-message';
 import { addStorage, getStorage, removeStorage } from '../utils/storage';
-import { setShowBankListData, setShowBankListDataLoading } from '../store/bank';
+import { setShowBankListData, setShowBankListDataLoading, setShowKotaListData, setShowKotaListDataLoading } from '../store/bank';
 import { logout } from './user';
-import { postShowBankList } from './dasbhoard';
 
+
+export const getShowKotaData = (params?: any) => async (dispatch: RootDispatch) => {
+    dispatch(setShowKotaListDataLoading(true));
+    axios
+        .post(`${API}/kota`, params, {
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${await getStorage('token')}`,
+            },
+        })
+        .then(res => {
+            dispatch(setShowKotaListData(res?.data));
+            dispatch(setShowKotaListDataLoading(false));
+        }).catch(err => {
+            if (err?.response?.status === 401) {
+                dispatch(logout())
+            }
+            dispatch(setShowKotaListDataLoading(false));
+            Toast.show({
+                type: 'error',
+                text1: 'Perhatian',
+                text2:
+                    err.response?.data?.message ?? err.response?.data ?? 'Terjadi error, coba lagi nanti.',
+            })
+        })
+};
 
 export const getShowBankListData = (params?: any) => async (dispatch: RootDispatch) => {
     dispatch(setShowBankListDataLoading(true));

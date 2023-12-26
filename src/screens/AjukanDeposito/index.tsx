@@ -25,6 +25,7 @@ export default function AjukanDeposito({ route }: RootStackScreenProps<"AjukanDe
   const [agree, setAgree] = useState<boolean>(false);
   const [showModal, setShowModal] = useState<boolean>(false);
   const [nominal, setNominal] = useState<string>('');
+  const [tujuanDeposito,setTujuanDeposito] = useState<string>('');
   const [data, setData] = useState<any>(null);
   const [loadings, setLoadings] = useState<boolean>(false);
   const { showBankListProduct } = useSelector(
@@ -52,6 +53,7 @@ export default function AjukanDeposito({ route }: RootStackScreenProps<"AjukanDe
     const payload = {
       id_norek: dataBank?.id,
       aro: perpanjang ? 1 : 0,
+      tujuan:tujuanDeposito,
       amount: nominal?.replace(/\./g, ""),
       bagi_hasil: data?.estimasi_akhir?.toString(),
       tenor: showProductDetail?.tenor,
@@ -115,6 +117,17 @@ export default function AjukanDeposito({ route }: RootStackScreenProps<"AjukanDe
 
         <View className="px-5">
           <DefaultText title="Masukkan Nominal Deposito Anda" />
+          <Gap height={10} />
+          <View className="border-[1px] border-primary rounded-md px-2 py-2">
+            <TextInput
+              className="m-0 p-0 font-inter-regular"
+              placeholder="Tujuan Deposito"
+              value={tujuanDeposito}
+              onChangeText={value => {
+                setTujuanDeposito(value);
+              }}
+            />
+          </View>
           <Gap height={10} />
           <View className="border-[1px] border-primary rounded-md px-2 py-2">
             <TextInput

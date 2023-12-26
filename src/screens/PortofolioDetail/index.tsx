@@ -206,7 +206,7 @@ export default function PortofolioDetail({ route }: RootStackScreenProps<'Portof
     return bgColor;
   }
   const statusVal = () => {
-    let status = 'Process';
+    let status = 'Proses';
     if (showPortofolioDetail?.data?.status === "6" || showPortofolioDetail?.data?.status === "0") {
       status = 'Batal'
     }

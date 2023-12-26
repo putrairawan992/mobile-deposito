@@ -44,7 +44,7 @@ const Item = ({ item }: any) => {
   }
 
   const statusVal = () => {
-    let status = 'Process';
+    let status = 'Proses';
     if (item.status === "6" || item.status === "0") {
       status = 'Batal'
     }

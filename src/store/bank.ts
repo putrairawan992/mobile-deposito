@@ -4,10 +4,14 @@ import { createSlice } from '@reduxjs/toolkit';
 interface InitialState {
     showBankListData: any
     showBankListDataLoading: boolean,
+    showKotaData: any,
+    showKotaDataLoading: boolean
 }
 
 const initialState: InitialState = {
     showBankListData: null,
+    showKotaData: null,
+    showKotaDataLoading: false,
     showBankListDataLoading: false,
 };
 
@@ -21,10 +25,16 @@ export const bankSlice = createSlice({
         setShowBankListDataLoading: (state, action) => {
             state.showBankListDataLoading = action.payload;
         },
+        setShowKotaListData: (state, action) => {
+            state.showKotaData = action.payload;
+        },
+        setShowKotaListDataLoading: (state, action) => {
+            state.showKotaDataLoading = action.payload;
+        },
     },
 });
 
 export default bankSlice.reducer;
 
 export const {
-    setShowBankListData, setShowBankListDataLoading } = bankSlice.actions;
+   setShowKotaListData,setShowKotaListDataLoading, setShowBankListData, setShowBankListDataLoading } = bankSlice.actions;

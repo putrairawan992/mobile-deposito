@@ -190,6 +190,11 @@ export default function Produk() {
 
   return (<DefaultView>
     <DefaultHeader title="Produk Deposito" />
+
+    <View className="mx-3 p-1">
+      <TextInput onChangeText={(e) => setSearchName(e)
+      } className="bg-gray-300 py-1 px-1 rounded-full items-center" placeholder='Cari Produk' />
+    </View>
     <View className="flex-row mx-3 p-1">
       <View className="flex-1">
         <DefaultText title="Bagi Hasil Setara" />
@@ -374,10 +379,6 @@ export default function Produk() {
           </View>
         )}
       </View>
-    </View>
-    <View className="mx-3 p-1 mb-3">
-      <TextInput onChangeText={(e) => setSearchName(e)
-      } className="bg-gray-300 py-1 px-1 rounded-full items-center" placeholder='Cari Produk' />
     </View>
     {showProcutLoading ?
       <ActivityIndicator

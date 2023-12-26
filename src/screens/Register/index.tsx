@@ -31,6 +31,8 @@ import ModalImage from '../../components/ModalImage';
 import Toast from 'react-native-toast-message';
 import { getCheckEmailUser, getCheckKtpUser } from '../../services/dasbhoard';
 import { getValidationBankListData } from '../../services/bank';
+import ModalGetKota from '../../components/ModalGetKota';
+import ModalGetKotaDomisili from '../../components/ModalGetKota';
 
 export default function Register() {
   const { registerLoading, detailNasabah } = useSelector(
@@ -41,6 +43,7 @@ export default function Register() {
   const [email, setEmail] = useState<string>(detailNasabah?.email);
   const [phone, setPhone] = useState<string>(detailNasabah?.phone);
   const [alamat, setAlamat] = useState<string>(detailNasabah?.alamat);
+  const [alamatDomisili, setAlamatDomisili] = useState<string>(detailNasabah?.alamat_domisili);
   const [ktp, setKtp] = useState<string>(detailNasabah?.ktp);
   const [tempatLahir, setTempatLahir] = useState<string>(detailNasabah?.tmpt_lahir);
   const [tanggalLahir, setTanggalLahir] = useState<Date>();
@@ -61,7 +64,10 @@ export default function Register() {
   const [messageCheckKtp, setMessageCheckKtp] = useState<string>('');
   const [messageCheckPhone, setMessageCheckPhone] = useState<string>('');
   const [messageAhliWaris, setMessageAhliWaris] = useState<string>('');
-
+  const [kotaTempatTinggal, setKotaTempatTinggal] = useState<any>(null);
+  const [showKotaTempatTinggal, setShowKotaTempatTinggal] = useState<boolean>(false);
+  const [kotaTempatDomisiliTinggal, setKotaTempatDomisiliTinggal] = useState<any>();
+  const [showKotaTempatDomisiliTinggal, setShowKotaTempatDomisiliTinggal] = useState<boolean>(false);
   const [showImageKtp, setShowImageKtp] = useState<boolean>(false);
   const [showImageSelfieKtp, setShowImageSelfieKtp] = useState<boolean>(false);
   const [showImageKtpAhliWaris, setShowImageKtpAhliWaris] = useState<boolean>(false);
@@ -103,6 +109,9 @@ export default function Register() {
     formdata.append('ktp_ahli_waris', ahliWarisKtp);
     formdata.append('phone_ahli_waris', ahliWarisPhone);
     formdata.append('hub_ahli_waris', hubunganAhliWaris);
+    formdata.append('alamat_domisili', alamatDomisili);
+    formdata.append('kota', kotaTempatTinggal?.id);
+    formdata.append('kota_domisili', kotaTempatDomisiliTinggal?.id);
     formdata.append('nama_bank', bank?.nama?.toUpperCase());
     formdata.append('norek', rekening);
     formdata.append('atas_nama', validateBank?.name_rek);
@@ -778,6 +787,31 @@ export default function Register() {
             value={alamat}
             onChangeText={value => setAlamat(value)}
           />
+          <Gap height={10} />
+          <Input
+            ComponentRight={<DefaultText title="*" titleClassName='text-red-600 ml-2' />}
+            title="Alamat Domisili"
+            isConditional={true}
+            value={alamatDomisili}
+            onChangeText={value => setAlamatDomisili(value)}
+          />
+
+          <Gap height={10} />
+          <Input
+            ComponentRight={<DefaultText title="*" titleClassName='text-red-600 ml-2' />}
+            title="Kota"
+            isConditional={true}
+            value={kotaTempatTinggal?.kota}
+            onPress={() => setShowKotaTempatTinggal(true)}
+          />
+          <Gap height={10} />
+          <Input
+            ComponentRight={<DefaultText title="*" titleClassName='text-red-600 ml-2' />}
+            title="Kota Domisili"
+            isConditional={true}
+            value={kotaTempatDomisiliTinggal?.kota}
+            onPress={() => setShowKotaTempatDomisiliTinggal(true)}
+          />
         </View>
 
         <Button
@@ -788,27 +822,33 @@ export default function Register() {
             !nama ||
             !email ||
             !phone ||
-            !alamat
+            !alamat ||
+            !kotaTempatTinggal || 
+            !kotaTempatDomisiliTinggal
           }
           onPress={async () => {
-            dispatch(getCheckEmailUser({ email }, setMessageCheckEmail, setPage, phone, setMessageCheckPhone))
-            // if (
-            //   nama?.trim()?.length === 0 ||
-            //   email?.trim()?.length === 0 ||
-            //   phone?.trim()?.length === 0 ||
-            //   alamat?.trim()?.length === 0
-            // ) {
-            //   return showToast('Data belum lengkap');
-            // }
-
-            // if (!isEmail(email)) {
-            //   return showToast('Email tidak valid');
-            // }
+            dispatch(getCheckEmailUser({ email }, setMessageCheckEmail, setPage, phone, setMessageCheckPhone));
             addStorage('pageRegister', 1);
             addStorage('dataPageZero', { nama, email, phone, alamat });
           }}
         />
       </ScrollView>
+      <ModalGetKota
+        onConfirm={value => {
+          setShowKotaTempatTinggal(false);
+          setKotaTempatTinggal(value);
+        }} show={showKotaTempatTinggal}
+        hide={() => setShowKotaTempatTinggal(false)}
+      />
+      <ModalGetKotaDomisili
+        onConfirm={value => {
+          setShowKotaTempatDomisiliTinggal(false);
+          setKotaTempatDomisiliTinggal(value);
+        }}
+        show={showKotaTempatDomisiliTinggal}
+        hide={() => setShowKotaTempatDomisiliTinggal(false)}
+      />
+
     </DefaultView>
   );
 }

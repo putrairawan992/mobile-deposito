@@ -24,7 +24,7 @@ export default function DetailPribadi() {
   useEffect(() => {
     dispatch(getDetailNasabah())
   }, [dispatch])
-  
+
   return (
     <DefaultView>
       <DefaultHeader title="Detail Pribadi" />
@@ -57,6 +57,35 @@ export default function DetailPribadi() {
               <DefaultText title={detailNasabah?.tgl_lahir} />
             </View>
           </View>
+          <Gap height={5} />
+          <View className="flex-row items-center">
+            <DefaultText title="Kota" titleClassName="flex-1" />
+            <View className="border-[1px] border-primary rounded-md w-[160] px-2 py-2">
+              <DefaultText title={detailNasabah?.kota} />
+            </View>
+          </View>
+          <Gap height={5} />
+          <View className="flex-row items-center">
+            <DefaultText title="Kota Domisili" titleClassName="flex-1" />
+            <View className="border-[1px] border-primary rounded-md w-[160] px-2 py-2">
+              <DefaultText title={detailNasabah?.kota_domisili} />
+            </View>
+          </View>
+          <Gap height={5} />
+          <View className="flex-row items-center">
+            <DefaultText title="Alamat" titleClassName="flex-1" />
+            <View className="border-[1px] border-primary rounded-md w-[160] px-2 py-2">
+              <DefaultText title={detailNasabah?.alamat} />
+            </View>
+          </View>
+          <Gap height={5} />
+          <View className="flex-row items-center">
+            <DefaultText title="Alamat Domisili" titleClassName="flex-1" />
+            <View className="border-[1px] border-primary rounded-md w-[160] px-2 py-2">
+              <DefaultText title={detailNasabah?.alamat_domisili} />
+            </View>
+          </View>
+          <Gap height={5} />
           <Gap height={5} />
           <View className="flex-row items-center">
             <DefaultText title="Nama Ibu Kandung" titleClassName="flex-1" />
@@ -102,14 +131,14 @@ export default function DetailPribadi() {
           <Gap height={5} />
           <View className="flex-row items-center">
             <DefaultText title="Foto KTP" titleClassName="flex-1" />
-            <TouchableOpacity onPress={() => setShowImageKtp(true)}   className="border-[1px] border-primary rounded-md w-[160] px-2 py-2">
+            <TouchableOpacity onPress={() => setShowImageKtp(true)} className="border-[1px] border-primary rounded-md w-[160] px-2 py-2">
               {detailNasabah?.image_ktp ? <Image source={{ uri: `${SYARIAH_URL}/${detailNasabah?.image_ktp}` }} style={{ width: 150, height: 100 }} /> : <DefaultText title="-" titleClassName="text-black" />}
             </TouchableOpacity>
           </View>
           <Gap height={5} />
           <View className="flex-row items-center">
             <DefaultText title="Foto Selfie" titleClassName="flex-1" />
-            <TouchableOpacity onPress={() => setShowImageSelfieKtp(true)}  className="border-[1px] border-primary rounded-md w-[160] px-2 py-2">
+            <TouchableOpacity onPress={() => setShowImageSelfieKtp(true)} className="border-[1px] border-primary rounded-md w-[160] px-2 py-2">
               {detailNasabah?.image_selfie ? <Image source={{ uri: `${SYARIAH_URL}/${detailNasabah?.image_selfie}` }} style={{ width: 150, height: 100 }} /> : <DefaultText title="-" titleClassName="text-black" />}
             </TouchableOpacity>
           </View>
