@@ -25,6 +25,9 @@ export default function DetailPribadi() {
     dispatch(getDetailNasabah())
   }, [dispatch])
 
+  console.log("detailNasabah",detailNasabah);
+  
+
   return (
     <DefaultView>
       <DefaultHeader title="Detail Pribadi" />
@@ -61,14 +64,14 @@ export default function DetailPribadi() {
           <View className="flex-row items-center">
             <DefaultText title="Kota" titleClassName="flex-1" />
             <View className="border-[1px] border-primary rounded-md w-[160] px-2 py-2">
-              <DefaultText title={detailNasabah?.kota} />
+              <DefaultText title={detailNasabah?.kota?.kota} />
             </View>
           </View>
           <Gap height={5} />
           <View className="flex-row items-center">
             <DefaultText title="Kota Domisili" titleClassName="flex-1" />
             <View className="border-[1px] border-primary rounded-md w-[160] px-2 py-2">
-              <DefaultText title={detailNasabah?.kota_domisili} />
+              <DefaultText title={detailNasabah?.kota_domisili?.kota} />
             </View>
           </View>
           <Gap height={5} />

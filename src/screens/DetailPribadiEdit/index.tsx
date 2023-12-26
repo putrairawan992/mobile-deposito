@@ -52,9 +52,9 @@ export default function DetailPribadiEdit({ route }: RootStackScreenProps<'Detai
     useState<boolean>(false);
   const [showImageKtp, setShowImageKtp] = useState<boolean>(false);
   const [showImageSelfieKtp, setShowImageSelfieKtp] = useState<boolean>(false);
-  const [kotaTempatTinggal, setKotaTempatTinggal] = useState<any>(detailPribadi?.kota);
+  const [kotaTempatTinggal, setKotaTempatTinggal] = useState<any>(null);
   const [showKotaTempatTinggal, setShowKotaTempatTinggal] = useState<boolean>(false);
-  const [kotaTempatDomisiliTinggal, setKotaTempatDomisiliTinggal] = useState<any>(detailPribadi?.kota_domisili);
+  const [kotaTempatDomisiliTinggal, setKotaTempatDomisiliTinggal] = useState<any>(null);
   const [showKotaTempatDomisiliTinggal, setShowKotaTempatDomisiliTinggal] = useState<boolean>(false);
 
   const dispatch = useDispatch<RootDispatch>();
@@ -188,7 +188,7 @@ export default function DetailPribadiEdit({ route }: RootStackScreenProps<'Detai
             <View className="border-[1px] border-primary rounded-md w-[200] px-2 py-2">
               <TextInput
                 className="m-0 p-0 font-inter-regular"
-                value={kotaTempatTinggal?.kota}
+                value={kotaTempatTinggal?.kota || detailPribadi?.kota?.kota}
                 onPressIn={value => setShowKotaTempatTinggal(true)}
               />
             </View>
@@ -199,7 +199,7 @@ export default function DetailPribadiEdit({ route }: RootStackScreenProps<'Detai
             <View className="border-[1px] border-primary rounded-md w-[200] px-2 py-2">
               <TextInput
                 className="m-0 p-0 font-inter-regular"
-                value={kotaTempatDomisiliTinggal?.kota}
+                value={kotaTempatDomisiliTinggal?.kota || detailPribadi?.kota_domisili?.kota}
                 onPressIn={value => setShowKotaTempatDomisiliTinggal(true)}
               />
             </View>

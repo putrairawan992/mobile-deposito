@@ -118,8 +118,8 @@ export default function ProdukDetail({
               </View> */}
               <Gap height={10} />
               <View className="flex-row">
-                <DefaultText title="Minimum Deposito" titleClassName="flex-1" />
-                <DefaultText title={`${formatRupiah(String(showProductDetail?.minimal), "Rp ")} pertahun`} />
+                <DefaultText title="Minimal Deposito" titleClassName="flex-1" />
+                <DefaultText title={`${formatRupiah(String(showProductDetail?.minimal), "Rp ")}`} />
               </View>
               <Gap height={10} />
               <View className="flex-row">
