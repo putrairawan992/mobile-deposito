@@ -1,5 +1,5 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { BottomTabNavigationOptions, createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import React from 'react';
 import { RootStackParamList } from './interface';
 import Login from '../screens/Login';
@@ -41,6 +41,8 @@ import Password from '../screens/Password';
 import ListChatProduct from '../screens/Chat/ListChatProduct';
 import BlogDetail from '../screens/BlogDetail';
 import ChangePhoneNumber from '../screens/ChangePhoneNumber';
+import Animated, { FadeInLeft, FadeInRight, Layout } from 'react-native-reanimated';
+import PromoDetail from '../screens/PromoDetail';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 const Tab = createBottomTabNavigator();
@@ -49,9 +51,14 @@ const Tab = createBottomTabNavigator();
 function MyTabs() {
   return (
     <Tab.Navigator
-      screenOptions={{  headerShown: false }}
-      tabBar={props => BottomNavigator({ ...props })}>
-      <Tab.Screen component={Beranda} name="Beranda" />
+      screenOptions={{ headerShown: false }}
+      tabBar={props => <Animated.View
+        entering={FadeInLeft}
+        exiting={FadeInRight}
+      >
+        {BottomNavigator({ ...props })}
+      </Animated.View>}>
+      <Tab.Screen  component={Beranda} name="Beranda" />
       <Tab.Screen component={Produk} name="Produk" />
       <Tab.Screen component={Portofolio} name="Portofolio" />
       <Tab.Screen component={Profile} name="Profil" />
@@ -94,6 +101,7 @@ function StackNavigator() {
       <Stack.Screen component={RekeningSayaDetail} name="RekeningSayaDetail" />
       <Stack.Screen component={RekeningSayaTambah} name="RekeningSayaTambah" />
       <Stack.Screen component={SemuaBlog} name="SemuaBlog" />
+      <Stack.Screen component={PromoDetail} name="PromoDetail" />
       <Stack.Screen component={SemuaPromo} name="SemuaPromo" />
       <Stack.Screen component={SplashLogin} name="SplashLogin" />
       <Stack.Screen component={SyaratKetentuan} name="SyaratKetentuan" />

@@ -22,6 +22,9 @@ import Toast from 'react-native-toast-message';
 import ModalImageSelfie from '../../components/ModalImage';
 import ModalImage from '../../components/ModalImage';
 
+import ModalGetKota from '../../components/ModalGetKota';
+import ModalGetKotaDomisili from '../../components/ModalGetKota';
+
 export default function DetailPribadiEdit({ route }: RootStackScreenProps<'DetailPribadiEdit'>) {
   const detailPribadi = route.params?.detailNasabah as any;
   const [ktp, setKtp] = useState<string>(detailPribadi?.ktp);
@@ -32,6 +35,7 @@ export default function DetailPribadiEdit({ route }: RootStackScreenProps<'Detai
   const [statusNikah, setStatusNikah] = useState<string>(detailPribadi?.status_pernikahan);
   const [profesi, setProfesi] = useState<string>(detailPribadi?.jenis_pekerjaan);
   const [perusahaan, setPerusahaan] = useState<string>(detailPribadi?.nama_perusahaan);
+  const [alamat, setAlamat] = useState<string>(detailPribadi?.alamat);
   const [alamatPerusahaan, setAlamatPerusahaan] = useState<string>(detailPribadi?.alamat_kerja);
   const [penghasilan, setPenghasilan] = useState<string>(detailPribadi?.penghasilan);
   const [pin, setPin] = useState<string>('');
@@ -43,14 +47,21 @@ export default function DetailPribadiEdit({ route }: RootStackScreenProps<'Detai
   const [image_selfie, setImage_selfie] = useState<string | Asset>(detailPribadi?.image_selfie ? `${SYARIAH_URL}/${detailPribadi?.image_selfie}` : '') as any;
   const [fotoKtp, setFotoKtp] = useState<Asset | string>() as any;
   const [fotoNasabah, setFotoNasabah] = useState<Asset | string>() as any;
+  const [alamatDomisili, setAlamatDomisili] = useState<string>(detailPribadi?.alamat_domisili);
   const [showStatusPernikahan, setShowStatusPernikahan] =
     useState<boolean>(false);
   const [showImageKtp, setShowImageKtp] = useState<boolean>(false);
   const [showImageSelfieKtp, setShowImageSelfieKtp] = useState<boolean>(false);
+  const [kotaTempatTinggal, setKotaTempatTinggal] = useState<any>(null);
+  const [showKotaTempatTinggal, setShowKotaTempatTinggal] = useState<boolean>(false);
+  const [kotaTempatDomisiliTinggal, setKotaTempatDomisiliTinggal] = useState<any>(null);
+  const [showKotaTempatDomisiliTinggal, setShowKotaTempatDomisiliTinggal] = useState<boolean>(false);
+
   const dispatch = useDispatch<RootDispatch>();
-  const { updateRegisterLoading } = useSelector(
+  const { updateRegisterLoading, token } = useSelector(
     (state: RootState) => state.userReducer,
   );
+  console.log("token", token);
 
   const onSave = () => {
     if (ktp.trim().length !== 16) {
@@ -68,6 +79,10 @@ export default function DetailPribadiEdit({ route }: RootStackScreenProps<'Detai
     formdata.append('status_pernikahan', statusNikah);
     formdata.append('jenis_pekerjaan', profesi);
     formdata.append('nama_perusahaan', perusahaan);
+    formdata.append('alamat', alamat);
+    formdata.append('alamat_domisili', alamatDomisili);
+    formdata.append('kota', kotaTempatTinggal?.id);
+    formdata.append('kota_domisili', kotaTempatDomisiliTinggal?.id);
     formdata.append('alamat_kerja', alamatPerusahaan);
     formdata.append('penghasilan', penghasilan);
     fotoKtp && formdata.append('image_ktp', {
@@ -89,7 +104,7 @@ export default function DetailPribadiEdit({ route }: RootStackScreenProps<'Detai
   const onOpeGallery = async (index: number, type?: string) => {
     let result;
     if (type === 'selfie') {
-      result = await launchCamera({ mediaType: 'photo', maxHeight: 100, maxWidth: 100 });
+      result = await launchCamera({ mediaType: 'photo', maxHeight: 800, maxWidth: 1100 });
     } else {
       result = await launchImageLibrary({ mediaType: 'photo' });
     }
@@ -167,6 +182,50 @@ export default function DetailPribadiEdit({ route }: RootStackScreenProps<'Detai
               />
             </View>
           </TouchableOpacity>
+          <Gap height={5} />
+          <View className="flex-row items-center">
+            <DefaultText title="Kota" titleClassName="flex-1" />
+            <View className="border-[1px] border-primary rounded-md w-[200] px-2 py-2">
+              <TextInput
+                className="m-0 p-0 font-inter-regular"
+                value={kotaTempatTinggal ? `${kotaTempatTinggal?.kota}, ${kotaTempatTinggal?.provinsi}` : `${detailPribadi?.kota?.kota}, ${detailPribadi?.kota?.provinsi}`}
+                onPressIn={value => setShowKotaTempatTinggal(true)}
+              />
+            </View>
+          </View>
+          <Gap height={5} />
+          <View className="flex-row items-center">
+            <DefaultText title="Kota Domisili" titleClassName="flex-1" />
+            <View className="border-[1px] border-primary rounded-md w-[200] px-2 py-2">
+              <TextInput
+                className="m-0 p-0 font-inter-regular"
+                value={kotaTempatDomisiliTinggal ? `${kotaTempatDomisiliTinggal?.kota}, ${kotaTempatDomisiliTinggal?.provinsi}` : `${detailPribadi?.kota_domisili?.kota}, ${detailPribadi?.kota_domisili?.provinsi}`}
+                onPressIn={value => setShowKotaTempatDomisiliTinggal(true)}
+              />
+            </View>
+          </View>
+          <Gap height={5} />
+          <View className="flex-row items-center">
+            <DefaultText title="Alamat Sekarang" titleClassName="flex-1" />
+            <View className="border-[1px] border-primary rounded-md w-[200] px-2 py-2">
+              <TextInput
+                className="m-0 p-0 font-inter-regular"
+                value={alamat}
+                onChangeText={value => setAlamat(value)}
+              />
+            </View>
+          </View>
+          <Gap height={5} />
+          <View className="flex-row items-center">
+            <DefaultText title="Alamat Domisili" titleClassName="flex-1" />
+            <View className="border-[1px] border-primary rounded-md w-[200] px-2 py-2">
+              <TextInput
+                className="m-0 p-0 font-inter-regular"
+                value={alamatDomisili}
+                onChangeText={value => setAlamatDomisili(value)}
+              />
+            </View>
+          </View>
           <Gap height={5} />
           <View className="flex-row items-center">
             <DefaultText title="Nama Ibu Kandung" titleClassName="flex-1" />
@@ -286,7 +345,7 @@ export default function DetailPribadiEdit({ route }: RootStackScreenProps<'Detai
               setImage_selfie(undefined);
             }} size={20} />}
           </View>
-      
+
 
           <Gap height={15} />
           <View className="bg-primary-light rounded-2xl px-5 py-3 flex-row items-center">
@@ -332,6 +391,21 @@ export default function DetailPribadiEdit({ route }: RootStackScreenProps<'Detai
             </TouchableOpacity>}
         </View>
       </ScrollView>
+      <ModalGetKota
+        onConfirm={value => {
+          setShowKotaTempatTinggal(false);
+          setKotaTempatTinggal(value);
+        }} show={showKotaTempatTinggal}
+        hide={() => setShowKotaTempatTinggal(false)}
+      />
+      <ModalGetKotaDomisili
+        onConfirm={value => {
+          setShowKotaTempatDomisiliTinggal(false);
+          setKotaTempatDomisiliTinggal(value);
+        }}
+        show={showKotaTempatDomisiliTinggal}
+        hide={() => setShowKotaTempatDomisiliTinggal(false)}
+      />
 
       <ModalImage
         title='Lihat Foto KTP'

@@ -1,5 +1,5 @@
 import { ActivityIndicator, AppState, Linking, ScrollView, TouchableOpacity, View } from 'react-native';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import DefaultView from '../../components/DefaultView';
 import DefaultText from '../../components/DefaultText';
 import DefaultHeader from '../../components/DefaultHeader';
@@ -11,7 +11,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { RootDispatch, RootState } from '../../store';
 import { checkLogin, getDetailNasabah, logout } from '../../services/user';
 import { addStorage, getExitTime, getStorage, saveExitTime } from '../../utils/storage';
-import { useFocusEffect, useIsFocused } from '@react-navigation/native';
+import { useFocusEffect, useIsFocused, useNavigation } from '@react-navigation/native';
 import ModalAlert from '../../components/ModalAlert';
 export default function Profile() {
   const { detailNasabah } = useSelector(
@@ -22,10 +22,14 @@ export default function Profile() {
     (state: RootState) => state.userReducer,
   );
   const [isShowAlertAuth, setIsShowAlertAuth] = useState<boolean>(false);
+  const navigation = useNavigation();
+  const isFocused = useMemo(() => navigation.isFocused(), []);
 
-  useEffect(() => {
-    dispatch(getDetailNasabah());
-  }, [useIsFocused]);
+  useFocusEffect(useCallback(() => {
+    if (isFocused) {
+      dispatch(getDetailNasabah());
+    }
+  }, [isFocused]));
 
   function maskEmail(email: string) {
     let skipFirstChars = 3;
@@ -83,34 +87,34 @@ export default function Profile() {
 
     checkLoginLoading ? <ActivityIndicator size="large" style={{ position: 'absolute', top: 150, left: 0, right: 0 }} /> :
       <DefaultView>
-     
+
         <DefaultHeader
           title="Profil"
           titleClassName="text-black"
           iconColor={colors.black}
         />
-          <View className="pb-3 ml-4 flex-row items-center">
-            {/* <Image
+        <View className="pb-3 ml-4 flex-row items-center">
+          {/* <Image
             source={{
               uri: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8cGVyc29ufGVufDB8fDB8fHww&auto=format&fit=crop&w=400&q=60',
             }}
             resizeMode="cover"
             className="bg-neutral-300 w-[80] h-[80] rounded-full"
           /> */}
-            <Gap width={10} />
-            <View className="flex-1">
-              <DefaultText
-                title={detailNasabah?.nama}
-                titleClassName="text-lg font-inter-bold"
-              />
-              <Gap height={5} />
-              <DefaultText
-                title={detailNasabah?.email && maskEmail(detailNasabah?.email)}
-              />
-              <Gap height={5} />
-              <DefaultText title={detailNasabah?.phone && maskPhoneNumber(detailNasabah?.phone)} />
-            </View>
+          <Gap width={10} />
+          <View className="flex-1">
+            <DefaultText
+              title={detailNasabah?.nama}
+              titleClassName="text-lg font-inter-bold"
+            />
+            <Gap height={5} />
+            <DefaultText
+              title={detailNasabah?.email && maskEmail(detailNasabah?.email)}
+            />
+            <Gap height={5} />
+            <DefaultText title={detailNasabah?.phone && maskPhoneNumber(detailNasabah?.phone)} />
           </View>
+        </View>
         <ScrollView showsVerticalScrollIndicator={false}>
           <View className="bg-neutral-300  px-3 py-1">
             <DefaultText title="Akun Saya" titleClassName="ml-4 font-inter-bold" />
@@ -228,7 +232,7 @@ export default function Profile() {
             dispatch(checkLogin(await getStorage("phone-email")))
           }}
         />
-      
+
       </DefaultView>
   );
 }

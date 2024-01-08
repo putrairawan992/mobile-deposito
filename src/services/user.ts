@@ -86,7 +86,9 @@ export const login =
                 navigationRef.navigate("MyTabs");
                 removeStorage("resetPass");
               } else {
-                navigationRef.navigate("SplashLogin")
+                if (!detailNash?.idUserNasabah) {
+                  navigationRef.navigate("SplashLogin");
+                }
               }
               dispatch(setLoginLoading(false))
             });
@@ -337,6 +339,8 @@ export const registerNasabah =
           }
         })
         .catch(err => {
+          console.log("err.response?.data",err.response);
+          
           Toast.show({
             type: 'error',
             text1: 'Gagal',

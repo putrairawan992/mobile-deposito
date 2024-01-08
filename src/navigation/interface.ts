@@ -3,11 +3,12 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 export type RootStackParamList = {
   Splash: undefined;
   Login: undefined;
+  PromoDetail: { data: undefined };
   OTP: {
     emailOrPhone: string;
     isResetPassword?: boolean;
   };
-  ChangePhoneNumber:undefined;
+  ChangePhoneNumber: undefined;
   Password: {
     emailOrPhone: string;
     isResetPassword?: boolean;
@@ -20,7 +21,7 @@ export type RootStackParamList = {
     showProductDetail?: undefined;
   };
   Beranda?: { fromUrl?: undefined };
-  Chat?: {token?: undefined};
+  Chat?: { token?: undefined };
   ChatRegistrasi: { id?: undefined };
   ChatTransaksi: undefined;
   DetailPribadi: undefined;
@@ -41,8 +42,8 @@ export type RootStackParamList = {
   ProdukDetail?: {
     noProduct?: undefined
   };
-  BlogDetail:{
-    id?:undefined;
+  BlogDetail: {
+    id?: undefined;
   }
   Profile: undefined;
   Register: undefined;
@@ -55,7 +56,7 @@ export type RootStackParamList = {
   SyaratKetentuan: undefined;
   FAQ: undefined;
   MyTabs: undefined;
-  BuatPassword?: {isShowDashboard?: boolean};
+  BuatPassword?: { isShowDashboard?: boolean };
 };
 
 export type RootStackScreenProps<T extends keyof RootStackParamList> =

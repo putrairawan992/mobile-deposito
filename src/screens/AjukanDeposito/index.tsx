@@ -25,6 +25,7 @@ export default function AjukanDeposito({ route }: RootStackScreenProps<"AjukanDe
   const [agree, setAgree] = useState<boolean>(false);
   const [showModal, setShowModal] = useState<boolean>(false);
   const [nominal, setNominal] = useState<string>('');
+  const [tujuanDeposito,setTujuanDeposito] = useState<string>('');
   const [data, setData] = useState<any>(null);
   const [loadings, setLoadings] = useState<boolean>(false);
   const { showBankListProduct } = useSelector(
@@ -52,6 +53,7 @@ export default function AjukanDeposito({ route }: RootStackScreenProps<"AjukanDe
     const payload = {
       id_norek: dataBank?.id,
       aro: perpanjang ? 1 : 0,
+      tujuan:tujuanDeposito,
       amount: nominal?.replace(/\./g, ""),
       bagi_hasil: data?.estimasi_akhir?.toString(),
       tenor: showProductDetail?.tenor,
@@ -82,7 +84,7 @@ export default function AjukanDeposito({ route }: RootStackScreenProps<"AjukanDe
   return (
     <DefaultView>
       <DefaultHeader title="Ajukan Deposito" />
-      <ScrollView showsVerticalScrollIndicator={false}>
+      <ScrollView style={{padding:15}} showsVerticalScrollIndicator={false}>
         <View className="px-5">
           <Gap height={15} />
           <DefaultText
@@ -114,6 +116,7 @@ export default function AjukanDeposito({ route }: RootStackScreenProps<"AjukanDe
         <View className="w-full h-[1px] bg-black my-3" />
 
         <View className="px-5">
+          <Gap height={10} />
           <DefaultText title="Masukkan Nominal Deposito Anda" />
           <Gap height={10} />
           <View className="border-[1px] border-primary rounded-md px-2 py-2">
@@ -134,6 +137,17 @@ export default function AjukanDeposito({ route }: RootStackScreenProps<"AjukanDe
               className="self-center px-5 mt-1 bg-primary py-2 rounded-full">
               <DefaultText title="Simulasikan Deposito" titleClassName="text-white" />
             </TouchableOpacity>}
+            <Gap height={20} />
+          <View className="border-[1px] border-primary rounded-md px-2 py-2">
+            <TextInput
+              className="m-0 p-0 font-inter-regular"
+              placeholder="Tujuan Deposito"
+              value={tujuanDeposito}
+              onChangeText={value => {
+                setTujuanDeposito(value);
+              }}
+            />
+          </View>
           <Gap height={20} />
 
           <DefaultText
@@ -242,6 +256,7 @@ export default function AjukanDeposito({ route }: RootStackScreenProps<"AjukanDe
             className="self-center bg-primary px-5 py-2 rounded-full">
             <DefaultText title="Submit" titleClassName="text-white" />
           </TouchableOpacity>
+          <Gap height={30} />
         </View>
       </ScrollView>
 

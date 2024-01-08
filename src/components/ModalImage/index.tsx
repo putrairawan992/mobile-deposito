@@ -21,7 +21,7 @@ export default function ModalImage({ show, hide, onConfirm, data, title }: Modal
           titleClassName="text-center text-base font-inter-bold"
         />
         <Gap height={30} />
-        <Image source={{ uri: data }} style={{ height: 222, width: "100%" }} />
+        <Image resizeMode='contain' source={{ uri: data }} style={{ height: 222, width: "100%" }} />
         <Gap height={15} />
         <TouchableOpacity
           onPress={onConfirm}

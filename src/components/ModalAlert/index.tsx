@@ -44,7 +44,7 @@ export default function ModalAlert({
             activeOpacity={0.7}
             style={{ marginLeft: !buttonOne ? 15 : 0 }}
             className={`self-center bg-primary px-5 py-2 rounded-full`}>
-            <DefaultText title="Oke" titleClassName="text-white" />
+            <DefaultText title="Ok" titleClassName="text-white" />
           </TouchableOpacity>
           <Gap width={15} />
           {buttonOne &&

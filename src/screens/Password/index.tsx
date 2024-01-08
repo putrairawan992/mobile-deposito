@@ -21,6 +21,8 @@ import { images } from '../../utils/images';
 import { WIDTH } from '../../utils/constant';
 import { getExitTime, getStorage } from '../../utils/storage';
 import { useFocusEffect, useIsFocused } from '@react-navigation/native';
+import DefaultHeader from '../../components/DefaultHeader';
+import { navigationRef } from '../../navigation/RootNavigation';
 
 export default function Password({ route }: RootStackScreenProps<'Password'>) {
   const [showPassword, setShowPassword] = useState<boolean>(false);
@@ -70,7 +72,7 @@ export default function Password({ route }: RootStackScreenProps<'Password'>) {
           />
           <Gap height={10} />
           <Input
-            title="Kata Sandi kamu"
+            title="Kata Sandi anda"
             titleClassName="text-left"
             textInputProps={{
               secureTextEntry: !showPassword,

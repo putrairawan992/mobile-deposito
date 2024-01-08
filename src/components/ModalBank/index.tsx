@@ -14,7 +14,7 @@ interface ModalBankProps {
   onConfirm: (value: string) => void;
 }
 
-export default function ModalBank({ show, hide, onConfirm }: ModalBankProps) {
+export default function ModalGetKota({ show, hide, onConfirm }: ModalBankProps) {
   const { showBankListData, showBankListDataLoading } = useSelector(
     (state: RootState) => state.bankDataReducer,
   );

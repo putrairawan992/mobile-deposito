@@ -27,7 +27,7 @@ export function EntryAnimation({children, index}: EntryAnimationI) {
 
   const animatedStyle = useAnimatedStyle(() => {
     const opacity = interpolate(progress.value, [0, 1], [0, 1]);
-    const translateY = interpolate(progress.value, [0, 1], [100, 0]);
+    const translateY = interpolate(progress.value, [50,50],[50,50]);
 
     return {
       opacity,

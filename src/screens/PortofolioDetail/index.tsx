@@ -206,7 +206,7 @@ export default function PortofolioDetail({ route }: RootStackScreenProps<'Portof
     return bgColor;
   }
   const statusVal = () => {
-    let status = 'Process';
+    let status = 'Proses';
     if (showPortofolioDetail?.data?.status === "6" || showPortofolioDetail?.data?.status === "0") {
       status = 'Batal'
     }
@@ -356,7 +356,8 @@ export default function PortofolioDetail({ route }: RootStackScreenProps<'Portof
               {upload_bukti_tf ?
                 <Image source={{ uri: upload_bukti_tf }} style={{ height: 100, width: 130 }} /> :
                 <TouchableOpacity
-                  className='border-[1px] border-primary mt-2 rounded-full self-center flex-row px-4 py-2'
+                style={{borderRadius: 8, borderColor: '#2A8E54', borderWidth: 1}}
+                  className='mt-2 self-center flex-row px-4 py-2'
                   onPress={() => onOpeGallery(0)}>
                   <DefaultText
                     title={'Upload Foto'}

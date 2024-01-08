@@ -1,16 +1,18 @@
 import {
   ActivityIndicator,
+  Animated,
   AppState,
   BackHandler,
   Dimensions,
+  Easing,
   Image,
+  Linking,
   StyleSheet,
   Text,
-  TouchableOpacity,
   View,
   useWindowDimensions,
 } from 'react-native';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import DefaultView from '../../components/DefaultView';
 import DefaultText from '../../components/DefaultText';
 import { images } from '../../utils/images';
@@ -26,11 +28,11 @@ import { getShowPromo } from '../../services/product';
 import { RootDispatch, RootState } from '../../store';
 import { getShowDashboard } from '../../services/dasbhoard';
 import { formatRupiah } from '../../utils/currency';
-import { checkLogin, getDetailNasabah, getUserProfile } from '../../services/user';
+import { checkLogin, getUserProfile } from '../../services/user';
 import { addStorage, getExitTime, getStorage, saveExitTime, } from '../../utils/storage';
-import { useFocusEffect, useIsFocused } from '@react-navigation/native';
+import { useFocusEffect, useIsFocused, useNavigation } from '@react-navigation/native';
 import ModalAlert from '../../components/ModalAlert';
-import { ScrollView } from 'react-native-gesture-handler';
+import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
 import { WIDTH } from '../../utils/constant';
 import { getShowArtikelList } from '../../services/artikel';
 import moment from 'moment';
@@ -42,10 +44,10 @@ export default function Beranda() {
     (state: RootState) => state.productReducer,
   );
   const [topActive, setTopActive] = useState<number>(0);
-  const { showDashboard, showDashboardLoading } = useSelector(
+  const { showDashboard } = useSelector(
     (state: RootState) => state.dashboardReducer,
   );
-  const { detailNasabah, checkLoginLoading } = useSelector(
+  const { detailNasabah, token } = useSelector(
     (state: RootState) => state.userReducer,
   );
   const { showArtikelListData } = useSelector(
@@ -61,17 +63,21 @@ export default function Beranda() {
   const [isShowAlertAuth, setIsShowAlertAuth] = useState<boolean>(false);
   const [notificationChatCount, setNotificationChatCount] = useState<any>();
   const dispatch = useDispatch<RootDispatch>();
+  const navigation = useNavigation()
+  const isFocused = useMemo(() => navigation.isFocused(), [])
 
   useEffect(() => {
-    dispatch(getShowPromo());
-    dispatch(getUserProfile());
-    dispatch(getShowArtikelList())
-    dispatch(getShowDashboard()).then(async (res: any) => {
-      if (!res?.statuses['5'].status && await getStorage("resetPass")) {
-        navigationRef.navigate("BuatPassword", { isShowDashboard: true });
-      }
-    });
-  }, [dispatch]);
+    if (isFocused) {
+      dispatch(getShowPromo());
+      dispatch(getUserProfile());
+      dispatch(getShowArtikelList())
+      dispatch(getShowDashboard()).then(async (res: any) => {
+        if (!res?.statuses['5'].status && await getStorage("resetPass")) {
+          navigationRef.navigate("BuatPassword", { isShowDashboard: true });
+        }
+      });
+    }
+  }, [isFocused]);
 
   const handleBackPress = (): boolean => {
     return true;
@@ -108,7 +114,6 @@ export default function Beranda() {
     useNasabah();
   }, [useIsFocused]));
 
-
   useFocusEffect(
     useCallback(() => {
       BackHandler.addEventListener('hardwareBackPress', handleBackPress);
@@ -116,13 +121,8 @@ export default function Beranda() {
     }, [handleBackPress])
   );
 
-  // useEffect(() => {
-  //   if (token && !userProfile?.data?.statuse?.profile && detailNasabah?.idUserNasabah) {
-  //     setUpdateProfile(true);
-  //   }
-  // }, [detailNasabah,userProfile]);
-
   const redirectUrlChat = async () => {
+    // Linking.openURL(`${SYARIAH_URL}/user?token=${token}`)
     navigationRef.navigate("Chat", { token: await getStorage("token") });
   }
 
@@ -139,44 +139,39 @@ export default function Beranda() {
     }, 3000)
     return () => clearInterval(intervalId); //This is important
 
-  }, [notificationChatCount, showNotificationList])
+  }, [notificationChatCount, showNotificationList]);
 
-  useFocusEffect(useCallback(() => {
-    dispatch(getShowDashboard());
-    dispatch(getDetailNasabah());
-  }, [dispatch]));
-
-  useFocusEffect(
-    useCallback(() => {
-      const totalNotifications: number = sumNotifications(showNotificationList?.data);
-      setDtNasabah(detailNasabah);
-      setNotifCount(totalNotifications);
-    }, [detailNasabah, showNotificationList]));
+  useEffect(() => {
+    const totalNotifications: number = sumNotifications(showNotificationList?.data);
+    setDtNasabah(detailNasabah);
+    setNotifCount(totalNotifications);
+  }, [detailNasabah, showNotificationList]);
 
   return (
     <DefaultView>
-      <View className="flex-row items-center px-5 py-2 mb-2">
+      <View className="flex-row items-center p-2">
         <Image
           className="w-[80] h-[40]"
           source={images.logo}
           resizeMode="contain"
         />
-        <Gap classname="flex-1" />
-
+        <Gap classname='flex-1' />
         <TouchableOpacity
           activeOpacity={0.7}
+          style={{ width: 35, height: 50, paddingTop: 10 }}
           onPress={() => navigationRef.navigate('Notifikasi')}>
-          {notifCount > 0 && <View className='bg-red-500 absolute left-4 bottom-5 px-1 py-0.3 rounded-full'>
-            <Text className='text-white'>{notifCount}</Text>
+          {notifCount > 0 && <View style={{ zIndex: 999999, borderRadius: 8, position: "absolute", left: 15, top: 5, padding: 5 }} className='bg-red-500'>
+            <Text className='text-white self-center' style={{ fontSize: 8 }}>{notifCount}</Text>
           </View>}
           <Icon name="bell" size={24} color={'#2A8E54'} />
         </TouchableOpacity>
         <Gap width={10} />
         <TouchableOpacity
           activeOpacity={0.7}
+          style={{ width: 50, height: 50, paddingTop: 10 }}
           onPress={() => redirectUrlChat()}>
-          {notificationChatCount?.count > 0 && <View className='bg-red-500 absolute left-5 bottom-5 px-1 py-0.3 rounded-full'>
-            <Text className='text-white'>{notificationChatCount?.count}</Text>
+          {notificationChatCount?.count > 0 && <View style={{ zIndex: 999999, borderRadius: 8, position: "absolute", right: 20, top: 5, padding: 5 }} className='bg-red-500'>
+            <Text className='text-white self-center' style={{ fontSize: 8 }}>{notificationChatCount?.count}</Text>
           </View>}
           <Icon name="message" size={24} color={'#2A8E54'} />
         </TouchableOpacity>
@@ -259,13 +254,14 @@ export default function Beranda() {
             <Carousel
               loop
               width={width}
+              key={showPromo?.length}
               height={width / 2}
-              autoPlay={true}
-              autoPlayInterval={5000}
+              autoPlayInterval={2222}
+              autoPlay
               data={showPromo}
               // scrollAnimationDuration={5000}
               onSnapToItem={index => setIndex(index)}
-              renderItem={({ item }: { item: { image: string } }) => (
+              renderItem={({ item }: { item: any }) => (
                 <View style={styles.child}>
                   <Image
                     style={{ width: WIDTH / 1.1, height: "100%" }}

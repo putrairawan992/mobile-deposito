@@ -1,4 +1,4 @@
-import { AppState, BackHandler, Dimensions, View } from 'react-native';
+import { AppState, BackHandler, Dimensions, Platform, View } from 'react-native';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import DefaultView from '../../components/DefaultView';
 import DefaultHeader from '../../components/DefaultHeader';
@@ -25,6 +25,7 @@ export default function Chat({ route }: RootStackScreenProps<"Chat">) {
   const handleExit = async () => {
     await saveExitTime();
   };
+  console.log(token, "<<<<token");
 
   useEffect(() => {
     const subscription = AppState.addEventListener('change', async nextAppState => {
@@ -54,7 +55,7 @@ export default function Chat({ route }: RootStackScreenProps<"Chat">) {
 
   const handleBackPress = (): boolean => {
     removeStorage('@exitTime');
-    return false;
+    return true;
   };
 
   useFocusEffect(
@@ -73,13 +74,15 @@ export default function Chat({ route }: RootStackScreenProps<"Chat">) {
           navigationRef.navigate("MyTabs");
           removeStorage('@exitTime');
         }}
-        title="Chat"
+        title="Hubungi Kami"
       />
       <View className="flex-1 rounded-lg">
         <WebView
-          ref={webViewRef}
-          onContentProcessDidTerminate={onContentProcessDidTerminate}
-          javaScriptEnabled
+          // ref={webViewRef}
+          // onContentProcessDidTerminate={onContentProcessDidTerminate}
+          javaScriptEnabled={true}
+          // sharedCookiesEnabled={true}
+          // thirdPartyCookiesEnabled={true}
           style={{ width: Dimensions.get('window').width }}
           source={{ uri: `${SYARIAH_URL}/user?token=${token}` }}
         />
